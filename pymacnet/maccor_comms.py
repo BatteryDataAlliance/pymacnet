@@ -2,8 +2,8 @@ import socket
 import logging
 import json
 import pymacnet.maccor_messages
+from datetime import datetime
 
-import struct
 
 log = logging.getLogger(__name__)
 
@@ -29,9 +29,7 @@ class MaccorInterface:
         """
 
         self.channel = config['channel'] - 1 # Note that channels are zero indexed within Macnet so we must subract one here.
-        self.ip = config['server_ip']
-        self.port = config['server_port']
-        self.msg_buffer_size = config['msg_buffer_size']
+        self.config = config
         self.sock = None
 
     def create_connection(self):
@@ -45,7 +43,7 @@ class MaccorInterface:
         """
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.sock.connect((self.ip, self.port))
+            self.sock.connect((self.config['server_ip'], self.config['server_port']))
             success = True
         except:
             log.error("Failed to create TCP connection with Maccor server!")
@@ -64,7 +62,6 @@ class MaccorInterface:
         msg_incoming_dict : dict
             A dictionary containing the message response. Returns None if there is an issue.
         """
-
         # Pack message
         try:
             msg_outgoing_packed = json.dumps( outgoing_msg_dict, indent = 4)
@@ -72,21 +69,18 @@ class MaccorInterface:
         except:
             log.error("Error packing outgoing message!")
             return None
-
         # Send message
         try:
             self.sock.send(msg_outgoing_packed)
         except:
             log.error("Error sending message!")
             return None
-
         # Receive response
         try:
-            msg_incoming_packed = self.sock.recv(self.msg_buffer_size)
+            msg_incoming_packed = self.sock.recv(self.config['msg_buffer_size'])
         except:
-            log.error("Error receiving incoming message!")
+            log.error("Error receiving message!")
             return None
-
         # Unpack response
         try:
             msg_incoming_dict = json.loads(msg_incoming_packed.decode('utf-8'))
@@ -104,19 +98,108 @@ class MaccorInterface:
         -------
         status : dict
             A dictionary detailing the status of the channel. Returns None if there is an issue.
+
+            The 'stat' key witin the status dict decodes as follows:
+                0: Available 
+                1: Selected
+                2: Active
+                3: Suspended 
+                4: Completed 
+                5: Problem
+                6: Not/Avl
+                7: Reset
+                8: Start
+                9: PWR Fail 
+                10: No Cntllr 
+                11: ShutDown
+                12: Starting 
+                13: Blocked 
+                14: Waiting 
+                15: FRA
+                16: Rem Maint 
+                17: Not USED 
+                18: N/A
         """
 
         msg_outging_dict = pymacnet.maccor_messages.read_status_msg.copy()
         msg_outging_dict['params']['Chan'] = self.channel
 
         status = self._send_receive_msg(msg_outging_dict)
-
         if status:
             return status['result']
         else:
             log.error("Failed to read channel status")
             return None
-        
+
+    def start_test_with_procedure(self):
+        """
+        Starts the tests on the channel and with the procedure specified in the passed config.
+        ----------
+        Returns
+        -------
+        result : dict
+            A dictionary info on how/if the test was started
+                Result response keys decoded as follows:
+                    0: OK
+                    10: Cannot start regimes with more than one channel selected.
+                    12: Advanced start is not compatible with regimes.
+                    14: No test procedure was selected, please select a test procedure 
+                    15: Channel not Active. Jump start impossible
+                    16: Channel not Selected. Advanced start impossible
+                    17: Channel not Suspended, Cannot Restart
+                    18: The maximum length of the data file name is 256 characters. 
+                    19: Name is not a unique filename.
+                    20: Name is not a unique filename
+                    21: EV Chamber in use
+                    22: Invalid entry.
+                    23: Channel in use
+                    24: No Channels were selected to be started.
+                    25: EV Chamber in use.
+        """
+
+        msg_outging_dict = pymacnet.maccor_messages.start_test_with_procedure_msg.copy()
+        msg_outging_dict['params']['Chan'] = self.channel
+        msg_outging_dict['params']['ProcName'] = self.config['test_procedure']
+        msg_outging_dict['params']['Comment'] = "Start with pymacnet at " + str(datetime.timestamp(datetime.now()))
+
+        # If test name is not specified then start test with a random test
+        if not self.config['test_name']:
+            msg_outging_dict['params']['TestName'] = 'Random'
+        else:
+            msg_outging_dict['params']['TestName'] = self.config['test_name']
+
+        result = self._send_receive_msg(msg_outging_dict)
+        # TODO: LOOK AT RESULT TO SEE IF TEST STARTED
+        if result:
+            return result['result']
+        else:
+            log.error("Failed to get start channel response!")
+            return None
+
+    def start_test_direct_control(self):
+        """
+        Starts a test to be manually controled with on the channel specified in the config.
+        ----------
+        Returns
+        -------
+        status : dict
+            A dictionary detailing the status of the channel. Returns None if there is an issue.
+        """
+        # TODO: WRITE THIS
+        pass
+
+    def set_direct_mode_output( self, voltage_v, current_a):
+        """
+        Sets the voltage/current output on the channel specified on in the config. Note that the
+        test must have been started with the start_test_direct_control method.
+        ----------
+        Returns
+        -------
+        status : dict
+            A dictionary detailing the status of the channel. Returns None if there is an issue.
+        """
+        # TODO: WRITE THIS
+        pass
 
     def __del__(self):
         """
