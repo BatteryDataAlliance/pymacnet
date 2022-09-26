@@ -1,7 +1,7 @@
 {
     "channel": 94,
-    "test_name": "Test1",
-    "test_procedure": "",
+    "test_name": "",
+    "test_procedure": "zn_test",
     "server_ip": "3.3.31.83",
     "server_port": 57570,
     "msg_buffer_size": 1024
