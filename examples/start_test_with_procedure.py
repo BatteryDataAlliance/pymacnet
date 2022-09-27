@@ -15,9 +15,5 @@ if not maccor_interface.create_connection():
     print("failed to create connection!")
 
 print(maccor_interface.read_status())
-result = maccor_interface.start_test_with_procedure()
-print(result)
-
-for i in range(0,6):
-    print(maccor_interface.read_status())
-    time.sleep(0.5)
+maccor_interface.start_test_with_procedure()
+#print(maccor_interface.read_status())

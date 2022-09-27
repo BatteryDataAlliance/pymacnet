@@ -4,7 +4,6 @@ import json
 import pymacnet.maccor_messages
 from datetime import datetime
 
-
 log = logging.getLogger(__name__)
 
 class MaccorInterface:
@@ -98,27 +97,6 @@ class MaccorInterface:
         -------
         status : dict
             A dictionary detailing the status of the channel. Returns None if there is an issue.
-
-            The 'stat' key witin the status dict decodes as follows:
-                0: Available 
-                1: Selected
-                2: Active
-                3: Suspended 
-                4: Completed 
-                5: Problem
-                6: Not/Avl
-                7: Reset
-                8: Start
-                9: PWR Fail 
-                10: No Cntllr 
-                11: ShutDown
-                12: Starting 
-                13: Blocked 
-                14: Waiting 
-                15: FRA
-                16: Rem Maint 
-                17: Not USED 
-                18: N/A
         """
 
         msg_outging_dict = pymacnet.maccor_messages.read_status_msg.copy()
@@ -130,37 +108,48 @@ class MaccorInterface:
         else:
             log.error("Failed to read channel status")
             return None
-
-    def start_test_with_procedure(self):
+        
+    def _reset_channel(self):
         """
-        Starts the tests on the channel and with the procedure specified in the passed config.
+        Resets the channel
         ----------
         Returns
         -------
-        result : dict
-            A dictionary info on how/if the test was started
-                Result response keys decoded as follows:
-                    0: OK
-                    10: Cannot start regimes with more than one channel selected.
-                    12: Advanced start is not compatible with regimes.
-                    14: No test procedure was selected, please select a test procedure 
-                    15: Channel not Active. Jump start impossible
-                    16: Channel not Selected. Advanced start impossible
-                    17: Channel not Suspended, Cannot Restart
-                    18: The maximum length of the data file name is 256 characters. 
-                    19: Name is not a unique filename.
-                    20: Name is not a unique filename
-                    21: EV Chamber in use
-                    22: Invalid entry.
-                    23: Channel in use
-                    24: No Channels were selected to be started.
-                    25: EV Chamber in use.
+        success : bool
+            True of False based on whether the test was started or not.
+        """
+        msg_outging_dict = pymacnet.maccor_messages.reset_channel_msg.copy()
+        msg_outging_dict['params']['Chan'] = self.channel
+
+        reply = self._send_receive_msg(msg_outging_dict)
+        if reply:
+            if reply['result']['Result'] == 'OK':
+                success = True
+            else:
+                log.error("Failed reset channel! Channel did not reset!")
+                success = False
+        else:
+            log.error("Failed reset channel! Did not receive reply!")
+            success = False
+
+        return success 
+
+    def start_test_with_procedure(self):
+        """
+        Starts the test on the channel and with the procedure specified in the passed config.
+        Will not start a test if the channel is current running a test.
+        Will reset a channel if there is a completed test on that channel.
+        ----------
+        Returns
+        -------
+        success : bool
+            True of False based on whether the test was started or not
         """
 
         msg_outging_dict = pymacnet.maccor_messages.start_test_with_procedure_msg.copy()
         msg_outging_dict['params']['Chan'] = self.channel
         msg_outging_dict['params']['ProcName'] = self.config['test_procedure']
-        msg_outging_dict['params']['Comment'] = "Start with pymacnet at " + str(datetime.timestamp(datetime.now()))
+        msg_outging_dict['params']['Comment'] = "Started with pymacnet at " + str(datetime.timestamp(datetime.now()))
 
         # If test name is not specified then start test with a random test
         if not self.config['test_name']:
@@ -168,13 +157,21 @@ class MaccorInterface:
         else:
             msg_outging_dict['params']['TestName'] = self.config['test_name']
 
-        result = self._send_receive_msg(msg_outging_dict)
-        # TODO: LOOK AT RESULT TO SEE IF TEST STARTED
-        if result:
-            return result['result']
+        # Check the status of the channel before we try to start the test.
+        status = self.read_status()
+        if status:
+            if pymacnet.maccor_messages.stat_dict[status['Stat']] == 'Completed':
+                self._reset_channel()
         else:
-            log.error("Failed to get start channel response!")
-            return None
+            log.error("Cannot read channel status!")
+            return False
+
+        reponse = self._send_receive_msg(msg_outging_dict)
+        if reponse['result']['Result'] != 'OK':
+            log.error("Error starting test! " + reponse['result']['Result'])
+            return False
+        else:
+            return True
 
     def start_test_direct_control(self):
         """

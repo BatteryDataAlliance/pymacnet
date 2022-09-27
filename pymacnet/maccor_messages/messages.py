@@ -39,6 +39,7 @@ start_test_with_procedure_msg = {
         "CANprof": "", 
         "RegimeName": ""
     },
+    "id": 1987
 }
 '''
 (6, 2) Start test with direct control
@@ -192,4 +193,19 @@ Response back results decode as follows:
     3: Command sent too fast. There must be at least 100 ms (10 ticks) between commands.
     4: Direct mode is not active.
     5: Direct mode is not ready yet.
+'''
+
+reset_channel_msg = {
+    "jsonrpc": "2.0", 
+    "method": "MacNet",
+    "params":
+    {
+        "FClass": 6, 
+        "FNum": 5, 
+        "Chan": -1
+    },
+    "id": 1987 
+}
+'''
+Reset “Chan” test channel.
 '''
