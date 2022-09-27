@@ -1,7 +1,11 @@
 {
     "channel": 94,
-    "test_name": "Test1",
-    "test_procedure": "",
+    "test_name": "",
+    "v_max_safety_limit_v": 4.45,
+    "v_min_safety_limit_v": 2.9,
+    "i_max_safety_limit_v": 5.0,
+    "i_min_safety_limit_v": -5.0,
+    "test_procedure": "zn_test",
     "server_ip": "3.3.31.83",
     "server_port": 57570,
     "msg_buffer_size": 1024

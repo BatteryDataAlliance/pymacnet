@@ -14,6 +14,6 @@ maccor_interface = pymacnet.MaccorInterface(config_dict)
 if not maccor_interface.create_connection():
     print("failed to create connection!")
 
-print(maccor_interface.read_status())
+#print(maccor_interface.read_status())
 maccor_interface.start_test_with_procedure()
 #print(maccor_interface.read_status())

@@ -2,6 +2,7 @@ import socket
 import logging
 import json
 import pymacnet.maccor_messages
+import time
 from datetime import datetime
 
 log = logging.getLogger(__name__)
@@ -145,7 +146,6 @@ class MaccorInterface:
         success : bool
             True of False based on whether the test was started or not
         """
-
         msg_outging_dict = pymacnet.maccor_messages.start_test_with_procedure_msg.copy()
         msg_outging_dict['params']['Chan'] = self.channel
         msg_outging_dict['params']['ProcName'] = self.config['test_procedure']
@@ -166,14 +166,52 @@ class MaccorInterface:
             log.error("Cannot read channel status!")
             return False
 
+        if not self._set_channel_safety_limits():
+            log.error("Failed to set channel safety limits!")
+            return False
+
+        # Start the test
         reponse = self._send_receive_msg(msg_outging_dict)
         if reponse['result']['Result'] != 'OK':
-            log.error("Error starting test! " + reponse['result']['Result'])
+            log.error("Error starting test! Comment from Maccor: " + reponse['result']['Result'])
             return False
         else:
             return True
 
-    def start_test_direct_control(self):
+    def _set_channel_safety_limits(self):
+        """
+        Sets channel safety limits on the channel specifed in the config. 
+        ----------
+        Returns
+        -------
+        success : bool
+            Returns True/False based on whether the safety limits were set correctly.
+        """
+        msg_outging_dict = pymacnet.maccor_messages.set_safety_limits_msg.copy()
+        msg_outging_dict['params']['Chan'] = self.channel
+        msg_outging_dict['params']['VSafeMax'] = self.config['v_max_safety_limit_v']
+        msg_outging_dict['params']['VSafeMin'] = self.config['v_min_safety_limit_v']
+        msg_outging_dict['params']['ISafeChg'] = self.config['i_max_safety_limit_v']
+        msg_outging_dict['params']['ISafeDis'] = self.config['i_min_safety_limit_v']
+
+        # Check to make sure all safety limits were set correctly
+        reply = self._send_receive_msg(msg_outging_dict)
+        if reply:
+            try:
+                assert( abs(reply['result']['VSafeMax'] - self.config['v_max_safety_limit_v']) < 0.001 )
+                assert( abs(reply['result']['VSafeMin'] - self.config['v_min_safety_limit_v']) < 0.001 )
+                assert( abs(reply['result']['ISafeChg'] - self.config['i_max_safety_limit_v']) < 0.001 )
+                assert( abs(reply['result']['ISafeDis'] - self.config['i_min_safety_limit_v']) < 0.001 )
+            except:
+                log.error("Set safety limits to not match sent safety limits!")
+                return False
+        else:
+            log.error("Failed to receive reply message when seting safety limits!")
+            return False
+
+        return True 
+
+    def start_test_with_direct_control(self):
         """
         Starts a test to be manually controled with on the channel specified in the config.
         ----------
@@ -185,10 +223,12 @@ class MaccorInterface:
         # TODO: WRITE THIS
         pass
 
-    def set_direct_mode_output( self, voltage_v, current_a):
+    def set_direct_mode_output( self, voltage_v = 65536, current_a = 65536):
         """
         Sets the voltage/current output on the channel specified on in the config. Note that the
         test must have been started with the start_test_direct_control method.
+
+        Default values are outside of limits and will be ignored
         ----------
         Returns
         -------
@@ -204,9 +244,3 @@ class MaccorInterface:
         """
         if self.sock:
             self.sock.close()
-
-
-
-
-   
-

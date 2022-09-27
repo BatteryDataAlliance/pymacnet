@@ -209,3 +209,24 @@ reset_channel_msg = {
 '''
 Reset “Chan” test channel.
 '''
+
+set_safety_limits_msg = {
+    "jsonrpc": "2.0", 
+    "method": "MacNet", 
+    "params":
+    {
+        "FClass": 6, 
+        "FNum": 10, 
+        "Chan": 3, 
+        "VSafeMax": 5.0,
+        "VSafeMin": 0.1,
+        "ISafeChg": 4.3, 
+        "ISafeDis": 2.5,
+        "PBatSafeChg": 0,
+        "PBatSafeDis": 0
+    },
+    "id": 1987
+}
+'''
+Sets safety limits on a channel
+'''
