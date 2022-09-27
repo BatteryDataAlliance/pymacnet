@@ -14,6 +14,9 @@ The fields are as follows:
 - `v_min_safety_limit_v` -> Lower voltage safety limit for the channel. Units of volts.
 - `i_max_safety_limit_v` -> Upper current safety limit for the channel. Units of amps.
 - `i_min_safety_limit_v` -> Lower current safety limit for the channel. Units of amps.
+- `data_record_time_s` -> How often data points are taken during direct control tests. Zero turns off.
+- `data_record_voltage_delta` -> The dV/dt at which data points are taken during direct control tests. Zero disables.
+- `data_record_current_delta` -> The dI/dt at which data points are taken during direct control tests. Zero disables.
 - `test_procedure` -> The test procedure to be used, if starting a test with a procedure.
 - `server_ip` -> The IP address of the Maccor server.
 - `server_port` -> The port to communicate through. Note this must be set to 57570 for JSON TCP/IP communication.

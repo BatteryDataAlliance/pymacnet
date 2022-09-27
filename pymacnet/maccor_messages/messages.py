@@ -83,7 +83,7 @@ VDivLoR
     See Start Test Setup for further details
 '''
 
-start_test_with_direct_output_mode_msg = {
+start_test_with_direct_control_msg = {
     "jsonrpc": "2.0", 
     "method": "MacNet", 
     "params":
@@ -92,12 +92,12 @@ start_test_with_direct_output_mode_msg = {
         "FNum": 7,
         "Chan": 3,
         "TestName": "Random", 
-        "Current": 0,
-        "Voltage": 20, 
-        "Power": 50, 
+        "Current": 0.0,
+        "Voltage": 65536, 
+        "Power": 65536, 
         "Resistance": 0, 
         "CurrentRange": 4, 
-        "ChMode": "R", 
+        "ChMode": 'C', 
         "DataTime": 1.0, 
         "DataV": 0, 
         "DataI": 0
@@ -154,11 +154,11 @@ set_direct_output_msg = {
         "FNum": 8, 
         "Chan": 3, 
         "Current": 0.0, 
-        "Voltage": 20, 
-        "Power": 50, 
+        "Voltage": 65536, 
+        "Power": 65536, 
         "Resistance": 0, 
         "CurrentRange": 4, 
-        "ChMode": "R"
+        "ChMode": "C"
     },
     "id": 1987 
 }
@@ -218,12 +218,12 @@ set_safety_limits_msg = {
         "FClass": 6, 
         "FNum": 10, 
         "Chan": 3, 
-        "VSafeMax": 5.0,
-        "VSafeMin": 0.1,
+        "VSafeMax": 4.5,
+        "VSafeMin": 2.5,
         "ISafeChg": 4.3, 
         "ISafeDis": 2.5,
-        "PBatSafeChg": 0,
-        "PBatSafeDis": 0
+        "PBatSafeChg": 20,
+        "PBatSafeDis": 20
     },
     "id": 1987
 }

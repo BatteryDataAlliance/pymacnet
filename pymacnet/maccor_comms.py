@@ -2,7 +2,6 @@ import socket
 import logging
 import json
 import pymacnet.maccor_messages
-import time
 from datetime import datetime
 
 log = logging.getLogger(__name__)
@@ -82,10 +81,12 @@ class MaccorInterface:
             log.error("Error receiving message!")
             return None
         # Unpack response
+        
         try:
             msg_incoming_dict = json.loads(msg_incoming_packed.decode('utf-8'))
         except:
             log.error("Error unpacking incoming message!")
+            log.error("Message: " + str(msg_incoming_packed))
             return None
 
         return msg_incoming_dict
@@ -135,49 +136,6 @@ class MaccorInterface:
 
         return success 
 
-    def start_test_with_procedure(self):
-        """
-        Starts the test on the channel and with the procedure specified in the passed config.
-        Will not start a test if the channel is current running a test.
-        Will reset a channel if there is a completed test on that channel.
-        ----------
-        Returns
-        -------
-        success : bool
-            True of False based on whether the test was started or not
-        """
-        msg_outging_dict = pymacnet.maccor_messages.start_test_with_procedure_msg.copy()
-        msg_outging_dict['params']['Chan'] = self.channel
-        msg_outging_dict['params']['ProcName'] = self.config['test_procedure']
-        msg_outging_dict['params']['Comment'] = "Started with pymacnet at " + str(datetime.timestamp(datetime.now()))
-
-        # If test name is not specified then start test with a random test
-        if not self.config['test_name']:
-            msg_outging_dict['params']['TestName'] = 'Random'
-        else:
-            msg_outging_dict['params']['TestName'] = self.config['test_name']
-
-        # Check the status of the channel before we try to start the test.
-        status = self.read_status()
-        if status:
-            if pymacnet.maccor_messages.stat_dict[status['Stat']] == 'Completed':
-                self._reset_channel()
-        else:
-            log.error("Cannot read channel status!")
-            return False
-
-        if not self._set_channel_safety_limits():
-            log.error("Failed to set channel safety limits!")
-            return False
-
-        # Start the test
-        reponse = self._send_receive_msg(msg_outging_dict)
-        if reponse['result']['Result'] != 'OK':
-            log.error("Error starting test! Comment from Maccor: " + reponse['result']['Result'])
-            return False
-        else:
-            return True
-
     def _set_channel_safety_limits(self):
         """
         Sets channel safety limits on the channel specifed in the config. 
@@ -211,17 +169,104 @@ class MaccorInterface:
 
         return True 
 
-    def start_test_with_direct_control(self):
+    def start_test_with_procedure(self):
         """
-        Starts a test to be manually controled with on the channel specified in the config.
+        Starts the test on the channel and with the procedure specified in the passed config.
+            - Will not start a test if the channel is current running a test.
+            - Will reset a channel if there is a completed test on that channel.
         ----------
         Returns
         -------
-        status : dict
-            A dictionary detailing the status of the channel. Returns None if there is an issue.
+        success : bool
+            True of False based on whether the test was started or not
         """
-        # TODO: WRITE THIS
-        pass
+        msg_outging_dict = pymacnet.maccor_messages.start_test_with_procedure_msg.copy()
+        msg_outging_dict['params']['Chan'] = self.channel
+        msg_outging_dict['params']['ProcName'] = self.config['test_procedure']
+        msg_outging_dict['params']['Comment'] = "Started with pymacnet at " + str(datetime.timestamp(datetime.now()))
+
+        # If test name is not specified then start test with a random test
+        if not self.config['test_name']:
+            msg_outging_dict['params']['TestName'] = 'Random'
+        else:
+            msg_outging_dict['params']['TestName'] = self.config['test_name']
+
+        # Check the status of the channel before we try to start the test.
+        status = self.read_status()
+        if status:
+            if pymacnet.maccor_messages.stat_dict[status['Stat']] == 'Completed':
+                self._reset_channel()
+        else:
+            log.error("Cannot read channel status!")
+            return False
+
+        # Set the safety limits.
+        if not self._set_channel_safety_limits():
+            log.error("Failed to set channel safety limits!")
+            return False
+
+        # Start the test
+        reponse = self._send_receive_msg(msg_outging_dict)
+        if reponse:
+            if reponse['result']['Result'] != 'OK':
+                log.error("Error starting test! Comment from Maccor: " + reponse['result']['Result'])
+                return False
+            else:
+                return True
+        else:
+            log.error("Failed to get message response when trying to start test!")
+            return False
+
+    def start_test_with_direct_control(self):
+        """
+        Starts a test to be manually controled with direct output on the channel specified in the config.
+        ----------
+        Returns
+        -------
+        success : bool
+            True of False based on whether the test was started or not
+        """
+        msg_outging_dict = pymacnet.maccor_messages.start_test_with_direct_control_msg.copy()
+        msg_outging_dict['params']['Chan'] = self.channel
+        msg_outging_dict['params']['DataTime'] = self.config['data_record_time_s']
+        msg_outging_dict['params']['DataV'] = self.config['data_record_voltage_delta']
+        msg_outging_dict['params']['DataI'] = self.config['data_record_current_delta']
+        msg_outging_dict['params']['Current'] = 0 # Make sure the start current is always zero.
+        # TODO: FIX having a weird issue where I can't set the mode to rest.
+        msg_outging_dict['params']['ChMode'] = "C"
+
+        # If test name is not specified then start test with a random test
+        if not self.config['test_name']:
+            msg_outging_dict['params']['TestName'] = "Random"
+        else:
+            msg_outging_dict['params']['TestName'] = self.config['test_name']
+
+        # Check the status of the channel before we try to start the test.
+        status = self.read_status()
+        if status:
+            if pymacnet.maccor_messages.stat_dict[status['Stat']] == 'Completed':
+                self._reset_channel()
+        else:
+            log.error("Cannot read channel status!")
+            return False
+
+        # Set the safety limits.
+        if not self._set_channel_safety_limits():
+            log.error("Failed to set channel safety limits!")
+            return False
+
+        # Start the test
+        reponse = self._send_receive_msg(msg_outging_dict)
+        if reponse:
+            if reponse['result']['Result'] != 'OK':
+                log.error("Error starting test! Comment from Maccor: " + reponse['result']['Result'])
+                return False
+            else:
+                return True
+        else:
+            log.error("Failed to get message response when trying to start test!")
+            return False
+
 
     def set_direct_mode_output( self, voltage_v = 65536, current_a = 65536):
         """
@@ -232,11 +277,48 @@ class MaccorInterface:
         ----------
         Returns
         -------
-        status : dict
-            A dictionary detailing the status of the channel. Returns None if there is an issue.
+        success : bool
+            True of False based on whether the test was started or not
         """
-        # TODO: WRITE THIS
-        pass
+
+        # Determine mode on current
+        if current_a == 0:
+            set_current_a = 0
+            mode = "R"
+        elif current_a < 0:
+            set_current_a = abs(current_a)
+            mode = "D"
+        elif current_a > 0:
+            set_current_a = current_a
+            mode = "C"
+        else:
+            log.error("Undefined state is set direct control output!")
+            return False
+
+        # Determine range based on the magnitude of the current
+        if set_current_a < 0.000150:
+            current_range = 1
+        elif set_current_a < 0.005:
+            current_range = 2
+        elif set_current_a < 0.150:
+            current_range = 3
+        else:
+            current_range = 4
+
+        msg_outging_dict = pymacnet.maccor_messages.set_direct_output_msg.copy()
+        msg_outging_dict['params']['Chan'] = self.channel
+        msg_outging_dict['params']['Current'] = set_current_a
+        msg_outging_dict['params']['ChMode'] = mode
+        msg_outging_dict['params']['CurrentRange'] = current_range
+        msg_outging_dict['params']['Voltage'] = voltage_v
+
+        # TODO: Cannut update fasted than every 100 ms according to manual. Try and add a timer to prevent this?
+        reponse = self._send_receive_msg(msg_outging_dict)
+        if reponse:
+            print(reponse)
+        else:
+            log.error("Failed to get message response when trying to set output!")
+            return False
 
     def __del__(self):
         """
