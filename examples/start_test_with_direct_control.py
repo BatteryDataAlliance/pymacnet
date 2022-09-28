@@ -1,3 +1,6 @@
+'''
+Example of how to start a test with direct control and control charge/discharge current.
+'''
 import pymacnet
 import json
 import time
@@ -17,14 +20,27 @@ else:
     sys.exit("Failed to start test!")
 
 time.sleep(5) # Must wait at least 100 ms between trying to set control
-maccor_interface.set_direct_mode_output( voltage_v = 4.0, current_a = 0.5)
 
-'''
-i = 1.0
-for i in range(0,5):
-    maccor_interface.set_direct_mode_output(current_a = (i*0.1))
-    time.sleep(5)
-    i = i + 1
+# Set the starting current
+start_current_a = 0.02
+dwell_time_s = 0.25
+num_steps = 100
+
+#maccor_interface.set_direct_mode_output(current_a = -0.5)
+
+# Discharge for 100 Steps
+for i in range(1,num_steps+1):
+    maccor_interface.set_direct_mode_output(current_a = (0 - start_current_a*i))
+    time.sleep(dwell_time_s)
+
+# Must wait at least 100 ms between trying to set control
+maccor_interface.set_direct_mode_output(current_a = 0)
+time.sleep(5) 
+
+# Charge for 100 Steps
+for i in range(1,num_steps+1):
+    maccor_interface.set_direct_mode_output(current_a = (0 + start_current_a*i))
+    time.sleep(dwell_time_s)
 
 maccor_interface.set_direct_mode_output(current_a = 0.0)
-'''
+print("Test Complete!")

@@ -19,10 +19,10 @@ The fields are as follows:
 - `data_record_time_s` -> How often data points are taken during direct control tests. Zero turns off.
 - `data_record_voltage_delta` -> The dV/dt at which data points are taken during direct control tests. Zero disables.
 - `data_record_current_delta` -> The dI/dt at which data points are taken during direct control tests. Zero disables.
-- `test_procedure` -> The test procedure to be used, if starting a test with a procedure.
+- `test_procedure` -> The test procedure to be used, if starting a test with a procedure. Not needed with direct control.
 - `server_ip` -> The IP address of the Maccor server.
 - `server_port` -> The port to communicate through. Note this must be set to 57570 for JSON TCP/IP communication.
-- `msg_buffer_size` -> Max buffer size for reading data back from Maccor.
+- `msg_buffer_size` -> Max buffer size for reading data back from Maccor server.
 
 ## Install
 

@@ -1,10 +1,11 @@
 '''
-Example how to create a connection with the Maccor interface and read channel status
+Example of how to read Maccor status
 '''
-
 import json
 import pymacnet 
 import time
+import sys
+
 
 config_path = 'example_config_1.json'
 with open(config_path, 'r') as file:
@@ -12,7 +13,7 @@ with open(config_path, 'r') as file:
     
 maccor_interface = pymacnet.MaccorInterface(config_dict)
 if not maccor_interface.create_connection():
-    print("failed to create connection!")
+    sys.exit("failed to create connection!")
 
 for i in range(0,5):
     print(maccor_interface.read_status())

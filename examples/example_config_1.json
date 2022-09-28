@@ -7,7 +7,7 @@
     "v_min_safety_limit_v": 2.9,
     "i_max_safety_limit_v": 3.0,
     "i_min_safety_limit_v": 3.0,
-    "data_record_time_s": 1.0,
+    "data_record_time_s": 0.05,
     "data_record_voltage_delta": 0.0,
     "data_record_current_delta": 0.0,
     "test_procedure": "zn_test",

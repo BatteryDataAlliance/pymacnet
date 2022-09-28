@@ -1,9 +1,9 @@
 '''
-Example how to start a test with a test procedure using the Maccor interface.
+Example how to start a test with a test procedure.
 '''
-
 import pymacnet
 import json
+import sys
 
 config_path = 'example_config_1.json'
 with open(config_path, 'r') as file:
@@ -11,10 +11,7 @@ with open(config_path, 'r') as file:
 
 maccor_interface = pymacnet.MaccorInterface(config_dict)
 if not maccor_interface.create_connection():
-    print("failed to create connection!")
+    sys.exit("failed to create connection!")
 
-maccor_interface._set_channel_safety_limits()
-
-#print(maccor_interface.read_status())
-#maccor_interface.start_test_with_procedure()
-#print(maccor_interface.read_status())
+if maccor_interface.start_test_with_procedure():
+    print("Test started!")

@@ -1,4 +1,3 @@
-import re
 import socket
 import logging
 import json
@@ -9,7 +8,7 @@ log = logging.getLogger(__name__)
 
 class MaccorInterface:
     """
-    Class for establishing a connection with the Maccor server.
+    Class for controlling Maccor Cycler using MacNet.
     """
 
     def __init__(self, config: dict):
@@ -19,16 +18,12 @@ class MaccorInterface:
         Parameters
         ----------
         config : dict
-            A configuration dictionary containing the following: 
-            channel : int
-                The channel we want to control / read from.
-            server_ip : str
-                The IP of the Maccor machine to communicate with.
-            server_port : str
-                The port on the Maccor machine to communicate through.
+            A configuration dictionary containing relevant test parameters. See the README.md
+            for a detailed breakdown of all parameters
         """
 
-        self.channel = config['channel'] - 1 # Note that channels are zero indexed within Macnet so we must subract one here.
+        # Channels are zero indexed within Macnet so we must subract one here.
+        self.channel = config['channel'] - 1 
         self.config = config
         self.sock = None
 
@@ -62,6 +57,13 @@ class MaccorInterface:
         msg_incoming_dict : dict
             A dictionary containing the message response. Returns None if there is an issue.
         """
+
+        # Make Sure this is socket connection exists first.
+        if self.sock:
+            pass
+        else:
+            log.error("Socket connection does not exist!")
+            return None
         # Pack message
         try:
             msg_outgoing_packed = json.dumps( outgoing_msg_dict, indent = 4)
@@ -82,7 +84,6 @@ class MaccorInterface:
             log.error("Error receiving message!")
             return None
         # Unpack response
-        
         try:
             msg_incoming_dict = json.loads(msg_incoming_packed.decode('utf-8'))
         except:
@@ -155,8 +156,6 @@ class MaccorInterface:
 
         # Check to make sure all safety limits were set correctly
         reply = self._send_receive_msg(msg_outging_dict)
-
-        print(reply)
         if reply:
             try:
                 assert( abs(reply['result']['VSafeMax'] - self.config['v_max_safety_limit_v']) < 0.001 )
@@ -167,7 +166,7 @@ class MaccorInterface:
                 log.error("Set safety limits to not match sent safety limits!")
                 return False
         else:
-            log.error("Failed to receive reply message when seting safety limits!")
+            log.error("Failed to receive reply message when trying to set safety limits!")
             return False
 
         return True 
@@ -272,37 +271,50 @@ class MaccorInterface:
             return False
 
 
-    def set_direct_mode_output( self, voltage_v = 65536, current_a = 65536):
+    def set_direct_mode_output( self, current_a, voltage_v = 65536):
         """
-        Sets the voltage/current output on the channel specified on in the config. Note that the
-        test must have been started with the start_test_direct_control method.
+        Sets the current/voltage output on the channel specified on in the config. Note that the
+        test must have been started with the start_test_direct_control method for this to work.
 
-        Default values are outside of limits and will be ignored
-        ----------
+        For discharging:
+            - Indicated with a negative sign on current. A lower voltage limit is set based on the
+            `v_min_v` value set in the config.
+
+        For charging:
+            - If only a `current_a` is passed, the cycler will charge at the this current until commanded 
+            otherwise or until the upper voltage safety limit is hit.
+
+            - If a `voltage_v` argument is passed in addition to `current_a`, then the cycler will do a CCCV 
+            charge with the requested voltage.
+            
+        -------
         Returns
         -------
         success : bool
-            True of False based on whether the test was started or not
+            True of False based on whether the values were set or not.
         """
 
-        # Determine mode on current
+        # Determine mode and voltage limits based on sign of passed current.
         if current_a == 0:
             set_current_a = 0
+            set_voltage_v = voltage_v
             mode = "C" # TODO: Fix so that this works with rest, "R". Ticket with Maccor exists.
-        elif current_a < 0:
-            set_current_a = abs(current_a)
-            mode = "D"
         elif current_a > 0:
             set_current_a = current_a
+            set_voltage_v = voltage_v
             mode = "C"
+        elif current_a < 0:
+            set_current_a = abs(current_a)
+            set_voltage_v = self.config['v_min_v']
+            mode = "D"
         else:
             log.error("Undefined state is set direct control output!")
             return False
 
-        # TODO: Figure out CV method
-
         # Determine range based on the magnitude of the current
-        if set_current_a < 0.000150:
+        if set_current_a == 0:
+            current_range = 4 # Don't bother changing current range if we're just setting to zero.
+        elif set_current_a < 0.000150:
             current_range = 1
         elif set_current_a < 0.005:
             current_range = 2
@@ -314,14 +326,18 @@ class MaccorInterface:
         msg_outging_dict = pymacnet.maccor_messages.set_direct_output_msg.copy()
         msg_outging_dict['params']['Chan'] = self.channel
         msg_outging_dict['params']['Current'] = set_current_a
+        msg_outging_dict['params']['Voltage'] = set_voltage_v
         msg_outging_dict['params']['ChMode'] = mode
         msg_outging_dict['params']['CurrentRange'] = current_range
-        msg_outging_dict['params']['Voltage'] = voltage_v
 
-        # TODO: Cannut update fasted than every 100 ms according to manual. Try and add a timer to prevent this?
+        # Send message and make sure resposne indicates values were accepted.
         reponse = self._send_receive_msg(msg_outging_dict)
         if reponse:
-            print(reponse)
+            if reponse['result']['Result'] == "OK":
+                return True
+            else:
+                log.error("Error Setting ouput! Message : " + str(reponse))
+                return False
         else:
             log.error("Failed to get message response when trying to set output!")
             return False
