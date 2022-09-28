@@ -1,3 +1,4 @@
+import re
 import socket
 import logging
 import json
@@ -154,6 +155,8 @@ class MaccorInterface:
 
         # Check to make sure all safety limits were set correctly
         reply = self._send_receive_msg(msg_outging_dict)
+
+        print(reply)
         if reply:
             try:
                 assert( abs(reply['result']['VSafeMax'] - self.config['v_max_safety_limit_v']) < 0.001 )
@@ -224,16 +227,17 @@ class MaccorInterface:
         Returns
         -------
         success : bool
-            True of False based on whether the test was started or not
+            True of False based on whether the test was started or not.
         """
+
         msg_outging_dict = pymacnet.maccor_messages.start_test_with_direct_control_msg.copy()
         msg_outging_dict['params']['Chan'] = self.channel
         msg_outging_dict['params']['DataTime'] = self.config['data_record_time_s']
         msg_outging_dict['params']['DataV'] = self.config['data_record_voltage_delta']
         msg_outging_dict['params']['DataI'] = self.config['data_record_current_delta']
         msg_outging_dict['params']['Current'] = 0 # Make sure the start current is always zero.
-        # TODO: FIX having a weird issue where I can't set the mode to rest.
-        msg_outging_dict['params']['ChMode'] = "C"
+        msg_outging_dict['params']['Voltage'] = self.config['v_max_v'] # Set to something within range so it's not disabled.
+        msg_outging_dict['params']['ChMode'] = "C" # TODO: FIX having a weird issue where I can't set the mode to rest.
 
         # If test name is not specified then start test with a random test
         if not self.config['test_name']:
@@ -284,7 +288,7 @@ class MaccorInterface:
         # Determine mode on current
         if current_a == 0:
             set_current_a = 0
-            mode = "R"
+            mode = "C" # TODO: Fix so that this works with rest, "R". Ticket with Maccor exists.
         elif current_a < 0:
             set_current_a = abs(current_a)
             mode = "D"
@@ -294,6 +298,8 @@ class MaccorInterface:
         else:
             log.error("Undefined state is set direct control output!")
             return False
+
+        # TODO: Figure out CV method
 
         # Determine range based on the magnitude of the current
         if set_current_a < 0.000150:

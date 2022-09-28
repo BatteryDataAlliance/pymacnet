@@ -1,7 +1,9 @@
 {
     "channel": 94,
     "test_name": "",
-    "v_max_safety_limit_v": 4.45,
+    "v_max_v": 4.2,
+    "v_min_v": 3.0,
+    "v_max_safety_limit_v": 4.25,
     "v_min_safety_limit_v": 2.9,
     "i_max_safety_limit_v": 3.0,
     "i_min_safety_limit_v": 3.0,

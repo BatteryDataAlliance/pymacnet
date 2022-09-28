@@ -17,7 +17,9 @@ else:
     sys.exit("Failed to start test!")
 
 time.sleep(5) # Must wait at least 100 ms between trying to set control
+maccor_interface.set_direct_mode_output( voltage_v = 4.0, current_a = 0.5)
 
+'''
 i = 1.0
 for i in range(0,5):
     maccor_interface.set_direct_mode_output(current_a = (i*0.1))
@@ -25,3 +27,4 @@ for i in range(0,5):
     i = i + 1
 
 maccor_interface.set_direct_mode_output(current_a = 0.0)
+'''
