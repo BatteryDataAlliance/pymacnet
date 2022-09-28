@@ -26,8 +26,6 @@ start_current_a = 0.02
 dwell_time_s = 0.25
 num_steps = 100
 
-#maccor_interface.set_direct_mode_output(current_a = -0.5)
-
 # Discharge for 100 Steps
 for i in range(1,num_steps+1):
     maccor_interface.set_direct_mode_output(current_a = (0 - start_current_a*i))

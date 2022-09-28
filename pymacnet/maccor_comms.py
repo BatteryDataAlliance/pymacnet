@@ -1,6 +1,7 @@
 import socket
 import logging
 import json
+from tkinter import RADIOBUTTON
 import pymacnet.maccor_messages
 from datetime import datetime
 
@@ -115,8 +116,8 @@ class MaccorInterface:
         
     def _reset_channel(self):
         """
-        Resets the channel
-        ----------
+        Resets the channel. WARNING! WILL STOP CURRENT RUNNING TESTS!
+        --------
         Returns
         -------
         success : bool

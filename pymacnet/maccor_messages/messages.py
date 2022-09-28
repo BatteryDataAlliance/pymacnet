@@ -96,7 +96,7 @@ start_test_with_direct_control_msg = {
         "Voltage": 5.0, 
         "Power": 50, 
         "Resistance": 0, 
-        "CurrentRange": 4, 
+        "CurrentRange": 1, 
         "ChMode": 'D', 
         "DataTime": 1.0, 
         "DataV": 0, 
