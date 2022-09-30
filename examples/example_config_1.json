@@ -9,7 +9,7 @@
     "i_min_safety_limit_a": 3.0,
     "data_record_time_s": 0.05,
     "data_record_voltage_delta_vbys": 0.0,
-    "data_record_current_delta_abs": 0.0,
+    "data_record_current_delta_abys": 0.0,
     "test_procedure": "zn_test",
     "server_ip": "3.3.31.83",
     "server_port": 57570,

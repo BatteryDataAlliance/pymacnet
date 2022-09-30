@@ -234,7 +234,7 @@ class MaccorInterface:
         msg_outging_dict['params']['Chan'] = self.channel
         msg_outging_dict['params']['DataTime'] = self.config['data_record_time_s']
         msg_outging_dict['params']['DataV'] = self.config['data_record_voltage_delta_vbys']
-        msg_outging_dict['params']['DataI'] = self.config['data_record_current_delta_abs']
+        msg_outging_dict['params']['DataI'] = self.config['data_record_current_delta_abys']
         msg_outging_dict['params']['Current'] = 0 # Make sure the start current is always zero.
         msg_outging_dict['params']['Voltage'] = self.config['v_max_v'] # Set to something within range so it's not disabled.
         msg_outging_dict['params']['ChMode'] = "C" # TODO: FIX having a weird issue where I can't set the mode to rest.
