@@ -80,7 +80,7 @@ class MaccorInterface:
             return None
         # Receive response
         try:
-            msg_incoming_packed = self.sock.recv(self.config['msg_buffer_size'])
+            msg_incoming_packed = self.sock.recv(self.config['msg_buffer_size_bytes'])
         except:
             log.error("Error receiving message!")
             return None
@@ -152,8 +152,8 @@ class MaccorInterface:
         msg_outging_dict['params']['Chan'] = self.channel
         msg_outging_dict['params']['VSafeMax'] = self.config['v_max_safety_limit_v']
         msg_outging_dict['params']['VSafeMin'] = self.config['v_min_safety_limit_v']
-        msg_outging_dict['params']['ISafeChg'] = self.config['i_max_safety_limit_v']
-        msg_outging_dict['params']['ISafeDis'] = self.config['i_min_safety_limit_v']
+        msg_outging_dict['params']['ISafeChg'] = self.config['i_max_safety_limit_a']
+        msg_outging_dict['params']['ISafeDis'] = self.config['i_min_safety_limit_a']
 
         # Check to make sure all safety limits were set correctly
         reply = self._send_receive_msg(msg_outging_dict)
@@ -161,8 +161,8 @@ class MaccorInterface:
             try:
                 assert( abs(reply['result']['VSafeMax'] - self.config['v_max_safety_limit_v']) < 0.001 )
                 assert( abs(reply['result']['VSafeMin'] - self.config['v_min_safety_limit_v']) < 0.001 )
-                assert( abs(reply['result']['ISafeChg'] - self.config['i_max_safety_limit_v']) < 0.001 )
-                assert( abs(reply['result']['ISafeDis'] - self.config['i_min_safety_limit_v']) < 0.001 )
+                assert( abs(reply['result']['ISafeChg'] - self.config['i_max_safety_limit_a']) < 0.001 )
+                assert( abs(reply['result']['ISafeDis'] - self.config['i_min_safety_limit_a']) < 0.001 )
             except:
                 log.error("Set safety limits to not match sent safety limits!")
                 return False
@@ -233,8 +233,8 @@ class MaccorInterface:
         msg_outging_dict = pymacnet.maccor_messages.start_test_with_direct_control_msg.copy()
         msg_outging_dict['params']['Chan'] = self.channel
         msg_outging_dict['params']['DataTime'] = self.config['data_record_time_s']
-        msg_outging_dict['params']['DataV'] = self.config['data_record_voltage_delta']
-        msg_outging_dict['params']['DataI'] = self.config['data_record_current_delta']
+        msg_outging_dict['params']['DataV'] = self.config['data_record_voltage_delta_vbys']
+        msg_outging_dict['params']['DataI'] = self.config['data_record_current_delta_abs']
         msg_outging_dict['params']['Current'] = 0 # Make sure the start current is always zero.
         msg_outging_dict['params']['Voltage'] = self.config['v_max_v'] # Set to something within range so it's not disabled.
         msg_outging_dict['params']['ChMode'] = "C" # TODO: FIX having a weird issue where I can't set the mode to rest.
