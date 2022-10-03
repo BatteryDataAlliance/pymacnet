@@ -1,7 +1,6 @@
 import socket
 import logging
 import json
-from tkinter import RADIOBUTTON
 import pymacnet.maccor_messages
 from datetime import datetime
 
@@ -112,6 +111,26 @@ class MaccorInterface:
             return status['result']
         else:
             log.error("Failed to read channel status")
+            return None
+
+    def read_aux(self):
+        """
+        Reads the auxiliary readings for the channel specified in the config.
+        ----------
+        Returns
+        -------
+        status : dict
+            A dictionary detailing the status of the channel. Returns None if there is an issue.
+        """
+
+        msg_outging_dict = pymacnet.maccor_messages.read_aux_msg.copy()
+        msg_outging_dict['params']['Chan'] = self.channel
+
+        aux_readings = self._send_receive_msg(msg_outging_dict)
+        if aux_readings:
+            return aux_readings['result']['AuxValues']
+        else:
+            log.error("Failed to read channel aux values!")
             return None
         
     def _reset_channel(self):

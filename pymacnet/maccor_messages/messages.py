@@ -210,6 +210,21 @@ reset_channel_msg = {
 Reset “Chan” test channel.
 '''
 
+read_aux_msg = {
+    "jsonrpc": "2.0", 
+    "method": "MacNet", 
+    "params":
+    {
+        "FClass": 4, 
+        "FNum": 4, 
+        "Chan": 1
+    },
+    "id": 1987 
+}
+'''
+The the auxiliary values.
+'''
+
 set_safety_limits_msg = {
     "jsonrpc": "2.0", 
     "method": "MacNet", 
