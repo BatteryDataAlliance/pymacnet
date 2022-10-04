@@ -12,6 +12,7 @@
     "data_record_current_delta_abys": 0.0,
     "test_procedure": "zn_test",
     "server_ip": "3.3.31.83",
-    "server_port": 57570,
+    "json_server_port": 57570,
+    "tcp_server_port": 57560,
     "msg_buffer_size_bytes": 1024
 }
