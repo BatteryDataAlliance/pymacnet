@@ -113,8 +113,14 @@ class MaccorInterface:
 
         msg_outging_dict = pymacnet.maccor_messages.read_status_msg.copy()
         msg_outging_dict['params']['Chan'] = self.channel
+        print("outgoing message")
+        print(msg_outging_dict)
 
         status = self._send_receive_msg(msg_outging_dict)
+
+        print("incoming message")
+
+        print(status)
         if status:
             return status['result']
         else:
