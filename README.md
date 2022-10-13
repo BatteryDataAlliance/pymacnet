@@ -21,7 +21,8 @@ The fields are as follows:
 - `data_record_current_delta_abys` -> The dI/dt at which data points are taken during direct control tests. Zero disables.
 - `test_procedure` -> The test procedure to be used, if starting a test with a procedure. Not needed with direct control.
 - `server_ip` -> The IP address of the Maccor server.
-- `server_port` -> The port to communicate through. Note this must be set to 57570 for JSON TCP/IP communication.
+- `json_server_port` -> The port to communicate through with JSON commands. Default set to 57570.
+- `tcp_server_port` -> The port to communicate through with TCP commands. Default set to 57560.
 - `msg_buffer_size` -> Max buffer size for reading data back from Maccor server.
 
 ## Install

@@ -1,6 +1,7 @@
 import socket
 import logging
 import json
+import struct
 import pymacnet.maccor_messages
 from datetime import datetime
 
@@ -25,7 +26,8 @@ class MaccorInterface:
         # Channels are zero indexed within Macnet so we must subract one here.
         self.channel = config['channel'] - 1 
         self.config = config
-        self.sock = None
+        self.json_sock = None
+        self.tcp_sock = None # Used for TCP comms to set rest
 
     def create_connection(self):
         """
@@ -37,14 +39,20 @@ class MaccorInterface:
             True or False based on whether the connection was created successfully
         """
         try:
-            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.sock.connect((self.config['server_ip'], self.config['server_port']))
-            success = True
+            self.json_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.json_sock.connect((self.config['server_ip'], self.config['json_server_port']))
+        except:
+            log.error("Failed to create JSON TCP connection with Maccor server!")
+            return False
+
+        try:
+            self.tcp_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.tcp_sock.connect((self.config['server_ip'], self.config['tcp_server_port']))
         except:
             log.error("Failed to create TCP connection with Maccor server!")
-            success = False
+            return False
 
-        return success
+        return True
 
     def _send_receive_msg( self, outgoing_msg_dict):
         """
@@ -58,11 +66,11 @@ class MaccorInterface:
             A dictionary containing the message response. Returns None if there is an issue.
         """
 
-        # Make Sure this is socket connection exists first.
-        if self.sock:
+        # Make Sure this is json_socket connection exists first.
+        if self.json_sock:
             pass
         else:
-            log.error("Socket connection does not exist!")
+            log.error("json_socket connection does not exist!")
             return None
         # Pack message
         try:
@@ -73,13 +81,13 @@ class MaccorInterface:
             return None
         # Send message
         try:
-            self.sock.send(msg_outgoing_packed)
+            self.json_sock.send(msg_outgoing_packed)
         except:
             log.error("Error sending message!")
             return None
         # Receive response
         try:
-            msg_incoming_packed = self.sock.recv(self.config['msg_buffer_size_bytes'])
+            msg_incoming_packed = self.json_sock.recv(self.config['msg_buffer_size_bytes'])
         except:
             log.error("Error receiving message!")
             return None
@@ -291,7 +299,7 @@ class MaccorInterface:
             return False
 
 
-    def set_direct_mode_output( self, current_a, voltage_v = 65536):
+    def set_direct_mode_output( self, current_a, voltage_v = 4900):
         """
         Sets the current/voltage output on the channel specified on in the config. Note that the
         test must have been started with the start_test_direct_control method for this to work.
@@ -317,8 +325,8 @@ class MaccorInterface:
         # Determine mode and voltage limits based on sign of passed current.
         if current_a == 0:
             set_current_a = 0
-            set_voltage_v = voltage_v
-            mode = "C" # TODO: Fix so that this works with rest, "R". Ticket with Maccor exists.
+            set_voltage_v = 0
+            mode = "R"
         elif current_a > 0:
             set_current_a = current_a
             set_voltage_v = voltage_v
@@ -350,6 +358,10 @@ class MaccorInterface:
         msg_outging_dict['params']['ChMode'] = mode
         msg_outging_dict['params']['CurrentRange'] = current_range
 
+        # Send the rest command using the Caveman method as JSON cannot set rest currently (10/4/2022)
+        if mode == "R":
+            return self.send_rest_cmd_msg(msg_outging_dict)
+
         # Send message and make sure resposne indicates values were accepted.
         reponse = self._send_receive_msg(msg_outging_dict)
         if reponse:
@@ -362,9 +374,54 @@ class MaccorInterface:
             log.error("Failed to get message response when trying to set output!")
             return False
 
+    def send_rest_cmd_msg( self, msg_outging_dict):
+        """
+        Commands rest step using caveman MacNet UDP/TCP method.
+        ----------
+        msg_outgoing_dict : dict
+            A dictionary containing the message to be sent.
+        Returns
+        -------
+        success : bool
+            True of False based on whether or not rest was set
+        """
+
+        msg_outgoing_bytes = struct.pack('<HHHHffffBB', 
+            msg_outging_dict["params"]['FClass'], 
+            msg_outging_dict["params"]['FNum'], 
+            msg_outging_dict["params"]['Chan'], 
+            18,
+            msg_outging_dict["params"]['Current'],
+            msg_outging_dict["params"]['Voltage'],
+            msg_outging_dict["params"]['Power'],
+            msg_outging_dict["params"]['Resistance'],
+            msg_outging_dict["params"]['CurrentRange'],
+            ord('R'))   
+
+        try:
+            self.tcp_sock.send(msg_outgoing_bytes)
+        except:
+            log.error("Error sending rest message!")
+            return False
+
+        try:
+            response = self.tcp_sock.recv(self.config['msg_buffer_size_bytes'])
+        except:
+            log.error("Error receiving rest message response!")
+            return False
+
+        if response:
+            pass
+        else:
+            log.error("No response for! setting rest!")
+            return False
+    
+        return True
+
+
     def __del__(self):
         """
         Kills cycler connections on death.
         """
-        if self.sock:
-            self.sock.close()
+        if self.json_sock:
+            self.json_sock.close()
