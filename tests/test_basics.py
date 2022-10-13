@@ -3,7 +3,8 @@ import json
 import maccor_spoofer
 
 # Create Maccor Spoofer
-spoofer = maccor_spoofer.MaccorSpoofer()
+spoofer_config_path = 'test_configs/maccor_spoofer_config.json'
+spoofer = maccor_spoofer.MaccorSpoofer(spoofer_config_path)
 spoofer.start()
 
 def basic_test():
