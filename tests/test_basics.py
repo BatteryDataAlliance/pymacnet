@@ -8,7 +8,7 @@ spoofer = maccor_spoofer.MaccorSpoofer(spoofer_config_path)
 spoofer.start()
 
 def basic_test():
-    config_path = 'test_config_1.json'
+    config_path = 'test_configs/test_config_1.json'
     with open(config_path, 'r') as file:
         config_dict = json.load(file)
     
