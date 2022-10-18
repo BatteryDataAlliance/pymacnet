@@ -237,8 +237,8 @@ set_safety_limits_msg = {
         "VSafeMin": 2.5,
         "ISafeChg": 4.3, 
         "ISafeDis": 2.5,
-        "PBatSafeChg": 20,
-        "PBatSafeDis": 20
+        "PBatSafeChg": 50,
+        "PBatSafeDis": 50
     },
     "id": 1987
 }
