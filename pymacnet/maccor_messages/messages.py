@@ -245,3 +245,20 @@ set_safety_limits_msg = {
 '''
 Sets safety limits on a channel
 '''
+
+set_variable_msg ={
+    "jsonrpc": "2.0", 
+    "method": "MacNet", 
+    "params":
+    {
+        "FClass": 6, 
+        "FNum": 9, 
+        "Chan": 3, 
+        "VarNum": 1,
+        "Value": 0
+    },
+    "id": 1987 
+}
+'''
+Sets channel variables
+'''

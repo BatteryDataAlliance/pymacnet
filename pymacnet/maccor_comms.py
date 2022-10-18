@@ -200,6 +200,39 @@ class MaccorInterface:
 
         return True 
 
+    def _set_channel_variables(self, var_num = 1, var_value = 0):
+        """
+        Sets channel variables.
+        ----------
+        var_num : int
+            Value between 1 and 16, depending on which variable to set.
+        var_value : float
+            Value to set the variable to.
+        Returns
+        -------
+        success : bool
+            True of False based on whether or not the variable value was set.
+        """
+        msg_outging_dict = pymacnet.maccor_messages.set_variable_msg.copy()
+        msg_outging_dict['params']['Chan'] = self.channel
+        msg_outging_dict['params']['VarNum'] = var_num
+        msg_outging_dict['params']['Value'] = var_value
+
+        # Check to make variable was set
+        reply = self._send_receive_msg(msg_outging_dict)
+        if reply:
+            try:
+                assert(reply['result']['Chan'] == self.channel)
+                assert(reply['result']['Result'] == 'OK')
+            except:
+                log.error("Variable not set!")
+                return False
+        else:
+            log.error("Failed to receive reply message when trying to set variable!")
+            return False
+
+        return True 
+
     def start_test_with_procedure(self):
         """
         Starts the test on the channel and with the procedure specified in the passed config.
@@ -298,7 +331,6 @@ class MaccorInterface:
         else:
             log.error("Failed to get message response when trying to start test!")
             return False
-
 
     def set_direct_mode_output( self, current_a, voltage_v = 4900):
         """
@@ -418,7 +450,6 @@ class MaccorInterface:
             return False
     
         return True
-
 
     def __del__(self):
         """
