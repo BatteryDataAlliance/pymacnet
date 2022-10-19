@@ -200,7 +200,7 @@ class MaccorInterface:
 
         return True 
 
-    def _set_channel_variables(self, var_num = 1, var_value = 0):
+    def set_channel_variables(self, var_num = 1, var_value = 0):
         """
         Sets channel variables.
         ----------
