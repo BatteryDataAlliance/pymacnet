@@ -19,7 +19,7 @@ if not maccor_interface.create_connection():
 set_current = 0.1
 
 for i in range(0,5):
-    print(maccor_interface.set_channel_variables(var_num = 1, var_value = set_current))
+    print(maccor_interface.set_channel_variable(var_num = 1, var_value = set_current))
     print(set_current)
     set_current += set_current
     time.sleep(5)

@@ -1,6 +1,7 @@
 {
     "channel": 94,
     "test_name": "",
+    "c_rate_ah": 1,
     "v_max_v": 4.2,
     "v_min_v": 3.0,
     "v_max_safety_limit_v": 4.25,

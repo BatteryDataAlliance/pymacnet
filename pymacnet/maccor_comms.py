@@ -200,7 +200,7 @@ class MaccorInterface:
 
         return True 
 
-    def set_channel_variables(self, var_num = 1, var_value = 0):
+    def set_channel_variable(self, var_num = 1, var_value = 0):
         """
         Sets channel variables.
         ----------
@@ -247,6 +247,7 @@ class MaccorInterface:
         msg_outging_dict = pymacnet.maccor_messages.start_test_with_procedure_msg.copy()
         msg_outging_dict['params']['Chan'] = self.channel
         msg_outging_dict['params']['ProcName'] = self.config['test_procedure']
+        msg_outging_dict['params']['Crate'] = self.config['c_rate_ah']
         msg_outging_dict['params']['Comment'] = "Started with pymacnet at " + str(datetime.timestamp(datetime.now()))
 
         # If test name is not specified then start test with a random test
@@ -274,6 +275,7 @@ class MaccorInterface:
         if reponse:
             if reponse['result']['Result'] != 'OK':
                 log.error("Error starting test! Comment from Maccor: " + reponse['result']['Result'])
+                # TODO: In event that restarting the test fails because the test already exists, resume the test.
                 return False
             else:
                 return True
