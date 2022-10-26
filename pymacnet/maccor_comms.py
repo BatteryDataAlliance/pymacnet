@@ -113,14 +113,9 @@ class MaccorInterface:
 
         msg_outging_dict = pymacnet.maccor_messages.read_status_msg.copy()
         msg_outging_dict['params']['Chan'] = self.channel
-        print("outgoing message")
-        print(msg_outging_dict)
 
         status = self._send_receive_msg(msg_outging_dict)
 
-        print("incoming message")
-
-        print(status)
         if status:
             return status['result']
         else:
@@ -205,6 +200,39 @@ class MaccorInterface:
 
         return True 
 
+    def set_channel_variable(self, var_num = 1, var_value = 0):
+        """
+        Sets channel variables.
+        ----------
+        var_num : int
+            Value between 1 and 16, depending on which variable to set.
+        var_value : float
+            Value to set the variable to.
+        Returns
+        -------
+        success : bool
+            True of False based on whether or not the variable value was set.
+        """
+        msg_outging_dict = pymacnet.maccor_messages.set_variable_msg.copy()
+        msg_outging_dict['params']['Chan'] = self.channel
+        msg_outging_dict['params']['VarNum'] = var_num
+        msg_outging_dict['params']['Value'] = var_value
+
+        # Check to make variable was set
+        reply = self._send_receive_msg(msg_outging_dict)
+        if reply:
+            try:
+                assert(reply['result']['Chan'] == self.channel)
+                assert(reply['result']['Result'] == 'OK')
+            except:
+                log.error("Variable not set!")
+                return False
+        else:
+            log.error("Failed to receive reply message when trying to set variable!")
+            return False
+
+        return True 
+
     def start_test_with_procedure(self):
         """
         Starts the test on the channel and with the procedure specified in the passed config.
@@ -219,6 +247,7 @@ class MaccorInterface:
         msg_outging_dict = pymacnet.maccor_messages.start_test_with_procedure_msg.copy()
         msg_outging_dict['params']['Chan'] = self.channel
         msg_outging_dict['params']['ProcName'] = self.config['test_procedure']
+        msg_outging_dict['params']['Crate'] = self.config['c_rate_ah']
         msg_outging_dict['params']['Comment'] = "Started with pymacnet at " + str(datetime.timestamp(datetime.now()))
 
         # If test name is not specified then start test with a random test
@@ -246,6 +275,7 @@ class MaccorInterface:
         if reponse:
             if reponse['result']['Result'] != 'OK':
                 log.error("Error starting test! Comment from Maccor: " + reponse['result']['Result'])
+                # TODO: In event that restarting the test fails because the test already exists, resume the test.
                 return False
             else:
                 return True
@@ -303,7 +333,6 @@ class MaccorInterface:
         else:
             log.error("Failed to get message response when trying to start test!")
             return False
-
 
     def set_direct_mode_output( self, current_a, voltage_v = 4900):
         """
@@ -423,7 +452,6 @@ class MaccorInterface:
             return False
     
         return True
-
 
     def __del__(self):
         """

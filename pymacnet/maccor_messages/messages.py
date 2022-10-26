@@ -237,11 +237,28 @@ set_safety_limits_msg = {
         "VSafeMin": 2.5,
         "ISafeChg": 4.3, 
         "ISafeDis": 2.5,
-        "PBatSafeChg": 20,
-        "PBatSafeDis": 20
+        "PBatSafeChg": 50,
+        "PBatSafeDis": 50
     },
     "id": 1987
 }
 '''
 Sets safety limits on a channel
+'''
+
+set_variable_msg ={
+    "jsonrpc": "2.0", 
+    "method": "MacNet", 
+    "params":
+    {
+        "FClass": 6, 
+        "FNum": 9, 
+        "Chan": 3, 
+        "VarNum": 1,
+        "Value": 0
+    },
+    "id": 1987 
+}
+'''
+Sets channel variables
 '''

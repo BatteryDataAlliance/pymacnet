@@ -10,6 +10,7 @@ The fields are as follows:
 
 - `channel` -> The channel to be targeted for all operations.
 - `test` -> The test name to be used for any tests started. If left blank, Maccor will generate a unique random name for any started tests. Note that Maccor requires unique test names for each test.
+- `c_rate_ah` -> The capacity value to be referenced when setting "C" values within the maccor schedule. Units of amp-hours. Ignored if not used anywhere in the test.
 - `v_max_v` -> Upper voltage limit used for charge/CV limits. Units of volts. Only used with direct control.
 - `v_min_v` -> Lower votage limit used for discharge limit. Units of volts. Only used with direct control.
 - `v_max_safety_limit_v` -> Upper voltage safety limit for the channel. Units of volts.
