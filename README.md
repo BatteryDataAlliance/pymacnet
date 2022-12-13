@@ -34,3 +34,10 @@ Navigate to the repo directory and run the following command:
 pip install .
 ```
 
+## Tests
+
+Navigate to the repo directory and run the following command:
+
+```
+pip install .
+```

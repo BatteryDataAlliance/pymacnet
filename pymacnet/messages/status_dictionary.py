@@ -1,4 +1,4 @@
-stat_dict = {
+status_dictionary = {
     0: 'Available',
     1: 'Selected',
     2: 'Active',

@@ -1,4 +1,4 @@
-read_status_msg = {
+tx_read_status_msg = {
     'jsonrpc': '2.0', 
     'method': 'MacNet', 
     'params':
@@ -14,7 +14,35 @@ read_status_msg = {
 The status and readings of “Chan” channel will be returned.
 '''
 
-start_test_with_procedure_msg = {
+rx_read_status_msg = {
+    'jsonrpc': '2.0',
+    'result': 
+    {
+        'FClass': 4,
+        'FNum': 7,
+        'Chan': 93,
+        'RF1': 0,
+        'RF2': 192,
+        'Stat': 0,
+        'LastRecNum': 4225,
+        'Cycle': 0,
+        'Step': 5,
+        'TestTime': 212.199996948242,
+        'StepTime': 209.889999389648,
+        'Capacity': 0,
+        'Energy': 0,
+        'Current': 0,
+        'Voltage': 3.85938811302185,
+        'TesterTime':'2022-10-13T12:32:56'
+    },
+    'id': 1987
+}
+'''
+(4, 7) All status and readings of one channel
+The status and readings of “Chan” channel will be returned.
+'''
+
+tx_start_test_with_procedure_msg = {
     "jsonrpc": "2.0",
     "method": "MacNet", 
     "params":
@@ -83,7 +111,7 @@ VDivLoR
     See Start Test Setup for further details
 '''
 
-start_test_with_direct_control_msg = {
+tx_start_test_with_direct_control_msg = {
     "jsonrpc": "2.0", 
     "method": "MacNet", 
     "params":
@@ -145,7 +173,7 @@ Data record current
     Current increment to generate a data record in the data file. Enter 0 to disable.
 '''
 
-set_direct_output_msg = {
+tx_set_direct_output_msg = {
     "jsonrpc": "2.0", 
     "method": "MacNet", 
     "params":
@@ -195,7 +223,7 @@ Response back results decode as follows:
     5: Direct mode is not ready yet.
 '''
 
-reset_channel_msg = {
+tx_reset_channel_msg = {
     "jsonrpc": "2.0", 
     "method": "MacNet",
     "params":
@@ -210,7 +238,7 @@ reset_channel_msg = {
 Reset “Chan” test channel.
 '''
 
-read_aux_msg = {
+tx_read_aux_msg = {
     "jsonrpc": "2.0", 
     "method": "MacNet", 
     "params":
@@ -225,7 +253,7 @@ read_aux_msg = {
 The the auxiliary values.
 '''
 
-set_safety_limits_msg = {
+tx_set_safety_limits_msg = {
     "jsonrpc": "2.0", 
     "method": "MacNet", 
     "params":
@@ -246,7 +274,7 @@ set_safety_limits_msg = {
 Sets safety limits on a channel
 '''
 
-set_variable_msg ={
+tx_set_variable_msg ={
     "jsonrpc": "2.0", 
     "method": "MacNet", 
     "params":
