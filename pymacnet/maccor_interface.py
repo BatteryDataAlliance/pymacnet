@@ -12,6 +12,8 @@ class MaccorInterface:
     Class for controlling Maccor Cycler using MacNet.
     """
 
+    msg_buffer_size_bytes = 1024
+
     def __init__(self, config: dict):
         """
         Init function.
@@ -87,7 +89,7 @@ class MaccorInterface:
             return None
         # Receive response
         try:
-            msg_incoming_packed = self.json_sock.recv(self.config['msg_buffer_size_bytes'])
+            msg_incoming_packed = self.json_sock.recv(self.msg_buffer_size_bytes)
         except:
             log.error("Error receiving message!")
             return None
@@ -393,9 +395,9 @@ class MaccorInterface:
         msg_outging_dict['params']['ChMode'] = mode
         msg_outging_dict['params']['CurrentRange'] = current_range
 
-        # Send the rest command using the Caveman method as JSON cannot set rest currently (10/4/2022)
+        # Send the rest command using the caveman method as JSON cannot set rest currently (10/4/2022)
         if mode == "R":
-            return self.send_rest_cmd_msg(msg_outging_dict)
+            return self._send_rest_cmd_msg(msg_outging_dict)
 
         # Send message and make sure resposne indicates values were accepted.
         reponse = self._send_receive_msg(msg_outging_dict)
@@ -409,7 +411,7 @@ class MaccorInterface:
             log.error("Failed to get message response when trying to set output!")
             return False
 
-    def send_rest_cmd_msg( self, msg_outging_dict):
+    def _send_rest_cmd_msg( self, msg_outging_dict):
         """
         Commands rest step using caveman MacNet UDP/TCP method.
         ----------
@@ -438,19 +440,17 @@ class MaccorInterface:
         except:
             log.error("Error sending rest message!")
             return False
-
         try:
-            response = self.tcp_sock.recv(self.config['msg_buffer_size_bytes'])
+            response = self.tcp_sock.recv(self.msg_buffer_size_bytes)
         except:
             log.error("Error receiving rest message response!")
             return False
-
         if response:
             pass
         else:
             log.error("No response for setting rest!")
             return False
-    
+
         return True
 
     def __del__(self):

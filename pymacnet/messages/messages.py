@@ -20,7 +20,7 @@ rx_read_status_msg = {
     {
         'FClass': 4,
         'FNum': 7,
-        'Chan': 93,
+        'Chan': -1,
         'RF1': 0,
         'RF2': 192,
         'Stat': 0,
@@ -49,7 +49,7 @@ tx_start_test_with_procedure_msg = {
     {
         "FClass": 6,
         "FNum": 2,
-        "Chan": 3,
+        "Chan": -1,
         "TestName": "Random", 
         "ProcName": "Procedure Name", 
         "Comment": "Test comment", 
@@ -117,7 +117,7 @@ rx_start_test_with_procedure_msg = {
     {
         'FClass': 6, 
         'FNum': 2, 
-        'Chan': 93, 
+        'Chan': -1, 
         'Result': 'OK'
     }, 
     'id': 1987
@@ -133,7 +133,7 @@ tx_start_test_with_direct_control_msg = {
     {
         "FClass": 6,
         "FNum": 7,
-        "Chan": 3,
+        "Chan": -1,
         "TestName": "Random", 
         "Current": 0.0,
         "Voltage": 5.0, 
@@ -194,7 +194,7 @@ rx_start_test_with_direct_control_msg = {
     {
         'FClass': 6, 
         'FNum': 7, 
-        'Chan': 93, 
+        'Chan': -1, 
         'Result': 'OK'
     },
     'id': 1987
@@ -210,7 +210,7 @@ tx_set_direct_output_msg = {
     {
         "FClass": 6, 
         "FNum": 8, 
-        "Chan": 3, 
+        "Chan": -1, 
         "Current": 0.0, 
         "Voltage": 65536, 
         "Power": 65536, 
@@ -260,7 +260,7 @@ rx_set_direct_output_msg = {
     {
         'FClass': 6, 
         'FNum': 8, 
-        'Chan': 93, 
+        'Chan': -1, 
         'Result': 'OK'
     }, 
     'id': 1987
@@ -290,7 +290,7 @@ rx_reset_channel_msg = {
     {
         "FClass":6, 
         "FNum":5, 
-        "Chan":3, 
+        "Chan":-1, 
         "Result":"OK"
     },
     "id":1987
@@ -306,7 +306,7 @@ tx_read_aux_msg = {
     {
         "FClass": 4, 
         "FNum": 4, 
-        "Chan": 1
+        "Chan": -1
     },
     "id": 1987 
 }
@@ -320,7 +320,7 @@ rx_read_aux_msg = {
     {
         'FClass': 4, 
         'FNum': 4, 
-        'Chan': 93, 
+        'Chan': -1, 
         'Len': 1, 
         'AuxValues': [24.7545490264893]
     }, 
@@ -357,7 +357,7 @@ rx_set_safety_limits_msg = {
     {
         "FClass":6,
         "FNum":10,
-        "Chan":3,
+        "Chan":-1,
         "VSafeMax":4.5, 
         "VSafeMin":2.5, 
         "ISafeChg":4.3, 
@@ -378,7 +378,7 @@ tx_set_variable_msg = {
     {
         "FClass": 6, 
         "FNum": 9, 
-        "Chan": 3, 
+        "Chan": -1, 
         "VarNum": 1,
         "Value": 0
     },
@@ -394,7 +394,7 @@ rx_set_variable_msg = {
     {
         'FClass': 6, 
         'FNum': 9, 
-        'Chan': 93, 
+        'Chan': -1, 
         'Result': 'OK'
     }, 
     'id': 1987

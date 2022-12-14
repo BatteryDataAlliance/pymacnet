@@ -1,6 +1,6 @@
-import pymacnet
 import json
-import maccorspoofer
+import pymacnet
+import pymacnet.maccorspoofer
 
 # Create Maccor Spoofer
 spoofer_config_path = 'test_configs/server_config.json'

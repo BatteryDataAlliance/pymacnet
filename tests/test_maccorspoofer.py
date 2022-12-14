@@ -12,7 +12,7 @@ CHANNEL = 1 # The channel we will use to associated tests messages.
 
 def test_messages():
     '''
-    Test that we get the correct message back for all messages.
+    Test that the spoofer replies correectly to all messages.
     '''
 
     spoofer_server = pymacnet.maccorspoofer.MaccorSpoofer(CONFIG_DICT)
