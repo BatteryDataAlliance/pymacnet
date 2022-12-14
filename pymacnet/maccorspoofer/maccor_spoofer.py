@@ -5,7 +5,7 @@ import pymacnet.messages
 
 class MaccorSpoofer:
     """
-    Class to mimic behavior of Maccor cycler. 
+    Class to mimic behavior of Maccor cycler MacNet control server. 
     """
     
     server_thread:threading.Thread
@@ -20,7 +20,7 @@ class MaccorSpoofer:
         Parameters
         ----------
         config : dict
-            A configuration dictionary containing the target server ip address and port.
+            A configuration dictionary containing the server ip address and port to use.
         """
         self.config = config
         self.server_thread = threading.Thread(target=self.__server_loop, 
@@ -44,6 +44,7 @@ class MaccorSpoofer:
         sock.settimeout(1)
         sock.listen()
         
+        # lambda function we will use to break the forever loop.
         stop = lambda : self.stop_server
         
         while True:
@@ -59,6 +60,30 @@ class MaccorSpoofer:
                                 pymacnet.messages.tx_read_status_msg['params']['FNum'] == rx_msg['params']['FNum']):
                             tx_msg = pymacnet.messages.rx_read_status_msg
                             tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+                        elif (pymacnet.messages.tx_read_aux_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
+                                pymacnet.messages.tx_read_aux_msg['params']['FNum'] == rx_msg['params']['FNum']):
+                            tx_msg = pymacnet.messages.rx_read_aux_msg
+                            tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+                        elif (pymacnet.messages.tx_start_test_with_procedure_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
+                                pymacnet.messages.tx_start_test_with_procedure_msg['params']['FNum'] == rx_msg['params']['FNum']):
+                            tx_msg = pymacnet.messages.rx_start_test_with_procedure_msg
+                            tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+                        elif (pymacnet.messages.tx_set_variable_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
+                                pymacnet.messages.tx_set_variable_msg['params']['FNum'] == rx_msg['params']['FNum']):
+                            tx_msg = pymacnet.messages.rx_set_variable_msg
+                            tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+                        elif (pymacnet.messages.tx_start_test_with_direct_control_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
+                                pymacnet.messages.tx_start_test_with_direct_control_msg['params']['FNum'] == rx_msg['params']['FNum']):
+                            tx_msg = pymacnet.messages.rx_start_test_with_direct_control_msg
+                            tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+                        elif (pymacnet.messages.tx_set_direct_output_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
+                                pymacnet.messages.tx_set_direct_output_msg['params']['FNum'] == rx_msg['params']['FNum']):
+                            tx_msg = pymacnet.messages.rx_set_direct_output_msg
+                            tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+                        elif (pymacnet.messages.tx_reset_channel_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
+                                pymacnet.messages.tx_reset_channel_msg['params']['FNum'] == rx_msg['params']['FNum']):
+                            tx_msg = pymacnet.messages.rx_reset_channel_msg
+                            tx_msg['result']['Chan'] = rx_msg['params']['Chan']
                         else:
                             tx_msg = {'err':1}
 
@@ -70,9 +95,9 @@ class MaccorSpoofer:
 
             # In event of timeout see if we should break.       
             except socket.timeout:
-               if stop():
-                sock.close()
-                break
+                if stop():
+                    sock.close()
+                    break
 
     def stop(self):
         """
@@ -80,23 +105,3 @@ class MaccorSpoofer:
         """
         self.stop_server = True
         self.server_thread.join()
-
-    def read_aux(self):
-        expected_aux_response = {'jsonrpc': '2.0', 'result': {'FClass': 4, 'FNum': 4, 'Chan': 93, 'Len': 1, 'AuxValues': [24.7545490264893]}, 'id': 1987}
-        return expected_aux_response
-
-    def set_channel_variables(var_num, var_value):
-        expected_channel_variables_response = {'jsonrpc': '2.0', 'result': {'FClass': 6, 'FNum': 9, 'Chan': 93, 'Result': 'OK'}, 'id': 1987}
-        return expected_channel_variables_response
-
-    def start_test_with_procedure(self):
-        expected_start_test_with_procedure_response = {'jsonrpc': '2.0', 'result': {'FClass': 6, 'FNum': 2, 'Chan': 93, 'Result': 'OK'}, 'id': 1987}
-        return expected_start_test_with_procedure_response
-
-    def start_test_with_direct_control(self):
-        expected_direct_control_response = {'jsonrpc': '2.0', 'result': {'FClass': 6, 'FNum': 7, 'Chan': 93, 'Result': 'OK'}, 'id': 1987}
-        return expected_direct_control_response
-
-    def set_direct_mode_output(self):
-        expected_set_direct_mode_output_response = {'jsonrpc': '2.0', 'result': {'FClass': 6, 'FNum': 8, 'Chan': 93, 'Result': 'OK'}, 'id': 1987}
-        return expected_set_direct_mode_output_response

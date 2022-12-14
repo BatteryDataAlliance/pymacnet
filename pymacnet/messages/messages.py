@@ -69,7 +69,7 @@ tx_start_test_with_procedure_msg = {
     },
     "id": 1987
 }
-'''
+"""
 (6, 2) Start test with direct control
 
 Selects the test channel to be started. The test name and procedure name can be up to 250 characters long.
@@ -84,7 +84,7 @@ TestName
     The field is fixed in length, so remaining characters should be space characters.
 ProcName
     Up to 25 ascii characters for the test procedure name. The test procedure must exist in the 
-    C:\Maccor\Procedur folder and the “.000” should not be part of the name. The field is fixed in length, 
+    C:\\Maccor\\Procedur folder and the “.000” should not be part of the name. The field is fixed in length, 
     so remaining characters should be space characters.
 Comment
     Up to 80 characters for the test comment. The field is fixed in length, so remaining characters should be space characters.
@@ -109,6 +109,21 @@ VDivHiR
     See Start Test Setup for further details
 VDivLoR
     See Start Test Setup for further details
+"""
+
+rx_start_test_with_procedure_msg = {
+    'jsonrpc': '2.0', 
+    'result': 
+    {
+        'FClass': 6, 
+        'FNum': 2, 
+        'Chan': 93, 
+        'Result': 'OK'
+    }, 
+    'id': 1987
+}
+'''
+(6, 2) Response for starting test with procedure.
 '''
 
 tx_start_test_with_direct_control_msg = {
@@ -173,6 +188,21 @@ Data record current
     Current increment to generate a data record in the data file. Enter 0 to disable.
 '''
 
+rx_start_test_with_direct_control_msg = {
+    'jsonrpc': '2.0', 
+    'result': 
+    {
+        'FClass': 6, 
+        'FNum': 7, 
+        'Chan': 93, 
+        'Result': 'OK'
+    },
+    'id': 1987
+    }
+"""
+(6, 7) Start test with direct control response message
+"""
+
 tx_set_direct_output_msg = {
     "jsonrpc": "2.0", 
     "method": "MacNet", 
@@ -213,6 +243,7 @@ Parameters as follows:
         The desired current range: 1, 2, 3, 4
     Charge mode
         67 i.e. 'C' for charge, 68 i.e. 'D' for discharge and 82 i.e. 'R' for rest
+        Note: As of 12/14/22 setting 'R' for rest does not work and rest must be set via other means.
 
 Response back results decode as follows:
     0: OK
@@ -221,6 +252,21 @@ Response back results decode as follows:
     3: Command sent too fast. There must be at least 100 ms (10 ticks) between commands.
     4: Direct mode is not active.
     5: Direct mode is not ready yet.
+'''
+
+rx_set_direct_output_msg = {
+    'jsonrpc': '2.0', 
+    'result': 
+    {
+        'FClass': 6, 
+        'FNum': 8, 
+        'Chan': 93, 
+        'Result': 'OK'
+    }, 
+    'id': 1987
+}
+'''
+Response for setting direct mode output
 '''
 
 tx_reset_channel_msg = {
@@ -235,7 +281,22 @@ tx_reset_channel_msg = {
     "id": 1987 
 }
 '''
-Reset “Chan” test channel.
+(6, 5) Reset “Chan” test channel.
+'''
+
+rx_reset_channel_msg = { 
+    "jsonrpc":"2.0", 
+    "result":
+    {
+        "FClass":6, 
+        "FNum":5, 
+        "Chan":3, 
+        "Result":"OK"
+    },
+    "id":1987
+}
+'''
+Reset channel response
 '''
 
 tx_read_aux_msg = {
@@ -250,7 +311,23 @@ tx_read_aux_msg = {
     "id": 1987 
 }
 '''
-The the auxiliary values.
+The auxiliary values.
+'''
+
+rx_read_aux_msg = {
+    'jsonrpc': '2.0', 
+    'result':
+    {
+        'FClass': 4, 
+        'FNum': 4, 
+        'Chan': 93, 
+        'Len': 1, 
+        'AuxValues': [24.7545490264893]
+    }, 
+    'id': 1987
+}
+'''
+The auxiliary response message.
 '''
 
 tx_set_safety_limits_msg = {
@@ -274,7 +351,7 @@ tx_set_safety_limits_msg = {
 Sets safety limits on a channel
 '''
 
-tx_set_variable_msg ={
+tx_set_variable_msg = {
     "jsonrpc": "2.0", 
     "method": "MacNet", 
     "params":
@@ -288,5 +365,20 @@ tx_set_variable_msg ={
     "id": 1987 
 }
 '''
-Sets channel variables
+Sets channel variable for the specified variable 'VarNum'.
+'''
+
+rx_set_variable_msg = {
+    'jsonrpc': '2.0', 
+    'result': 
+    {
+        'FClass': 6, 
+        'FNum': 9, 
+        'Chan': 93, 
+        'Result': 'OK'
+    }, 
+    'id': 1987
+}
+'''
+Response message for setting channel variables 
 '''

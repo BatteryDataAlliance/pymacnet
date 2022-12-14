@@ -270,7 +270,7 @@ class MaccorInterface:
             log.error("Failed to set channel safety limits!")
             return False
 
-        # Start the test
+        # Start the test.
         reponse = self._send_receive_msg(msg_outging_dict)
         if reponse:
             if reponse['result']['Result'] != 'OK':
@@ -448,7 +448,7 @@ class MaccorInterface:
         if response:
             pass
         else:
-            log.error("No response for! setting rest!")
+            log.error("No response for setting rest!")
             return False
     
         return True
@@ -459,3 +459,6 @@ class MaccorInterface:
         """
         if self.json_sock:
             self.json_sock.close()
+
+        if self.tcp_sock:
+            self.tcp_sock.close()
