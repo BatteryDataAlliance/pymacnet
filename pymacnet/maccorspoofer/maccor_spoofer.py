@@ -84,6 +84,10 @@ class MaccorSpoofer:
                                 pymacnet.messages.tx_reset_channel_msg['params']['FNum'] == rx_msg['params']['FNum']):
                             tx_msg = pymacnet.messages.rx_reset_channel_msg
                             tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+                        elif (pymacnet.messages.tx_set_safety_limits_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
+                                pymacnet.messages.tx_set_safety_limits_msg['params']['FNum'] == rx_msg['params']['FNum']):
+                            tx_msg = pymacnet.messages.rx_set_safety_limits_msg
+                            tx_msg['result']['Chan'] = rx_msg['params']['Chan']
                         else:
                             tx_msg = {'err':1}
 

@@ -351,6 +351,26 @@ tx_set_safety_limits_msg = {
 Sets safety limits on a channel
 '''
 
+rx_set_safety_limits_msg = {
+    "jsonrpc":"2.0", 
+    "result":
+    {
+        "FClass":6,
+        "FNum":10,
+        "Chan":3,
+        "VSafeMax":4.5, 
+        "VSafeMin":2.5, 
+        "ISafeChg":4.3, 
+        "ISafeDis":2.5,
+        "PBatSafeChg":50,
+        "PBatSafeDis":50
+    },
+    "id":1987
+}
+'''
+Response message for setting safety limits on channel.
+'''
+
 tx_set_variable_msg = {
     "jsonrpc": "2.0", 
     "method": "MacNet", 

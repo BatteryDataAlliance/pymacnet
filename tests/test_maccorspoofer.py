@@ -26,6 +26,7 @@ def test_messages():
                  (pymacnet.messages.tx_start_test_with_direct_control_msg, pymacnet.messages.rx_start_test_with_direct_control_msg),
                  (pymacnet.messages.tx_set_direct_output_msg, pymacnet.messages.rx_set_direct_output_msg),
                  (pymacnet.messages.tx_reset_channel_msg, pymacnet.messages.rx_reset_channel_msg),
+                 (pymacnet.messages.tx_set_safety_limits_msg, pymacnet.messages.rx_set_safety_limits_msg),
                 ] 
 
     for tx_msg, key in messages:
