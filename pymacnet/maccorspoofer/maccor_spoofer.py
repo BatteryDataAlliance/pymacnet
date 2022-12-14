@@ -39,10 +39,11 @@ class MaccorSpoofer:
 
         # Create a TCP/IP socket
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.bind((self.config["server_ip"], self.config["server_port"]))
         sock.settimeout(1)
         sock.listen()
-
+        
         stop = lambda : self.stop_server
         
         while True:
@@ -69,10 +70,7 @@ class MaccorSpoofer:
 
             # In event of timeout see if we should break.       
             except socket.timeout:
-               pass
-
-            if stop():
-                sock.shutdown(1)
+               if stop():
                 sock.close()
                 break
 
