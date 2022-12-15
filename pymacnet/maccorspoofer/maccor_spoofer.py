@@ -21,11 +21,10 @@ class MaccorSpoofer:
         Parameters
         ----------
         config : dict
-            A configuration dictionary containing the server ip address and port to use.
+            A configuration dictionary containing the server ip address and ports to use.
         """
         self.config = config
 
-        # lambda function we will use to break the server loops.
         self.__json_server_thread = threading.Thread(target=self.__json_server_loop, 
                                                 args=(),daemon=True)
         self.__tcp_server_thread = threading.Thread(target=self.__tcp_server_loop, 
@@ -42,7 +41,6 @@ class MaccorSpoofer:
         """
         Starts a the JSON server in a forever loop. Breaks when stop method is called.
         """
-
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.bind((self.config["server_ip"], self.config["json_port"]))
@@ -108,7 +106,6 @@ class MaccorSpoofer:
 
         TODO: Currently just setup as an echo server. Add functionality later.
         """
-
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.bind((self.config["server_ip"], self.config["tcp_port"]))
