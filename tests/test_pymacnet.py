@@ -1,9 +1,6 @@
-import json
 import pymacnet
 import pymacnet.maccorspoofer
 import pymacnet.messages
-import socket
-import time
 
 # Create Maccor Spoofer server
 MACCOR_SPOOFER_CONFIG = { "server_ip": "127.0.0.1", "server_port": 5555 }
@@ -39,11 +36,4 @@ def test_read_status():
     key['result']['Chan'] = MACCORINTERFACE_CONFIG['channel']
     assert(response == key['result'])
 
-    print(response)
-
-    time.sleep(5)
-
-    #del maccor_interfrace
-
-    #del maccor_spoofer
     maccor_spoofer.stop()
