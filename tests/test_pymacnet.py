@@ -3,7 +3,7 @@ import pymacnet.maccorspoofer
 import pymacnet.messages
 
 # Create Maccor Spoofer server
-MACCOR_SPOOFER_CONFIG = { "server_ip": "127.0.0.1", "server_port": 5555 }
+MACCOR_SPOOFER_CONFIG = { "server_ip": "127.0.0.1", "json_port": 5555, "tcp_port": 5556 }
 
 # Create the interface we will use for testing.
 MACCORINTERFACE_CONFIG = { 
@@ -17,7 +17,7 @@ MACCORINTERFACE_CONFIG = {
     'i_min_safety_limit_a':-2.0,
     'server_ip':'127.0.0.1',
     'json_server_port':5555,
-    'tcp_server_port':5555
+    'tcp_server_port':5556
 }
 
 def test_read_status():
@@ -36,4 +36,4 @@ def test_read_status():
     key['result']['Chan'] = MACCORINTERFACE_CONFIG['channel']
     assert(response == key['result'])
 
-    maccor_spoofer.stop()
+    del maccor_spoofer

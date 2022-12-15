@@ -24,11 +24,8 @@ class MaccorSpoofer:
             A configuration dictionary containing the server ip address and ports to use.
         """
         self.config = config
-
-        self.__json_server_thread = threading.Thread(target=self.__json_server_loop, 
-                                                args=(),daemon=True)
-        self.__tcp_server_thread = threading.Thread(target=self.__tcp_server_loop, 
-                                                args=(),daemon=True)
+        self.__json_server_thread = threading.Thread( target=self.__json_server_loop, args=(), daemon=True)
+        self.__tcp_server_thread = threading.Thread( target=self.__tcp_server_loop, args=(), daemon=True)
 
     def start(self):
         """
@@ -54,7 +51,6 @@ class MaccorSpoofer:
                     rx_msg = connection.recv(self.__msg_buffer_size_bytes)
                     rx_msg = json.loads(rx_msg)
 
-                    # Determine the type of received message and give appropriate response.
                     if rx_msg:
                         if (pymacnet.messages.tx_read_status_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
                                 pymacnet.messages.tx_read_status_msg['params']['FNum'] == rx_msg['params']['FNum']):
@@ -117,8 +113,11 @@ class MaccorSpoofer:
                 connection, client_address = sock.accept()
                 with connection:    
                     rx_msg = connection.recv(self.__msg_buffer_size_bytes)
+                    print(rx_msg)
                     if rx_msg:
                         tx_msg = rx_msg
+                    else:
+                        tx_msg = b'err'
                     if tx_msg:
                         connection.send(tx_msg)
             except socket.timeout:
