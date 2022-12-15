@@ -47,12 +47,14 @@ class MaccorInterface:
             log.error("Failed to create JSON TCP connection with Maccor server!", exc_info=True)
             return False
 
+        '''
         try:
             self.tcp_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.tcp_sock.connect((self.config['server_ip'], self.config['tcp_server_port']))
         except:
             log.error("Failed to create TCP connection with Maccor server!", exc_info=True)
             return False
+        '''
 
         return True
 
