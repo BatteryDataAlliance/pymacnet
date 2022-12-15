@@ -2,6 +2,7 @@ import socket
 import json
 import pymacnet.maccorspoofer
 import pymacnet.messages
+import time
 
 '''
 Various parameters we will use accross all the tests.
@@ -17,6 +18,8 @@ def test_messages():
 
     spoofer_server = pymacnet.maccorspoofer.MaccorSpoofer(CONFIG_DICT)
     spoofer_server.start()
+
+    time.sleep(4)
 
     # Send all messages and make sure we get the correct responses.
     messages = [ (pymacnet.messages.tx_read_status_msg, pymacnet.messages.rx_read_status_msg),

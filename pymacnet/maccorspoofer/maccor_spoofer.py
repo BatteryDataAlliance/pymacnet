@@ -9,7 +9,7 @@ class MaccorSpoofer:
     """
     
     server_thread:threading.Thread
-    receive_msg_wait_time_ms = 1000
+    receive_msg_timeout_s = 1
     msg_buffer_size_bytes = 1024
     stop_server = False
 
@@ -41,7 +41,7 @@ class MaccorSpoofer:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.bind((self.config["server_ip"], self.config["server_port"]))
-        sock.settimeout(1)
+        sock.settimeout(self.receive_msg_timeout_s)
         sock.listen()
         
         # lambda function we will use to break the forever loop.
@@ -50,8 +50,10 @@ class MaccorSpoofer:
         while True:
             try:
                 connection, client_address = sock.accept()
-                with connection:            
+                with connection:
+                    print("a")      
                     rx_msg = connection.recv(self.msg_buffer_size_bytes)
+                    print("b")
                     rx_msg = json.loads(rx_msg)
 
                     # Determine the type of received message and give appropriate response.
@@ -99,13 +101,23 @@ class MaccorSpoofer:
 
             # In event of timeout see if we should break.       
             except socket.timeout:
+                print("timeout")
                 if stop():
                     sock.close()
                     break
+
+            except:
+                print("other exception!")
 
     def stop(self):
         """
         Stop the send/receive forever loop
         """
+        print("stopping")
         self.stop_server = True
+        print("stopping more")
         self.server_thread.join()
+        print("thread joined")
+
+    def __del__(self):
+        self.stop()

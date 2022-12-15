@@ -44,14 +44,14 @@ class MaccorInterface:
             self.json_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.json_sock.connect((self.config['server_ip'], self.config['json_server_port']))
         except:
-            log.error("Failed to create JSON TCP connection with Maccor server!")
+            log.error("Failed to create JSON TCP connection with Maccor server!", exc_info=True)
             return False
 
         try:
             self.tcp_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.tcp_sock.connect((self.config['server_ip'], self.config['tcp_server_port']))
         except:
-            log.error("Failed to create TCP connection with Maccor server!")
+            log.error("Failed to create TCP connection with Maccor server!", exc_info=True)
             return False
 
         return True
@@ -72,34 +72,40 @@ class MaccorInterface:
         if self.json_sock:
             pass
         else:
-            log.error("json_socket connection does not exist!")
+            log.error("json_socket connection does not exist!", exc_info=True)
             return None
         # Pack message
         try:
             msg_outgoing_packed = json.dumps( outgoing_msg_dict, indent = 4)
             msg_outgoing_packed = msg_outgoing_packed.encode()
         except:
-            log.error("Error packing outgoing message!")
+            log.error("Error packing outgoing message!", exc_info=True)
             return None
         # Send message
         try:
+            print(msg_outgoing_packed)
             self.json_sock.send(msg_outgoing_packed)
         except:
-            log.error("Error sending message!")
+            log.error("Error sending message!", exc_info=True)
             return None
         # Receive response
         try:
             msg_incoming_packed = self.json_sock.recv(self.msg_buffer_size_bytes)
         except:
-            log.error("Error receiving message!")
+            log.error("Error receiving message!", exc_info=True)
             return None
         # Unpack response
         try:
             msg_incoming_dict = json.loads(msg_incoming_packed.decode('utf-8'))
         except:
-            log.error("Error unpacking incoming message!")
+            log.error("Error unpacking incoming message!", exc_info=True)
             log.error("Message: " + str(msg_incoming_packed))
             return None
+
+        # If the response messages has the channel in it add 1.
+        if 'result' in msg_incoming_dict.keys():
+            if 'Chan' in msg_incoming_dict['result'].keys():
+                msg_incoming_dict['result']['Chan'] += 1
 
         return msg_incoming_dict
 
@@ -438,12 +444,12 @@ class MaccorInterface:
         try:
             self.tcp_sock.send(msg_outgoing_bytes)
         except:
-            log.error("Error sending rest message!")
+            log.error("Error sending rest message!", exc_info=True)
             return False
         try:
             response = self.tcp_sock.recv(self.msg_buffer_size_bytes)
         except:
-            log.error("Error receiving rest message response!")
+            log.error("Error receiving rest message response!", exc_info=True)
             return False
         if response:
             pass
