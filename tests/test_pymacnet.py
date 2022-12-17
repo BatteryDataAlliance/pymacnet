@@ -36,7 +36,5 @@ def test_read_status():
     key['result']['Chan'] = MACCORINTERFACE_CONFIG['channel']
     assert(response == key['result'])
 
-    response = maccor_interfrace.read_status()
-
-    #del maccor_interfrace
     maccor_spoofer.stop()
+    
