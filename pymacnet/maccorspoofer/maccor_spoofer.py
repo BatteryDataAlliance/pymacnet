@@ -48,68 +48,66 @@ class MaccorSpoofer:
         sock.settimeout(self.__receive_msg_timeout_s)
         sock.listen()
         
-        while True:
-            try: 
-                connection, client_address = sock.accept()
-                with connection:
-                    connection.settimeout(self.__receive_msg_timeout_s)    
-                    while True:
-                        try:
-                            rx_msg = connection.recv(self.__msg_buffer_size_bytes)
-                            print(rx_msg)
-                            if not rx_msg:
-                                # When a recv returns 0 bytes, it means the other side has closed (or is in the process of closing)
+        try: 
+            connection, client_address = sock.accept()
+            with connection:
+                connection.settimeout(self.__receive_msg_timeout_s)    
+                while True:
+                    try:
+                        rx_msg = connection.recv(self.__msg_buffer_size_bytes)
+                        if not rx_msg:
+                            break  # When a recv returns 0 bytes, it means the other side has closed (or is in the process of closing)
+                        rx_msg = json.loads(rx_msg)
+                        if rx_msg:
+                            if (pymacnet.messages.tx_read_status_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
+                                    pymacnet.messages.tx_read_status_msg['params']['FNum'] == rx_msg['params']['FNum']):
+                                tx_msg = pymacnet.messages.rx_read_status_msg
+                                tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+                            elif (pymacnet.messages.tx_read_aux_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
+                                    pymacnet.messages.tx_read_aux_msg['params']['FNum'] == rx_msg['params']['FNum']):
+                                tx_msg = pymacnet.messages.rx_read_aux_msg
+                                tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+                            elif (pymacnet.messages.tx_start_test_with_procedure_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
+                                    pymacnet.messages.tx_start_test_with_procedure_msg['params']['FNum'] == rx_msg['params']['FNum']):
+                                tx_msg = pymacnet.messages.rx_start_test_with_procedure_msg
+                                tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+                            elif (pymacnet.messages.tx_set_variable_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
+                                    pymacnet.messages.tx_set_variable_msg['params']['FNum'] == rx_msg['params']['FNum']):
+                                tx_msg = pymacnet.messages.rx_set_variable_msg
+                                tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+                            elif (pymacnet.messages.tx_start_test_with_direct_control_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
+                                    pymacnet.messages.tx_start_test_with_direct_control_msg['params']['FNum'] == rx_msg['params']['FNum']):
+                                tx_msg = pymacnet.messages.rx_start_test_with_direct_control_msg
+                                tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+                            elif (pymacnet.messages.tx_set_direct_output_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
+                                    pymacnet.messages.tx_set_direct_output_msg['params']['FNum'] == rx_msg['params']['FNum']):
+                                tx_msg = pymacnet.messages.rx_set_direct_output_msg
+                                tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+                            elif (pymacnet.messages.tx_reset_channel_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
+                                    pymacnet.messages.tx_reset_channel_msg['params']['FNum'] == rx_msg['params']['FNum']):
+                                tx_msg = pymacnet.messages.rx_reset_channel_msg
+                                tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+                            elif (pymacnet.messages.tx_set_safety_limits_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
+                                    pymacnet.messages.tx_set_safety_limits_msg['params']['FNum'] == rx_msg['params']['FNum']):
+                                tx_msg = pymacnet.messages.rx_set_safety_limits_msg
+                                tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+                            else:
+                                tx_msg = {'err':1}
+                        if tx_msg:
+                            tx_msg_packed = json.dumps( tx_msg, indent = 4)
+                            tx_msg_packed = tx_msg_packed.encode('utf-8')
+                            connection.sendall(tx_msg_packed)
+                    # Check timeout on receiving message.
+                    except socket.timeout:
+                        with self.__stop_servers_lock:
+                            if self.__stop_servers:
+                                sock.close()
                                 break
-                            print("here")
-                            rx_msg = json.loads(rx_msg)
-                            if rx_msg:
-                                if (pymacnet.messages.tx_read_status_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
-                                        pymacnet.messages.tx_read_status_msg['params']['FNum'] == rx_msg['params']['FNum']):
-                                    tx_msg = pymacnet.messages.rx_read_status_msg
-                                    tx_msg['result']['Chan'] = rx_msg['params']['Chan']
-                                elif (pymacnet.messages.tx_read_aux_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
-                                        pymacnet.messages.tx_read_aux_msg['params']['FNum'] == rx_msg['params']['FNum']):
-                                    tx_msg = pymacnet.messages.rx_read_aux_msg
-                                    tx_msg['result']['Chan'] = rx_msg['params']['Chan']
-                                elif (pymacnet.messages.tx_start_test_with_procedure_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
-                                        pymacnet.messages.tx_start_test_with_procedure_msg['params']['FNum'] == rx_msg['params']['FNum']):
-                                    tx_msg = pymacnet.messages.rx_start_test_with_procedure_msg
-                                    tx_msg['result']['Chan'] = rx_msg['params']['Chan']
-                                elif (pymacnet.messages.tx_set_variable_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
-                                        pymacnet.messages.tx_set_variable_msg['params']['FNum'] == rx_msg['params']['FNum']):
-                                    tx_msg = pymacnet.messages.rx_set_variable_msg
-                                    tx_msg['result']['Chan'] = rx_msg['params']['Chan']
-                                elif (pymacnet.messages.tx_start_test_with_direct_control_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
-                                        pymacnet.messages.tx_start_test_with_direct_control_msg['params']['FNum'] == rx_msg['params']['FNum']):
-                                    tx_msg = pymacnet.messages.rx_start_test_with_direct_control_msg
-                                    tx_msg['result']['Chan'] = rx_msg['params']['Chan']
-                                elif (pymacnet.messages.tx_set_direct_output_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
-                                        pymacnet.messages.tx_set_direct_output_msg['params']['FNum'] == rx_msg['params']['FNum']):
-                                    tx_msg = pymacnet.messages.rx_set_direct_output_msg
-                                    tx_msg['result']['Chan'] = rx_msg['params']['Chan']
-                                elif (pymacnet.messages.tx_reset_channel_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
-                                        pymacnet.messages.tx_reset_channel_msg['params']['FNum'] == rx_msg['params']['FNum']):
-                                    tx_msg = pymacnet.messages.rx_reset_channel_msg
-                                    tx_msg['result']['Chan'] = rx_msg['params']['Chan']
-                                elif (pymacnet.messages.tx_set_safety_limits_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
-                                        pymacnet.messages.tx_set_safety_limits_msg['params']['FNum'] == rx_msg['params']['FNum']):
-                                    tx_msg = pymacnet.messages.rx_set_safety_limits_msg
-                                    tx_msg['result']['Chan'] = rx_msg['params']['Chan']
-                                else:
-                                    tx_msg = {'err':1}
-                            if tx_msg:
-                                tx_msg_packed = json.dumps( tx_msg, indent = 4)
-                                tx_msg_packed = tx_msg_packed.encode('utf-8')
-                                connection.sendall(tx_msg_packed)
-                        except socket.timeout:
-                            with self.__stop_servers_lock:
-                                if self.__stop_servers:
-                                    break
-            except socket.timeout:
-                with self.__stop_servers_lock:
-                    if self.__stop_servers:
-                        sock.close()
-                        break
+        # Check timeout on accepting intial connection
+        except socket.timeout:
+            with self.__stop_servers_lock:
+                if self.__stop_servers:
+                    sock.close()
 
     def __tcp_server_loop(self):
         """
@@ -166,4 +164,47 @@ class JsonWorker:
         self.___service_loop(s)
     
     def ___service_loop(s):
-        
+        while True:
+            rx_msg = s.recv(1024)
+            if not rx_msg:
+                break
+            rx_msg = json.loads(rx_msg)
+            if rx_msg:
+                if (pymacnet.messages.tx_read_status_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
+                        pymacnet.messages.tx_read_status_msg['params']['FNum'] == rx_msg['params']['FNum']):
+                    tx_msg = pymacnet.messages.rx_read_status_msg
+                    tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+                elif (pymacnet.messages.tx_read_aux_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
+                        pymacnet.messages.tx_read_aux_msg['params']['FNum'] == rx_msg['params']['FNum']):
+                    tx_msg = pymacnet.messages.rx_read_aux_msg
+                    tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+                elif (pymacnet.messages.tx_start_test_with_procedure_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
+                        pymacnet.messages.tx_start_test_with_procedure_msg['params']['FNum'] == rx_msg['params']['FNum']):
+                    tx_msg = pymacnet.messages.rx_start_test_with_procedure_msg
+                    tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+                elif (pymacnet.messages.tx_set_variable_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
+                        pymacnet.messages.tx_set_variable_msg['params']['FNum'] == rx_msg['params']['FNum']):
+                    tx_msg = pymacnet.messages.rx_set_variable_msg
+                    tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+                elif (pymacnet.messages.tx_start_test_with_direct_control_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
+                        pymacnet.messages.tx_start_test_with_direct_control_msg['params']['FNum'] == rx_msg['params']['FNum']):
+                    tx_msg = pymacnet.messages.rx_start_test_with_direct_control_msg
+                    tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+                elif (pymacnet.messages.tx_set_direct_output_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
+                        pymacnet.messages.tx_set_direct_output_msg['params']['FNum'] == rx_msg['params']['FNum']):
+                    tx_msg = pymacnet.messages.rx_set_direct_output_msg
+                    tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+                elif (pymacnet.messages.tx_reset_channel_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
+                        pymacnet.messages.tx_reset_channel_msg['params']['FNum'] == rx_msg['params']['FNum']):
+                    tx_msg = pymacnet.messages.rx_reset_channel_msg
+                    tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+                elif (pymacnet.messages.tx_set_safety_limits_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
+                        pymacnet.messages.tx_set_safety_limits_msg['params']['FNum'] == rx_msg['params']['FNum']):
+                    tx_msg = pymacnet.messages.rx_set_safety_limits_msg
+                    tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+                else:
+                    tx_msg = {'err':1}
+            if tx_msg:
+                tx_msg_packed = json.dumps( tx_msg, indent = 4)
+                tx_msg_packed = tx_msg_packed.encode('utf-8')
+                s.sendall(tx_msg_packed)

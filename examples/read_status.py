@@ -7,7 +7,7 @@ import sys
 import pymacnet.maccorspoofer
 
 # Create Maccor Spoofer server
-CONFIG_DICT = { "server_ip": "127.0.0.1", "json_port": 5555, "tcp_port": 5556 }
+MACCOR_SPOOFER_CONFIG = { "server_ip": "127.0.0.1", "json_port": 5555, "tcp_port": 5556 }
 
 # Create the interface we will use for testing.
 MACCORINTERFACE_CONFIG = { 
@@ -24,21 +24,21 @@ MACCORINTERFACE_CONFIG = {
     'tcp_server_port':5556
 }
 
-spoofer_server = pymacnet.maccorspoofer.MaccorSpoofer(CONFIG_DICT)
-spoofer_server.start()
-
-time.sleep(4)
+maccor_spoofer = pymacnet.maccorspoofer.MaccorSpoofer(MACCOR_SPOOFER_CONFIG)
+maccor_spoofer.start()
 
 maccor_interfrace = pymacnet.MaccorInterface(MACCORINTERFACE_CONFIG)
 if not maccor_interfrace.create_connection():
     sys.exit("failed to create connection!")
 
-time.sleep(2)
-
 for i in range(0,5):
     print(i)
-    maccor_interfrace.read_status()
+    print(maccor_interfrace.read_status())
     print(i)
     time.sleep(0.5)
 
-spoofer_server.stop()
+response = maccor_interfrace.read_status()
+print(response)
+
+#del maccor_interfrace
+maccor_spoofer.stop()

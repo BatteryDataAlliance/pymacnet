@@ -85,7 +85,6 @@ class MaccorInterface:
             return None
         # Send message
         try:
-            print(msg_outgoing_packed)
             self.json_sock.send(msg_outgoing_packed)
         except:
             log.error("Error sending message!", exc_info=True)
