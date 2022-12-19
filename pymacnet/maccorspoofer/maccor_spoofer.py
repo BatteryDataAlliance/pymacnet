@@ -33,7 +33,40 @@ class MaccorSpoofer:
         Note: 
         """
         self.__json_server_thread.start()       
-        self.__tcp_server_thread.start()                                         
+        self.__tcp_server_thread.start()
+
+    def __server_loop( self, sock_config : dict, Worker):  
+        """
+        Creates a forever loop to service client socket requests.
+        ----------
+        sock_cofig : dict
+            A configuration for the socket containing the IP and port number.
+        Worker : SocketWorker
+            A reference to the worker class that will service individual client connections.
+        """       
+        # List that will hold all the workers to service client connections.
+        client_workers = [] 
+
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        sock.bind((sock_config["server_ip"], sock_config["json_port"]))
+        sock.settimeout(self.__receive_msg_timeout_s)
+        sock.listen()
+        
+        while True:
+            try: 
+                client_connection, client_address = sock.accept()
+                client_workers.append(Worker(client_connection))
+            except socket.timeout:
+                with self.__stop_servers_lock:
+                    # If stop commmand is issued then kill all workers.
+                    if self.__stop_servers:
+                        for worker in client_workers:
+                            if worker.is_alive():
+                                worker.kill_worker()
+                        break
+                # Remove any workers that made have died from disconnecting clients.
+                client_workers[:] = [worker for worker in client_workers if worker.is_alive()]                         
 
     def __json_server_loop(self):
         """
@@ -41,7 +74,7 @@ class MaccorSpoofer:
         """
 
         # List that will hold all the workers to service client connections.
-        json_client_workers = [] 
+        client_workers = [] 
 
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -52,23 +85,26 @@ class MaccorSpoofer:
         while True:
             try: 
                 client_connection, client_address = sock.accept()
-                json_client_workers.append(JsonWorker(client_connection))
+                client_workers.append(JsonWorker(client_connection))
             except socket.timeout:
                 with self.__stop_servers_lock:
+                    # If stop commmand is issued then kill all workers.
                     if self.__stop_servers:
-                        for worker in json_client_workers:
+                        for worker in client_workers:
                             if worker.is_alive():
                                 worker.kill_worker()
                         break
-                # Remove any dead workers.
-                json_client_workers[:] = [worker for worker in json_client_workers if worker.is_alive()]
+                # Remove any workers that made have died from disconnecting clients.
+                client_workers[:] = [worker for worker in client_workers if worker.is_alive()]
 
     def __tcp_server_loop(self):
         """
-        Starts a the TCP server in a forever loop. Breaks when stop method is called.
-
-        TODO: Currently just setup as an echo server. Add functionality later.
+        Starts a the JSON server in a forever loop. Breaks when stop method is called. Can handle multiple client connecitons.
         """
+
+        # List that will hold all the workers to service client connections.
+        client_workers = [] 
+
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.bind((self.config["server_ip"], self.config["tcp_port"]))
@@ -76,22 +112,17 @@ class MaccorSpoofer:
         sock.listen()
         
         while True:
-            try:
-                connection, client_address = sock.accept()
-                with connection:    
-                    rx_msg = connection.recv(self.__msg_buffer_size_bytes)
-                    if rx_msg:
-                        tx_msg = rx_msg
-                    else:
-                        tx_msg = None
-                        break
-                    if tx_msg:
-                        connection.send(tx_msg)
+            try: 
+                client_connection, client_address = sock.accept()
+                client_workers.append(TcpWorker(client_connection))
             except socket.timeout:
                 with self.__stop_servers_lock:
                     if self.__stop_servers:
-                        sock.close()
+                        for worker in client_workers:
+                            if worker.is_alive():
+                                worker.kill_worker()
                         break
+                client_workers[:] = [worker for worker in client_workers if worker.is_alive()]
 
     def stop(self):
         """
@@ -105,9 +136,11 @@ class MaccorSpoofer:
     def __del__(self):
         self.stop()
 
-class JsonWorker:
+class SocketWorker:
     '''
-    Class to handle requests from JSON socket clients.
+    Generic worker class that will respond to client socket requests. 
+    Default setup as an echo client. Child classes can overwrite the 
+    the `__process_client_msg` method with their own responses
     '''
     __receive_msg_timeout_s = 1
     __msg_buffer_size_bytes = 1024
@@ -139,7 +172,7 @@ class JsonWorker:
                 rx_msg = s.recv(self.__msg_buffer_size_bytes)
                 if not rx_msg:
                     break
-                tx_msg = self.__process_client_msg(rx_msg)
+                tx_msg = self._process_client_msg(rx_msg)
                 s.sendall(tx_msg)
             except socket.timeout:
                 with self.__stop_lock:
@@ -147,15 +180,52 @@ class JsonWorker:
                         break
         s.close()
 
-    def __process_client_msg(self, rx_msg):
+    def _process_client_msg(self, rx_msg):
         """
-        Takes the incoming client message and generates a response
+        Takes the incoming client message and generates a response. 
         ----------
         rx_msg : PyBytesObject
             The client message received.
         Returns
         -------
+        tx_msg : PyBytesObject
+            The client response.
+        """
+        return rx_msg
+
+    def is_alive(self):
+        """
+        Method to call to see if the client service thread is still running.
+        Returns
+        -------
+        running : bool
+            True of False based on whether or not the client thread is running.
+        """
+        return self.__client_thread.is_alive()
+
+    def kill_worker(self):
+        '''
+        Method to stop client service loop.
+        '''
+        if self.__client_thread.is_alive():
+            with self.__stop_lock:
+                self.__stop = True
+            self.__client_thread.join()
+
+class JsonWorker(SocketWorker):
+    '''
+    Class to handle requests from MacNet JSON socket clients.
+    '''
+
+    def _process_client_msg(self, rx_msg):
+        """
+        Takes the incoming JSON client message and generates a response. 
+        ----------
         rx_msg : PyBytesObject
+            The client message received.
+        Returns
+        -------
+        tx_msg : PyBytesObject
             The client response.
         """
 
@@ -200,21 +270,9 @@ class JsonWorker:
 
         return tx_msg
 
-    def is_alive(self):
-        """
-        Method to call to see if the client service thread is still running.
-        Returns
-        -------
-        running : bool
-            True of False based on whether or not the client thread is running.
-        """
-        return self.__client_thread.is_alive()
-
-    def kill_worker(self):
-        '''
-        Method to stop client service loop.
-        '''
-        if self.__client_thread.is_alive():
-            with self.__stop_lock:
-                self.__stop = True
-            self.__client_thread.join()
+class TcpWorker(SocketWorker):
+    '''
+    Class to handle requests from TCP JSON socket clients.
+    Currently just implemented as an echo server.
+    '''
+    pass
