@@ -5,7 +5,10 @@ import pymacnet.messages
 
 class MaccorSpoofer:
     """
-    Class to mimic behavior of Maccor cycler MacNet control server. 
+    Class to mimic behavior of Maccor cycler MacNet control server.
+
+    Currently dumb and just sends back basic response messages without 
+    any notion of channel status or readings. Could be expanded in future. 
     """
     
     __client_connect_timeout_s = 1
@@ -215,6 +218,12 @@ class JsonWorker(SocketWorker):
                 pymacnet.messages.tx_set_safety_limits_msg['params']['FNum'] == rx_msg['params']['FNum']):
             tx_msg = pymacnet.messages.rx_set_safety_limits_msg
             tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+            tx_msg['result']['VSafeMax'] = rx_msg['params']['VSafeMax']
+            tx_msg['result']['VSafeMin'] = rx_msg['params']['VSafeMin']
+            tx_msg['result']['ISafeChg'] = rx_msg['params']['ISafeChg']
+            tx_msg['result']['ISafeDis'] = rx_msg['params']['ISafeDis']
+            tx_msg['result']['PBatSafeChg'] = rx_msg['params']['PBatSafeChg']
+            tx_msg['result']['PBatSafeDis'] = rx_msg['params']['PBatSafeDis']
         else:
             tx_msg = {'err':1}
 

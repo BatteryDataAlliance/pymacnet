@@ -103,7 +103,7 @@ class MaccorInterface:
             log.error("Message: " + str(msg_incoming_packed))
             return None
 
-        # If the response messages has the channel in it add 1.
+        # If the response messages has the channel in it add 1 so things look correct to user.
         if 'result' in msg_incoming_dict.keys():
             if 'Chan' in msg_incoming_dict['result'].keys():
                 msg_incoming_dict['result']['Chan'] += 1
@@ -196,6 +196,7 @@ class MaccorInterface:
         reply = self._send_receive_msg(msg_outging_dict)
         if reply:
             try:
+                assert( (reply['result']['Chan']) == self.config['channel'] )
                 assert( abs(reply['result']['VSafeMax'] - self.config['v_max_safety_limit_v']) < 0.001 )
                 assert( abs(reply['result']['VSafeMin'] - self.config['v_min_safety_limit_v']) < 0.001 )
                 assert( abs(reply['result']['ISafeChg'] - self.config['i_max_safety_limit_a']) < 0.001 )
@@ -231,7 +232,7 @@ class MaccorInterface:
         reply = self._send_receive_msg(msg_outging_dict)
         if reply:
             try:
-                assert(reply['result']['Chan'] == self.channel)
+                assert( (reply['result']['Chan']) == self.config['channel'] )
                 assert(reply['result']['Result'] == 'OK')
             except:
                 log.error("Variable not set!")

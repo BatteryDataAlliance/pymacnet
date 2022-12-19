@@ -2,7 +2,6 @@ import socket
 import json
 import pymacnet.maccorspoofer
 import pymacnet.messages
-import time
 
 '''
 Various parameters we will use accross all the tests.
