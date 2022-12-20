@@ -53,10 +53,6 @@ def test_messages_basic():
     response = maccor_interfrace.reset_channel()
     assert(response)
 
-    # Set channel safety limits
-    response = maccor_interfrace._set_channel_safety_limits()
-    assert(response)
-
     # Set channel variable
     response = maccor_interfrace.set_channel_variable()
     assert(response)
@@ -110,7 +106,7 @@ def test_bad_config():
 
 def test_illegal_sends():
     '''
-    Try to send messages without existing server connections
+    Try to send messages without existing server connections.
     '''
     
     maccor_interfrace = pymacnet.MaccorInterface(MACCORINTERFACE_CONFIG)
@@ -122,9 +118,6 @@ def test_illegal_sends():
     assert(not response)
 
     response = maccor_interfrace.reset_channel()
-    assert(not response)
-
-    response = maccor_interfrace._set_channel_safety_limits()
     assert(not response)
 
     response = maccor_interfrace.set_channel_variable()
@@ -139,6 +132,5 @@ def test_illegal_sends():
     response = maccor_interfrace.set_direct_mode_output( current_a = 0.5, voltage_v = 4.2)
     assert(not response)
 
-    # Try rest.
     response = maccor_interfrace.set_direct_mode_output( current_a = 0)
     assert(not response)
