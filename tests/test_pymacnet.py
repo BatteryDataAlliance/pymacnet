@@ -15,6 +15,8 @@ MACCORINTERFACE_CONFIG = {
     'v_min_safety_limit_v':2.9,
     'i_max_safety_limit_a':2.0,
     'i_min_safety_limit_a':-2.0,
+    'v_max_v':4.2,
+    'v_min_v':3.0,
     'server_ip':'127.0.0.1',
     'json_server_port':5555,
     'tcp_server_port':5556
@@ -44,7 +46,7 @@ def test_messages_basic():
     assert(response == key['result']['AuxValues'])
 
     # Read reset channel message
-    response = maccor_interfrace._reset_channel()
+    response = maccor_interfrace.reset_channel()
     assert(response)
 
     # Set channel safety limits
@@ -55,5 +57,28 @@ def test_messages_basic():
     response = maccor_interfrace.set_channel_variable()
     assert(response)
 
+    # Start test with procedure
+    response = maccor_interfrace.start_test_with_procedure
+    assert(response)
+
+    # Start test with direct control
+    response = maccor_interfrace.start_test_with_direct_control
+    assert(response)
+
+    # Set direct control output. Rest
+    response = maccor_interfrace.set_direct_mode_output( current_a = 0, voltage_v = 4.2)
+    assert(response)
+
+    # Set direct control output. Charge CCCV
+    response = maccor_interfrace.set_direct_mode_output( current_a = 0.5, voltage_v = 4.2)
+    assert(response)
+
+    # Set direct control output. Charge CC
+    response = maccor_interfrace.set_direct_mode_output( current_a = 0.5)
+    assert(response)
+
+    # Set direct control output. Discharge
+    response = maccor_interfrace.set_direct_mode_output( current_a = -2.0)
+    assert(response)
+
     maccor_spoofer.stop()
-    

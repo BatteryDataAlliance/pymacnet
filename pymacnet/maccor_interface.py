@@ -46,15 +46,12 @@ class MaccorInterface:
         except:
             log.error("Failed to create JSON TCP connection with Maccor server!", exc_info=True)
             return False
-
-        '''
         try:
             self.tcp_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.tcp_sock.connect((self.config['server_ip'], self.config['tcp_server_port']))
         except:
             log.error("Failed to create TCP connection with Maccor server!", exc_info=True)
             return False
-        '''
 
         return True
 
@@ -151,7 +148,7 @@ class MaccorInterface:
             log.error("Failed to read channel aux values!")
             return None
         
-    def _reset_channel(self):
+    def reset_channel(self):
         """
         Resets the channel. WARNING! WILL STOP CURRENT RUNNING TESTS!
         --------
@@ -270,7 +267,7 @@ class MaccorInterface:
         status = self.read_status()
         if status:
             if pymacnet.messages.status_dictionary[status['Stat']] == 'Completed':
-                self._reset_channel()
+                self.reset_channel()
         else:
             log.error("Cannot read channel status!")
             return False
@@ -285,7 +282,6 @@ class MaccorInterface:
         if reponse:
             if reponse['result']['Result'] != 'OK':
                 log.error("Error starting test! Comment from Maccor: " + reponse['result']['Result'])
-                # TODO: In event that restarting the test fails because the test already exists, resume the test.
                 return False
             else:
                 return True
@@ -322,7 +318,7 @@ class MaccorInterface:
         status = self.read_status()
         if status:
             if pymacnet.messages.status_dictionary[status['Stat']] == 'Completed':
-                self._reset_channel()
+                self.reset_channel()
         else:
             log.error("Cannot read channel status!")
             return False
@@ -454,6 +450,7 @@ class MaccorInterface:
             log.error("Error receiving rest message response!", exc_info=True)
             return False
         if response:
+            # TODO: Should check something related to the response.
             pass
         else:
             log.error("No response for setting rest!")

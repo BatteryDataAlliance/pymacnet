@@ -64,7 +64,6 @@ Note that the MaccorInterface class instance must receive a config dictionary on
 - `data_record_voltage_delta_vbys` -> The dV/dt at which data points are taken during direct control tests. Zero disables. Used only for direct control.
 - `data_record_current_delta_abys` -> The dI/dt at which data points are taken during direct control tests. Zero disables. Used only for direct control.
 
-
 ## Install
 
 Navigate to the repo directory and run the following command:
@@ -75,8 +74,20 @@ pip install .
 
 ## Tests
 
-Navigate to the repo directory and run the following command:
+From within the test directory: 
 
 ```
-pip install .
+coverage run -m pytest .
+```
+
+To view coverage report:
+
+```
+coverage report
+```
+
+To see as HTML:
+
+```
+coverage html
 ```
