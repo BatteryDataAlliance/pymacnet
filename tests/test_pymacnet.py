@@ -17,6 +17,9 @@ MACCORINTERFACE_CONFIG = {
     'i_min_safety_limit_a':-2.0,
     'v_max_v':4.2,
     'v_min_v':3.0,
+    'data_record_time_s':1,
+    'data_record_voltage_delta_vbys':1,
+    'data_record_current_delta_abys':1,
     'server_ip':'127.0.0.1',
     'json_server_port':5555,
     'tcp_server_port':5556
@@ -31,7 +34,8 @@ def test_messages_basic():
     maccor_interfrace = pymacnet.MaccorInterface(MACCORINTERFACE_CONFIG)
 
     maccor_spoofer.start()
-    maccor_interfrace.create_connection()
+    start_success = maccor_interfrace.start()
+    assert(start_success)
     
     # Read Status
     response = maccor_interfrace.read_status()
@@ -82,3 +86,59 @@ def test_messages_basic():
     assert(response)
 
     maccor_spoofer.stop()
+
+def test_no_server():
+    '''
+    Try to start MaccorInterface without a server running.
+    '''
+    maccor_interfrace = pymacnet.MaccorInterface(MACCORINTERFACE_CONFIG)
+    start_success = maccor_interfrace.start()
+    assert(not start_success)
+
+def test_bad_config():
+    '''
+    Try to run with an incomplete config.
+    '''
+    
+    bad_config = {'channel':1}
+    maccor_spoofer = pymacnet.maccorspoofer.MaccorSpoofer(MACCOR_SPOOFER_CONFIG)
+    maccor_interfrace = pymacnet.MaccorInterface(bad_config)
+
+    maccor_spoofer.start()
+    start_success = maccor_interfrace.start()
+    assert(not start_success)
+
+def test_illegal_sends():
+    '''
+    Try to send messages without existing server connections
+    '''
+    
+    maccor_interfrace = pymacnet.MaccorInterface(MACCORINTERFACE_CONFIG)
+
+    response = maccor_interfrace.read_status()
+    assert(not response)
+
+    response = maccor_interfrace.read_aux()
+    assert(not response)
+
+    response = maccor_interfrace.reset_channel()
+    assert(not response)
+
+    response = maccor_interfrace._set_channel_safety_limits()
+    assert(not response)
+
+    response = maccor_interfrace.set_channel_variable()
+    assert(not response)
+
+    response = maccor_interfrace.start_test_with_procedure()
+    assert(not response)
+
+    response = maccor_interfrace.start_test_with_direct_control()
+    assert(not response)
+
+    response = maccor_interfrace.set_direct_mode_output( current_a = 0.5, voltage_v = 4.2)
+    assert(not response)
+
+    # Try rest.
+    response = maccor_interfrace.set_direct_mode_output( current_a = 0)
+    assert(not response)

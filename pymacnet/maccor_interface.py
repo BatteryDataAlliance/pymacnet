@@ -29,9 +29,59 @@ class MaccorInterface:
         self.channel = config['channel'] - 1 
         self.config = config
         self.json_sock = None
-        self.tcp_sock = None # Used for TCP comms to set rest
+        self.tcp_sock = None
 
-    def create_connection(self):
+    def start(self):
+        """
+        Verifies that the config passed during construction is valid and creates connections to 
+        the Maccor server.
+        ----------
+        Returns
+        -------
+        success : bool
+            True or False based on whether the config passed at construction is valid.
+        """
+        if not self.__verify_config():
+            return False
+        elif not self.__create_connection():
+            return False
+        else:
+            return True
+
+    def __verify_config(self):
+        """
+        Verifies that the config passed on contruction is valid.
+        ----------
+        Returns
+        -------
+        success : bool
+            True or False based on whether the config passed at construction is valid.
+        """
+
+        required_config_keys = [ 'channel', 
+                                'test_name',
+                                'test_procedure',
+                                'v_max_safety_limit_v',
+                                'v_min_safety_limit_v',
+                                'i_max_safety_limit_a', 
+                                'i_min_safety_limit_a',
+                                'v_max_v',
+                                'v_min_v',
+                                'c_rate_ah',
+                                'data_record_time_s',
+                                'data_record_voltage_delta_vbys',
+                                'data_record_current_delta_abys',
+                                'server_ip',
+                                'json_server_port',
+                                'tcp_server_port' ]
+
+        for key in required_config_keys:
+            if key not in self.config: 
+                log.error("Missing key from confgi! Missing : " + key)
+                return False
+        return True
+
+    def __create_connection(self):
         """
         Creates a connection with Maccor server to send/receive JSON and binary messages.
         ----------
@@ -55,7 +105,7 @@ class MaccorInterface:
 
         return True
 
-    def _send_receive_msg( self, outgoing_msg_dict):
+    def __send_receive_msg( self, outgoing_msg_dict):
         """
         Takes in a message dictionary, packs it, sends to Maccor server, and unpacks the response.
         ----------
@@ -120,7 +170,7 @@ class MaccorInterface:
         msg_outging_dict = pymacnet.messages.tx_read_status_msg.copy()
         msg_outging_dict['params']['Chan'] = self.channel
 
-        status = self._send_receive_msg(msg_outging_dict)
+        status = self.__send_receive_msg(msg_outging_dict)
 
         if status:
             return status['result']
@@ -141,7 +191,7 @@ class MaccorInterface:
         msg_outging_dict = pymacnet.messages.tx_read_aux_msg.copy()
         msg_outging_dict['params']['Chan'] = self.channel
 
-        aux_readings = self._send_receive_msg(msg_outging_dict)
+        aux_readings = self.__send_receive_msg(msg_outging_dict)
         if aux_readings:
             return aux_readings['result']['AuxValues']
         else:
@@ -160,7 +210,7 @@ class MaccorInterface:
         msg_outging_dict = pymacnet.messages.tx_reset_channel_msg.copy()
         msg_outging_dict['params']['Chan'] = self.channel
 
-        reply = self._send_receive_msg(msg_outging_dict)
+        reply = self.__send_receive_msg(msg_outging_dict)
         if reply:
             if reply['result']['Result'] == 'OK':
                 success = True
@@ -190,7 +240,7 @@ class MaccorInterface:
         msg_outging_dict['params']['ISafeDis'] = self.config['i_min_safety_limit_a']
 
         # Check to make sure all safety limits were set correctly
-        reply = self._send_receive_msg(msg_outging_dict)
+        reply = self.__send_receive_msg(msg_outging_dict)
         if reply:
             try:
                 assert( (reply['result']['Chan']) == self.config['channel'] )
@@ -226,7 +276,7 @@ class MaccorInterface:
         msg_outging_dict['params']['Value'] = var_value
 
         # Check to make variable was set
-        reply = self._send_receive_msg(msg_outging_dict)
+        reply = self.__send_receive_msg(msg_outging_dict)
         if reply:
             try:
                 assert( (reply['result']['Chan']) == self.config['channel'] )
@@ -263,7 +313,7 @@ class MaccorInterface:
         else:
             msg_outging_dict['params']['TestName'] = self.config['test_name']
 
-        # Check the status of the channel before we try to start the test.
+        # Check the status of the channel before we try to start the test.]
         status = self.read_status()
         if status:
             if pymacnet.messages.status_dictionary[status['Stat']] == 'Completed':
@@ -278,7 +328,7 @@ class MaccorInterface:
             return False
 
         # Start the test.
-        reponse = self._send_receive_msg(msg_outging_dict)
+        reponse = self.__send_receive_msg(msg_outging_dict)
         if reponse:
             if reponse['result']['Result'] != 'OK':
                 log.error("Error starting test! Comment from Maccor: " + reponse['result']['Result'])
@@ -329,7 +379,7 @@ class MaccorInterface:
             return False
 
         # Start the test
-        reponse = self._send_receive_msg(msg_outging_dict)
+        reponse = self.__send_receive_msg(msg_outging_dict)
         if reponse:
             if reponse['result']['Result'] != 'OK':
                 log.error("Error starting test! Comment from Maccor: " + reponse['result']['Result'])
@@ -404,7 +454,7 @@ class MaccorInterface:
             return self._send_rest_cmd_msg(msg_outging_dict)
 
         # Send message and make sure resposne indicates values were accepted.
-        reponse = self._send_receive_msg(msg_outging_dict)
+        reponse = self.__send_receive_msg(msg_outging_dict)
         if reponse:
             if reponse['result']['Result'] == "OK":
                 return True
