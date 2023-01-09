@@ -4,43 +4,44 @@ import threading
 import pymacnet.messages
 
 class MaccorSpoofer:
-    """
-    Class to mimic behavior of Maccor cycler MacNet control server.
 
-    Currently dumb and just sends back basic response messages without 
-    any notion of channel status or readings. Could be expanded in future. 
-    """
-    
     __client_connect_timeout_s = 1
     __stop_servers_lock = threading.Lock()
     __stop_servers = False
 
     def __init__(self, config: dict):
         """
-        Init function.
+        Class to mimic behavior of Maccor cycler MacNet control server. The class is currently dumb 
+        and just sends back basic response messages without any notion of channel status or readings. 
+        It could be expanded in future. 
         -------
         Parameters
         ----------
         config : dict
-            A configuration dictionary containing the server ip address and ports to use.
+            A configuration dictionary containing the server ip address and ports to use. The
+            fields to include are as follows:
+
+            `server_ip`: The server IP address to host from. Most often 'localhost' for testing.
+
+            `json_port`: The port to use for the JSON server.
+
+            `tcp_port`: the port to use for the TCP server.
         """
         self.config = config
 
         json_server_config = {'ip':config['server_ip'],'port':config['json_port']}
         self.__json_server_thread = threading.Thread( target=self.__server_loop, 
-                                                        args=( json_server_config, JsonWorker,), 
+                                                        args=( json_server_config, _JsonWorker,), 
                                                         daemon=True)
 
         tcp_server_config = {'ip':config['server_ip'],'port':config['tcp_port']}
         self.__tcp_server_thread = threading.Thread( target=self.__server_loop,
-                                                         args=( tcp_server_config, TcpWorker,), 
+                                                         args=( tcp_server_config, _TcpWorker,), 
                                                         daemon=True)
 
     def start(self):
         """
-        Starts the server loops
-
-        Note: 
+        Starts the server loops.
         """
         self.__json_server_thread.start()       
         self.__tcp_server_thread.start()
@@ -51,7 +52,7 @@ class MaccorSpoofer:
         ----------
         sock_cofig : dict
             A configuration for the socket containing the IP and port number.
-        Worker : SocketWorker
+        Worker : _SocketWorker
             A reference to the worker class that will service individual client connections.
         """       
         # List that will hold all the workers to service client connections.
@@ -80,7 +81,7 @@ class MaccorSpoofer:
 
     def stop(self):
         """
-        Stop the server loops
+        Stop the server loops.
         """
         with self.__stop_servers_lock:
             self.__stop_servers = True
@@ -90,7 +91,7 @@ class MaccorSpoofer:
     def __del__(self):
         self.stop()
 
-class SocketWorker:
+class _SocketWorker:
     '''
     Generic worker class that will respond to client socket requests. 
     Default setup as an echo server. Child classes should overwrite the 
@@ -168,7 +169,7 @@ class SocketWorker:
                 self.__stop = True
             self.__client_thread.join()
 
-class JsonWorker(SocketWorker):
+class _JsonWorker(_SocketWorker):
     '''
     Class to handle requests from MacNet JSON socket clients.
     '''
@@ -232,7 +233,7 @@ class JsonWorker(SocketWorker):
 
         return tx_msg
 
-class TcpWorker(SocketWorker):
+class _TcpWorker(_SocketWorker):
     '''
     Class to handle requests from TCP socket clients.
     Currently just implemented as an echo server.

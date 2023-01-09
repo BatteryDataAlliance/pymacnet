@@ -16,13 +16,14 @@ class MaccorInterface:
 
     def __init__(self, config: dict):
         """
-        Init function.
-        -------
+        Creates the a class instance. The `start()` method still needs to be run to create the conenction
+        and to check the validity of the config.
+
         Parameters
-        ----------
+        --------------------------
         config : dict
             A configuration dictionary containing relevant test parameters. See the README.md
-            for a detailed breakdown of all parameters
+            for a detailed breakdown of all parameters that must be included.
         """
 
         # Channels are zero indexed within Macnet so we must subract one here.
@@ -35,9 +36,9 @@ class MaccorInterface:
         """
         Verifies that the config passed during construction is valid and creates connections to 
         the Maccor server.
-        ----------
+
         Returns
-        -------
+        --------------------------
         success : bool
             True or False based on whether the config passed at construction is valid.
         """
@@ -51,9 +52,9 @@ class MaccorInterface:
     def __verify_config(self) -> bool:
         """
         Verifies that the config passed on contruction is valid.
-        ----------
+
         Returns
-        -------
+        --------------------------
         success : bool
             True or False based on whether the config passed at construction is valid.
         """
@@ -84,9 +85,9 @@ class MaccorInterface:
     def __create_connection(self) -> bool:
         """
         Creates a connection with Maccor server to send/receive JSON and binary messages.
-        ----------
+
         Returns
-        -------
+        --------------------------
         success : bool
             True or False based on whether the connection was created successfully
         """
@@ -108,11 +109,14 @@ class MaccorInterface:
     def __send_receive_msg( self, outgoing_msg_dict) -> dict:
         """
         Takes in a message dictionary, packs it, sends to Maccor server, and unpacks the response.
-        ----------
+
+        Parameters
+        --------------------------
         msg_outgoing_dict : dict
             A dictionary containing the message to be sent.
+        --------------------------
         Returns
-        -------
+        --------------------------
         msg_incoming_dict : dict
             A dictionary containing the message response. Returns None if there is an issue.
         """
@@ -160,9 +164,9 @@ class MaccorInterface:
     def read_status(self) -> dict:
         """
         Method to read the status of the channel defined in the config.
-        ----------
+
         Returns
-        -------
+        --------------------------
         status : dict
             A dictionary detailing the status of the channel. Returns None if there is an issue.
         """
@@ -181,9 +185,9 @@ class MaccorInterface:
     def read_aux(self) -> list:
         """
         Reads the auxiliary readings for the channel specified in the config.
-        ----------
+
         Returns
-        -------
+        --------------------------
         aux_readings : list
             A list of the auxiliary readings.
         """
@@ -200,10 +204,10 @@ class MaccorInterface:
         
     def reset_channel(self) -> bool:
         """
-        Resets the channel. WARNING! WILL STOP CURRENT RUNNING TESTS!
-        --------
+        Resets the channel. Note this will stop any actively running test on the target channel.
+
         Returns
-        -------
+        --------------------------
         success : bool
             True of False based on whether the test was started or not.
         """
@@ -226,9 +230,9 @@ class MaccorInterface:
     def __set_channel_safety_limits(self) -> bool:
         """
         Sets channel safety limits on the channel specifed in the config. 
-        ----------
+
         Returns
-        -------
+        --------------------------
         success : bool
             Returns True/False based on whether the safety limits were set correctly.
         """
@@ -259,14 +263,16 @@ class MaccorInterface:
 
     def set_channel_variable(self, var_num = 1, var_value = 0) -> bool:
         """
-        Sets channel variables.
-        ----------
+        Sets test variables on the target channel.
+
+        Parameters
+        --------------------------
         var_num : int
             Value between 1 and 16, depending on which variable to set.
         var_value : float
             Value to set the variable to.
         Returns
-        -------
+        --------------------------
         success : bool
             True of False based on whether or not the variable value was set.
         """
@@ -292,12 +298,11 @@ class MaccorInterface:
 
     def start_test_with_procedure(self) -> bool:
         """
-        Starts the test on the channel and with the procedure specified in the passed config.
-            - Will not start a test if the channel is current running a test.
-            - Will reset a channel if there is a completed test on that channel.
-        ----------
+        Starts the test on the channel and with the procedure specified in the passed config. 
+        Note that it will not start a test if the channel is current running a test.
+
         Returns
-        -------
+        --------------------------
         success : bool
             True of False based on whether the test was started or not
         """
@@ -342,9 +347,9 @@ class MaccorInterface:
     def start_test_with_direct_control(self) -> bool:
         """
         Starts a test to be manually controled with direct output on the channel specified in the config.
-        ----------
+
         Returns
-        -------
+        --------------------------
         success : bool
             True of False based on whether the test was started or not.
         """
@@ -395,20 +400,16 @@ class MaccorInterface:
         Sets the current/voltage output on the channel specified on in the config. Note that the
         test must have been started with the start_test_direct_control method for this to work.
 
-        For discharging:
-            - Indicated with a negative sign on current. A lower voltage limit is set based on the
+        For discharging: Indicated with a negative sign on current. A lower voltage limit is set based on the
             `v_min_v` value set in the config.
 
-        For charging:
-            - If only `current_a` is passed, the cycler will charge at the this current until commanded 
-            otherwise or until the upper voltage safety limit is hit.
-
-            - If a `voltage_v` argument is passed in addition to `current_a`, then the cycler will do a CCCV 
+        For charging: If only `current_a` is passed, the cycler will charge at the this current until commanded 
+            otherwise or until the upper voltage safety limit is hit. If a `voltage_v` argument is passed in addition to `current_a`, then the cycler will do a CCCV 
             charge with the requested voltage.
             
-        -------
+
         Returns
-        -------
+        --------------------------
         success : bool
             True of False based on whether the values were set or not.
         """
@@ -468,11 +469,14 @@ class MaccorInterface:
     def __send_rest_cmd_msg( self, msg_outging_dict) -> bool:
         """
         Commands rest step using caveman MacNet UDP/TCP method.
-        ----------
+        --------------------------
+        Parameters
+        --------------------------
         msg_outgoing_dict : dict
             A dictionary containing the message to be sent.
+        --------------------------
         Returns
-        -------
+        --------------------------
         success : bool
             True of False based on whether or not rest was set
         """

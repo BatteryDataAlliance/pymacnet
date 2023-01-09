@@ -18,5 +18,5 @@ status_dictionary = {
     16: 'Rem Maint'
 }
 '''
-Dictionary to decode the "result" field returned by the channel status message
+Dictionary to decode the "result" field returned by the channel status messages.
 '''

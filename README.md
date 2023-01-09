@@ -2,6 +2,18 @@
 
 PyMacNet provides a channel level interface for communication and control of Maccor cyclers via MacNet.
 
+TODO: What is Macnet?
+
+TODO: Make a usage example in Jply Notebook 
+
+Emebedded video 
+
+```
+start_test()
+
+read_status()
+```
+
 ## Running
 
 The `MaccorInterface` class requires a configuration dictionary on initiaiton at construction where the fields are as follows:
@@ -57,3 +69,9 @@ To see as HTML:
 ```
 coverage html
 ```
+
+## Platform support.
+
+## License?
+
+## Contirbution guidleine 
