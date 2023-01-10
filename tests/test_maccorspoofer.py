@@ -74,7 +74,6 @@ def test_update_status():
 
     tx_msg = copy.deepcopy(pymacnet.messages.tx_read_status_msg)
     ans_key = copy.deepcopy(pymacnet.messages.rx_read_status_msg)
-
     tx_msg['params']['Chan'] = CHANNEL
     ans_key['result']['Chan'] = CHANNEL
 
@@ -82,10 +81,26 @@ def test_update_status():
     rx_msg = __send_recv_msg( s, tx_msg)
     assert(rx_msg == ans_key)
 
-    # Try updating voltage
+    # Try updating voltage and test time.
     updated_voltage = 4.20
+    updated_test_time = 7.69
     ans_key['result']['Voltage'] = updated_voltage
-    assert(spoofer_server.update_channel_status( CHANNEL, {'Voltage':updated_voltage}))
+    ans_key['result']['TestTime'] = updated_test_time
+    assert(spoofer_server.update_channel_status( CHANNEL, {'Voltage':updated_voltage,'TestTime':updated_test_time}))
+    rx_msg = __send_recv_msg( s, tx_msg)
+    assert(rx_msg == ans_key)
+
+    # Try to apply status update with invalid key
+    assert(not spoofer_server.update_channel_status( CHANNEL, {'Voltage':2.1,'Fake_Key':updated_test_time}))
+    # Make sure values were not updated
+    rx_msg = __send_recv_msg( s, tx_msg)
+    assert(rx_msg == ans_key)
+
+    # Make updating only changed values for the specified channel
+    ans_key = copy.deepcopy(pymacnet.messages.rx_read_status_msg)
+    tx_msg = copy.deepcopy(pymacnet.messages.tx_read_status_msg)
+    tx_msg['params']['Chan'] = CHANNEL+1
+    ans_key['result']['Chan'] = CHANNEL +1
     rx_msg = __send_recv_msg( s, tx_msg)
     assert(rx_msg == ans_key)
 

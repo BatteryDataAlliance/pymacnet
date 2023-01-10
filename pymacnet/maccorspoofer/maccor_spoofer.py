@@ -40,7 +40,6 @@ class ChannelData:
         status : dict
             The status message for the requested channel. Empty if channel larger than number of channel
         '''
-
         if channel > self.num_channels:
             return {}
         else:
@@ -63,14 +62,14 @@ class ChannelData:
 
         if channel > self.num_channels:
             return False
-
-        for key in updated_status.keys():
-            if key not in pymacnet.messages.rx_read_status_msg['result'].keys():
-                return False
-            
-        with self.__chan_status_lock:
+        else:
             for key in updated_status.keys():
-                self.__chan_status_list[channel]['result'][key] = updated_status[key]
+                if key not in pymacnet.messages.rx_read_status_msg['result'].keys():
+                    return False
+                
+            with self.__chan_status_lock:
+                for key in updated_status.keys():
+                    self.__chan_status_list[channel]['result'][key] = updated_status[key]
 
         return True
 
