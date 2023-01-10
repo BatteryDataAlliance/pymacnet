@@ -32,20 +32,16 @@ import threading
 import pymacnet.messages
 
 class MaccorSpoofer:
-    &#34;&#34;&#34;
-    Class to mimic behavior of Maccor cycler MacNet control server. The class is currently dumb 
-    and just sends back basic response messages without any notion of channel status or readings. 
-    It could be expanded in future. 
-    &#34;&#34;&#34;
-    
+
     __client_connect_timeout_s = 1
     __stop_servers_lock = threading.Lock()
     __stop_servers = False
 
     def __init__(self, config: dict):
         &#34;&#34;&#34;
-        Creates an instance of the class, but does not start the servers. The `start()` method
-        must be called to start the servers and ready them for communication.
+        Class to mimic behavior of Maccor cycler MacNet control server. The class is currently dumb 
+        and just sends back basic response messages without any notion of channel status or readings. 
+        It could be expanded in future. 
         -------
         Parameters
         ----------
@@ -63,17 +59,17 @@ class MaccorSpoofer:
 
         json_server_config = {&#39;ip&#39;:config[&#39;server_ip&#39;],&#39;port&#39;:config[&#39;json_port&#39;]}
         self.__json_server_thread = threading.Thread( target=self.__server_loop, 
-                                                        args=( json_server_config, __JsonWorker,), 
+                                                        args=( json_server_config, _JsonWorker,), 
                                                         daemon=True)
 
         tcp_server_config = {&#39;ip&#39;:config[&#39;server_ip&#39;],&#39;port&#39;:config[&#39;tcp_port&#39;]}
         self.__tcp_server_thread = threading.Thread( target=self.__server_loop,
-                                                         args=( tcp_server_config, __TcpWorker,), 
+                                                         args=( tcp_server_config, _TcpWorker,), 
                                                         daemon=True)
 
     def start(self):
         &#34;&#34;&#34;
-        Starts the server loops
+        Starts the server loops.
         &#34;&#34;&#34;
         self.__json_server_thread.start()       
         self.__tcp_server_thread.start()
@@ -84,7 +80,7 @@ class MaccorSpoofer:
         ----------
         sock_cofig : dict
             A configuration for the socket containing the IP and port number.
-        Worker : __SocketWorker
+        Worker : _SocketWorker
             A reference to the worker class that will service individual client connections.
         &#34;&#34;&#34;       
         # List that will hold all the workers to service client connections.
@@ -113,7 +109,7 @@ class MaccorSpoofer:
 
     def stop(self):
         &#34;&#34;&#34;
-        Stop the server loops
+        Stop the server loops.
         &#34;&#34;&#34;
         with self.__stop_servers_lock:
             self.__stop_servers = True
@@ -123,7 +119,7 @@ class MaccorSpoofer:
     def __del__(self):
         self.stop()
 
-class __SocketWorker:
+class _SocketWorker:
     &#39;&#39;&#39;
     Generic worker class that will respond to client socket requests. 
     Default setup as an echo server. Child classes should overwrite the 
@@ -201,7 +197,7 @@ class __SocketWorker:
                 self.__stop = True
             self.__client_thread.join()
 
-class __JsonWorker(__SocketWorker):
+class _JsonWorker(_SocketWorker):
     &#39;&#39;&#39;
     Class to handle requests from MacNet JSON socket clients.
     &#39;&#39;&#39;
@@ -265,7 +261,7 @@ class __JsonWorker(__SocketWorker):
 
         return tx_msg
 
-class __TcpWorker(__SocketWorker):
+class _TcpWorker(_SocketWorker):
     &#39;&#39;&#39;
     Class to handle requests from TCP socket clients.
     Currently just implemented as an echo server.
@@ -290,8 +286,6 @@ class __TcpWorker(__SocketWorker):
 <div class="desc"><p>Class to mimic behavior of Maccor cycler MacNet control server. The class is currently dumb
 and just sends back basic response messages without any notion of channel status or readings.
 It could be expanded in future. </p>
-<p>Creates an instance of the class, but does not start the servers. The <code>start()</code> method
-must be called to start the servers and ready them for communication.</p>
 <hr>
 <h2 id="parameters">Parameters</h2>
 <dl>
@@ -309,20 +303,16 @@ fields to include are as follows:</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class MaccorSpoofer:
-    &#34;&#34;&#34;
-    Class to mimic behavior of Maccor cycler MacNet control server. The class is currently dumb 
-    and just sends back basic response messages without any notion of channel status or readings. 
-    It could be expanded in future. 
-    &#34;&#34;&#34;
-    
+
     __client_connect_timeout_s = 1
     __stop_servers_lock = threading.Lock()
     __stop_servers = False
 
     def __init__(self, config: dict):
         &#34;&#34;&#34;
-        Creates an instance of the class, but does not start the servers. The `start()` method
-        must be called to start the servers and ready them for communication.
+        Class to mimic behavior of Maccor cycler MacNet control server. The class is currently dumb 
+        and just sends back basic response messages without any notion of channel status or readings. 
+        It could be expanded in future. 
         -------
         Parameters
         ----------
@@ -340,17 +330,17 @@ fields to include are as follows:</p>
 
         json_server_config = {&#39;ip&#39;:config[&#39;server_ip&#39;],&#39;port&#39;:config[&#39;json_port&#39;]}
         self.__json_server_thread = threading.Thread( target=self.__server_loop, 
-                                                        args=( json_server_config, __JsonWorker,), 
+                                                        args=( json_server_config, _JsonWorker,), 
                                                         daemon=True)
 
         tcp_server_config = {&#39;ip&#39;:config[&#39;server_ip&#39;],&#39;port&#39;:config[&#39;tcp_port&#39;]}
         self.__tcp_server_thread = threading.Thread( target=self.__server_loop,
-                                                         args=( tcp_server_config, __TcpWorker,), 
+                                                         args=( tcp_server_config, _TcpWorker,), 
                                                         daemon=True)
 
     def start(self):
         &#34;&#34;&#34;
-        Starts the server loops
+        Starts the server loops.
         &#34;&#34;&#34;
         self.__json_server_thread.start()       
         self.__tcp_server_thread.start()
@@ -361,7 +351,7 @@ fields to include are as follows:</p>
         ----------
         sock_cofig : dict
             A configuration for the socket containing the IP and port number.
-        Worker : __SocketWorker
+        Worker : _SocketWorker
             A reference to the worker class that will service individual client connections.
         &#34;&#34;&#34;       
         # List that will hold all the workers to service client connections.
@@ -390,7 +380,7 @@ fields to include are as follows:</p>
 
     def stop(self):
         &#34;&#34;&#34;
-        Stop the server loops
+        Stop the server loops.
         &#34;&#34;&#34;
         with self.__stop_servers_lock:
             self.__stop_servers = True
@@ -406,14 +396,14 @@ fields to include are as follows:</p>
 <span>def <span class="ident">start</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Starts the server loops</p></div>
+<div class="desc"><p>Starts the server loops.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def start(self):
     &#34;&#34;&#34;
-    Starts the server loops
+    Starts the server loops.
     &#34;&#34;&#34;
     self.__json_server_thread.start()       
     self.__tcp_server_thread.start()</code></pre>
@@ -423,14 +413,14 @@ fields to include are as follows:</p>
 <span>def <span class="ident">stop</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Stop the server loops</p></div>
+<div class="desc"><p>Stop the server loops.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def stop(self):
     &#34;&#34;&#34;
-    Stop the server loops
+    Stop the server loops.
     &#34;&#34;&#34;
     with self.__stop_servers_lock:
         self.__stop_servers = True

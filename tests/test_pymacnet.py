@@ -1,9 +1,10 @@
+import copy
 import pymacnet
 import pymacnet.maccorspoofer
 import pymacnet.messages
 
 # Create Maccor Spoofer server
-MACCOR_SPOOFER_CONFIG = { "server_ip": "127.0.0.1", "json_port": 5555, "tcp_port": 5556 }
+MACCOR_SPOOFER_CONFIG = { "server_ip": "127.0.0.1", "json_port": 5555, "tcp_port": 5556, "num_channels":128 }
 
 # Create the interface we will use for testing.
 MACCORINTERFACE_CONFIG = { 
@@ -39,15 +40,15 @@ def test_messages_basic():
     
     # Read Status
     response = maccor_interfrace.read_status()
-    key = pymacnet.messages.rx_read_status_msg
-    key['result']['Chan'] = MACCORINTERFACE_CONFIG['channel']
-    assert(response == key['result'])
+    ans_key = copy.deepcopy(pymacnet.messages.rx_read_status_msg)
+    ans_key['result']['Chan'] = MACCORINTERFACE_CONFIG['channel']
+    assert(response == ans_key['result'])
 
     # Read Aux
     response = maccor_interfrace.read_aux()
-    key = pymacnet.messages.rx_read_aux_msg
-    key['result']['Chan'] = MACCORINTERFACE_CONFIG['channel']
-    assert(response == key['result']['AuxValues'])
+    ans_key = copy.deepcopy(pymacnet.messages.rx_read_aux_msg)
+    ans_key['result']['Chan'] = MACCORINTERFACE_CONFIG['channel']
+    assert(response == ans_key['result']['AuxValues'])
 
     # Read reset channel message
     response = maccor_interfrace.reset_channel()

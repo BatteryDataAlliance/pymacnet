@@ -26,12 +26,12 @@ rx_read_status_msg = {
         'LastRecNum': 4225,
         'Cycle': 0,
         'Step': 5,
-        'TestTime': 212.199996948242,
-        'StepTime': 209.889999389648,
+        'TestTime': 2.00,
+        'StepTime': 1.00,
         'Capacity': 0,
         'Energy': 0,
         'Current': 0,
-        'Voltage': 3.85938811302185,
+        'Voltage': 3.85,
         'TesterTime':'2022-10-13T12:32:56'
     },
     'id': 1987

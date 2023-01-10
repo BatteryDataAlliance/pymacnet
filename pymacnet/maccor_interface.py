@@ -2,6 +2,7 @@ import socket
 import logging
 import json
 import struct
+import copy
 import pymacnet.messages
 from datetime import datetime
 
@@ -171,7 +172,7 @@ class MaccorInterface:
             A dictionary detailing the status of the channel. Returns None if there is an issue.
         """
 
-        msg_outging_dict = pymacnet.messages.tx_read_status_msg.copy()
+        msg_outging_dict = copy.deepcopy(pymacnet.messages.tx_read_status_msg)
         msg_outging_dict['params']['Chan'] = self.channel
 
         status = self.__send_receive_msg(msg_outging_dict)
@@ -192,7 +193,7 @@ class MaccorInterface:
             A list of the auxiliary readings.
         """
 
-        msg_outging_dict = pymacnet.messages.tx_read_aux_msg.copy()
+        msg_outging_dict = copy.deepcopy(pymacnet.messages.tx_read_aux_msg)
         msg_outging_dict['params']['Chan'] = self.channel
 
         aux_readings = self.__send_receive_msg(msg_outging_dict)
@@ -211,7 +212,7 @@ class MaccorInterface:
         success : bool
             True of False based on whether the test was started or not.
         """
-        msg_outging_dict = pymacnet.messages.tx_reset_channel_msg.copy()
+        msg_outging_dict = copy.deepcopy(pymacnet.messages.tx_reset_channel_msg)
         msg_outging_dict['params']['Chan'] = self.channel
 
         reply = self.__send_receive_msg(msg_outging_dict)
@@ -236,7 +237,7 @@ class MaccorInterface:
         success : bool
             Returns True/False based on whether the safety limits were set correctly.
         """
-        msg_outging_dict = pymacnet.messages.tx_set_safety_limits_msg.copy()
+        msg_outging_dict = copy.deepcopy(pymacnet.messages.tx_set_safety_limits_msg)
         msg_outging_dict['params']['Chan'] = self.channel
         msg_outging_dict['params']['VSafeMax'] = self.config['v_max_safety_limit_v']
         msg_outging_dict['params']['VSafeMin'] = self.config['v_min_safety_limit_v']
@@ -276,7 +277,7 @@ class MaccorInterface:
         success : bool
             True of False based on whether or not the variable value was set.
         """
-        msg_outging_dict = pymacnet.messages.tx_set_variable_msg.copy()
+        msg_outging_dict = copy.deepcopy(pymacnet.messages.tx_set_variable_msg)
         msg_outging_dict['params']['Chan'] = self.channel
         msg_outging_dict['params']['VarNum'] = var_num
         msg_outging_dict['params']['Value'] = var_value
@@ -306,7 +307,7 @@ class MaccorInterface:
         success : bool
             True of False based on whether the test was started or not
         """
-        msg_outging_dict = pymacnet.messages.tx_start_test_with_procedure_msg.copy()
+        msg_outging_dict = copy.deepcopy(pymacnet.messages.tx_start_test_with_procedure_msg)
         msg_outging_dict['params']['Chan'] = self.channel
         msg_outging_dict['params']['ProcName'] = self.config['test_procedure']
         msg_outging_dict['params']['Crate'] = self.config['c_rate_ah']
@@ -354,7 +355,7 @@ class MaccorInterface:
             True of False based on whether the test was started or not.
         """
 
-        msg_outging_dict = pymacnet.messages.tx_start_test_with_direct_control_msg.copy()
+        msg_outging_dict = copy.deepcopy(pymacnet.messages.tx_start_test_with_direct_control_msg)
         msg_outging_dict['params']['Chan'] = self.channel
         msg_outging_dict['params']['DataTime'] = self.config['data_record_time_s']
         msg_outging_dict['params']['DataV'] = self.config['data_record_voltage_delta_vbys']
@@ -443,7 +444,7 @@ class MaccorInterface:
         else:
             current_range = 4
 
-        msg_outging_dict = pymacnet.messages.tx_set_direct_output_msg.copy()
+        msg_outging_dict = copy.deepcopy(pymacnet.messages.tx_set_direct_output_msg)
         msg_outging_dict['params']['Chan'] = self.channel
         msg_outging_dict['params']['Current'] = set_current_a
         msg_outging_dict['params']['Voltage'] = set_voltage_v

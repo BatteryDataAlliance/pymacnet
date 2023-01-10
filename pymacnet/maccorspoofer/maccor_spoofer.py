@@ -1,7 +1,78 @@
 import socket
 import json
 import threading
+import copy
 import pymacnet.messages
+
+class ChannelData:
+
+    __chan_status_list = []
+    __chan_status_lock = threading.Lock()
+
+    def __init__(self, num_channels):
+        '''
+        Container class that will hold all of the specific channel data for MaccorSpoofer.
+        ----------
+        Parameters
+        ----------
+            num_channels : int
+                Number of channels in our hypothetical Maccor cycler.
+        '''
+        self.num_channels = num_channels
+
+        # Create status entries for all of the channels.
+        for i in range(0,self.num_channels):
+            channel_status = copy.deepcopy(pymacnet.messages.rx_read_status_msg)
+            channel_status['result']['Chan'] = i
+            with self.__chan_status_lock:
+                self.__chan_status_list.append(copy.deepcopy(channel_status))
+
+    def fetch_channel_status ( self, channel):
+        '''
+        Returns the status message for a specified channel
+        ----------
+        Parameters
+        ----------
+        channel : int
+            The channel to return the status for.
+        Returns
+        -------
+        status : dict
+            The status message for the requested channel. Empty if channel larger than number of channel
+        '''
+
+        if channel > self.num_channels:
+            return {}
+        else:
+            with self.__chan_status_lock:
+                return copy.deepcopy(self.__chan_status_list[channel])
+
+    def update_channel_status( self, channel, updated_status):
+        """
+        Updates the stored channel status for the specified channel.
+        ----------
+        channel : int
+            The channel to update the status for.
+        updated_status : dict
+            Complete or partial dictionary of status values to update.
+        Returns
+        -------
+        success : bool
+            Returns True if all values in the updated_status were used to update the channel_status_array.
+        """
+
+        if channel > self.num_channels:
+            return False
+
+        for key in updated_status.keys():
+            if key not in pymacnet.messages.rx_read_status_msg['result'].keys():
+                return False
+            
+        with self.__chan_status_lock:
+            for key in updated_status.keys():
+                self.__chan_status_list[channel]['result'][key] = updated_status[key]
+
+        return True
 
 class MaccorSpoofer:
 
@@ -14,7 +85,7 @@ class MaccorSpoofer:
         Class to mimic behavior of Maccor cycler MacNet control server. The class is currently dumb 
         and just sends back basic response messages without any notion of channel status or readings. 
         It could be expanded in future. 
-        -------
+        ----------
         Parameters
         ----------
         config : dict
@@ -26,8 +97,11 @@ class MaccorSpoofer:
             `json_port`: The port to use for the JSON server.
 
             `tcp_port`: the port to use for the TCP server.
+
+            `num_channels`: The number of channel our fictional cycler has.
         """
-        self.config = config
+
+        self.__channel_data = ChannelData(config['num_channels'])
 
         json_server_config = {'ip':config['server_ip'],'port':config['json_port']}
         self.__json_server_thread = threading.Thread( target=self.__server_loop, 
@@ -45,6 +119,21 @@ class MaccorSpoofer:
         """
         self.__json_server_thread.start()       
         self.__tcp_server_thread.start()
+
+    def update_channel_status( self, channel, updated_status):
+        """
+        Updates the stored channel status for the specified channel.
+        ----------
+        channel : int
+            The channel to update the status for.
+        updated_status : dict
+            Complete or partial dictionary of status values to update.
+        Returns
+        -------
+        success : bool
+            Returns True if all values in the updated_status were used to update the channel_status_array.
+        """
+        return self.__channel_data.update_channel_status( channel, updated_status)
 
     def __server_loop( self, sock_config : dict, Worker):  
         """
@@ -66,8 +155,8 @@ class MaccorSpoofer:
         
         while True:
             try: 
-                client_connection, client_address = sock.accept()
-                client_workers.append(Worker(client_connection))
+                client_connection = sock.accept()[0]
+                client_workers.append(Worker(client_connection, self.__channel_data))
             except socket.timeout:
                 with self.__stop_servers_lock:
                     # If stop commmand is issued then kill all workers.
@@ -170,11 +259,22 @@ class _SocketWorker:
             self.__client_thread.join()
 
 class _JsonWorker(_SocketWorker):
-    '''
-    Class to handle requests from MacNet JSON socket clients.
-    '''
 
-    def _process_client_msg(self, rx_msg):
+    def __init__(self, s: socket.socket, channel_data: ChannelData):
+        '''
+        Class to handle requests from MacNet JSON socket clients.
+        ----------
+        s : socket.socket
+            Socket to communicate with.
+        channel_data : ChannelData
+            Container class of channel data
+        '''
+
+        # These must be created before calling ().__init__(s). Otherwise access can be attempted before they exist.
+        self.__channel_data = channel_data
+        super().__init__(s)
+
+    def _process_client_msg( self, rx_msg):
         """
         Takes the incoming JSON client message and generates a response. 
         ----------
@@ -187,10 +287,13 @@ class _JsonWorker(_SocketWorker):
         """
 
         rx_msg = json.loads(rx_msg)
+        if rx_msg['params']['Chan'] > self.__channel_data.num_channels:
+            # TODO: Should respond with some sort of error message if request is out of range
+            pass
+
         if (pymacnet.messages.tx_read_status_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
                 pymacnet.messages.tx_read_status_msg['params']['FNum'] == rx_msg['params']['FNum']):
-            tx_msg = pymacnet.messages.rx_read_status_msg
-            tx_msg['result']['Chan'] = rx_msg['params']['Chan']
+            tx_msg = copy.deepcopy(self.__channel_data.fetch_channel_status(rx_msg['params']['Chan']))
         elif (pymacnet.messages.tx_read_aux_msg['params']['FClass'] == rx_msg['params']['FClass'] and 
                 pymacnet.messages.tx_read_aux_msg['params']['FNum'] == rx_msg['params']['FNum']):
             tx_msg = pymacnet.messages.rx_read_aux_msg
@@ -234,8 +337,17 @@ class _JsonWorker(_SocketWorker):
         return tx_msg
 
 class _TcpWorker(_SocketWorker):
-    '''
-    Class to handle requests from TCP socket clients.
-    Currently just implemented as an echo server.
-    '''
-    pass
+
+    def __init__(self, s: socket.socket, channel_data: ChannelData):
+        '''
+        Class to handle requests from MacNet TCP socket clients. Currently just echos back client
+        message. Should be expanded in future.
+        ----------
+        s : socket.socket
+            Socket to communicate with.
+        channel_data : ChannelData
+            Container class of channel data
+        '''
+        
+        self.__channel_data = channel_data
+        super().__init__(s)
