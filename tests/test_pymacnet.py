@@ -32,54 +32,54 @@ def test_messages_basic():
     '''
 
     maccor_spoofer = pymacnet.maccorspoofer.MaccorSpoofer(MACCOR_SPOOFER_CONFIG)
-    maccor_interfrace = pymacnet.MaccorInterface(MACCORINTERFACE_CONFIG)
+    maccor_interface = pymacnet.MaccorInterface(MACCORINTERFACE_CONFIG)
 
     maccor_spoofer.start()
-    start_success = maccor_interfrace.start()
+    start_success = maccor_interface.start()
     assert(start_success)
     
     # Read Status
-    response = maccor_interfrace.read_status()
+    response = maccor_interface.read_status()
     ans_key = copy.deepcopy(pymacnet.messages.rx_read_status_msg)
     ans_key['result']['Chan'] = MACCORINTERFACE_CONFIG['channel']
     assert(response == ans_key['result'])
 
     # Read Aux
-    response = maccor_interfrace.read_aux()
+    response = maccor_interface.read_aux()
     ans_key = copy.deepcopy(pymacnet.messages.rx_read_aux_msg)
     ans_key['result']['Chan'] = MACCORINTERFACE_CONFIG['channel']
     assert(response == ans_key['result']['AuxValues'])
 
     # Read reset channel message
-    response = maccor_interfrace.reset_channel()
+    response = maccor_interface.reset_channel()
     assert(response)
 
     # Set channel variable
-    response = maccor_interfrace.set_channel_variable()
+    response = maccor_interface.set_channel_variable()
     assert(response)
 
     # Start test with procedure
-    response = maccor_interfrace.start_test_with_procedure()
+    response = maccor_interface.start_test_with_procedure()
     assert(response)
 
     # Start test with direct control
-    response = maccor_interfrace.start_test_with_direct_control()
+    response = maccor_interface.start_test_with_direct_control()
     assert(response)
 
     # Set direct control output. Rest
-    response = maccor_interfrace.set_direct_mode_output( current_a = 0, voltage_v = 4.2)
+    response = maccor_interface.set_direct_mode_output( current_a = 0, voltage_v = 4.2)
     assert(response)
 
     # Set direct control output. Charge CCCV
-    response = maccor_interfrace.set_direct_mode_output( current_a = 0.5, voltage_v = 4.2)
+    response = maccor_interface.set_direct_mode_output( current_a = 0.5, voltage_v = 4.2)
     assert(response)
 
     # Set direct control output. Charge CC
-    response = maccor_interfrace.set_direct_mode_output( current_a = 0.5)
+    response = maccor_interface.set_direct_mode_output( current_a = 0.5)
     assert(response)
 
     # Set direct control output. Discharge
-    response = maccor_interfrace.set_direct_mode_output( current_a = -2.0)
+    response = maccor_interface.set_direct_mode_output( current_a = -2.0)
     assert(response)
 
     maccor_spoofer.stop()
@@ -88,8 +88,8 @@ def test_no_server():
     '''
     Try to start MaccorInterface without a server running.
     '''
-    maccor_interfrace = pymacnet.MaccorInterface(MACCORINTERFACE_CONFIG)
-    start_success = maccor_interfrace.start()
+    maccor_interface = pymacnet.MaccorInterface(MACCORINTERFACE_CONFIG)
+    start_success = maccor_interface.start()
     assert(not start_success)
 
 def test_bad_config():
@@ -99,10 +99,10 @@ def test_bad_config():
     
     bad_config = {'channel':1}
     maccor_spoofer = pymacnet.maccorspoofer.MaccorSpoofer(MACCOR_SPOOFER_CONFIG)
-    maccor_interfrace = pymacnet.MaccorInterface(bad_config)
+    maccor_interface = pymacnet.MaccorInterface(bad_config)
 
     maccor_spoofer.start()
-    start_success = maccor_interfrace.start()
+    start_success = maccor_interface.start()
     assert(not start_success)
 
 def test_illegal_sends():
@@ -110,28 +110,28 @@ def test_illegal_sends():
     Try to send messages without existing server connections.
     '''
     
-    maccor_interfrace = pymacnet.MaccorInterface(MACCORINTERFACE_CONFIG)
+    maccor_interface = pymacnet.MaccorInterface(MACCORINTERFACE_CONFIG)
 
-    response = maccor_interfrace.read_status()
+    response = maccor_interface.read_status()
     assert(not response)
 
-    response = maccor_interfrace.read_aux()
+    response = maccor_interface.read_aux()
     assert(not response)
 
-    response = maccor_interfrace.reset_channel()
+    response = maccor_interface.reset_channel()
     assert(not response)
 
-    response = maccor_interfrace.set_channel_variable()
+    response = maccor_interface.set_channel_variable()
     assert(not response)
 
-    response = maccor_interfrace.start_test_with_procedure()
+    response = maccor_interface.start_test_with_procedure()
     assert(not response)
 
-    response = maccor_interfrace.start_test_with_direct_control()
+    response = maccor_interface.start_test_with_direct_control()
     assert(not response)
 
-    response = maccor_interfrace.set_direct_mode_output( current_a = 0.5, voltage_v = 4.2)
+    response = maccor_interface.set_direct_mode_output( current_a = 0.5, voltage_v = 4.2)
     assert(not response)
 
-    response = maccor_interfrace.set_direct_mode_output( current_a = 0)
+    response = maccor_interface.set_direct_mode_output( current_a = 0)
     assert(not response)
