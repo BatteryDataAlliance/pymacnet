@@ -59,11 +59,11 @@ def test_messages_basic():
     assert(response)
 
     # Start test with procedure
-    response = maccor_interfrace.start_test_with_procedure
+    response = maccor_interfrace.start_test_with_procedure()
     assert(response)
 
     # Start test with direct control
-    response = maccor_interfrace.start_test_with_direct_control
+    response = maccor_interfrace.start_test_with_direct_control()
     assert(response)
 
     # Set direct control output. Rest
