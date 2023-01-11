@@ -79,7 +79,7 @@ class MaccorInterface:
 
         for key in required_config_keys:
             if key not in self.config: 
-                log.error("Missing key from confgi! Missing : " + key)
+                log.error("Missing key from config! Missing : " + key)
                 return False
         return True
 
