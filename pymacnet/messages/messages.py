@@ -321,7 +321,7 @@ rx_read_aux_msg = {
         'FNum': 4, 
         'Chan': -1, 
         'Len': 1, 
-        'AuxValues': [24.7545490264893]
+        'AuxValues': [24.75]
     }, 
     'id': 1987
 }
