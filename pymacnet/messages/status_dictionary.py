@@ -1,4 +1,4 @@
-stat_dict = {
+status_dictionary = {
     0: 'Available',
     1: 'Selected',
     2: 'Active',
@@ -18,5 +18,5 @@ stat_dict = {
     16: 'Rem Maint'
 }
 '''
-Dictionary to decode the "result" field returned by the channel status message
+Dictionary to decode the "result" field returned by the channel status messages.
 '''

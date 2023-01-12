@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>pymacnet.messages.messages API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>pymacnet.messages.messages</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">tx_read_status_msg = {
+    &#39;jsonrpc&#39;: &#39;2.0&#39;, 
+    &#39;method&#39;: &#39;MacNet&#39;, 
+    &#39;params&#39;:
+    {
+        &#39;FClass&#39;: 4, 
+        &#39;FNum&#39;: 7,
+        &#39;Chan&#39;: -1
+    },
+    &#39;id&#39;: 1987 
+}
+&#39;&#39;&#39;
+Gets the status and readings of one channel. The status and readings of `Chan` channel will be returned.
+&#39;&#39;&#39;
+
+rx_read_status_msg = {
+    &#39;jsonrpc&#39;: &#39;2.0&#39;,
+    &#39;result&#39;: 
+    {
+        &#39;FClass&#39;: 4,
+        &#39;FNum&#39;: 7,
+        &#39;Chan&#39;: -1,
+        &#39;RF1&#39;: 0,
+        &#39;RF2&#39;: 192,
+        &#39;Stat&#39;: 0,
+        &#39;LastRecNum&#39;: 4225,
+        &#39;Cycle&#39;: 0,
+        &#39;Step&#39;: 5,
+        &#39;TestTime&#39;: 212.199996948242,
+        &#39;StepTime&#39;: 209.889999389648,
+        &#39;Capacity&#39;: 0,
+        &#39;Energy&#39;: 0,
+        &#39;Current&#39;: 0,
+        &#39;Voltage&#39;: 3.85938811302185,
+        &#39;TesterTime&#39;:&#39;2022-10-13T12:32:56&#39;
+    },
+    &#39;id&#39;: 1987
+}
+&#39;&#39;&#39;
+All status and readings from channel `Chan`.
+&#39;&#39;&#39;
+
+tx_start_test_with_procedure_msg = {
+    &#34;jsonrpc&#34;: &#34;2.0&#34;,
+    &#34;method&#34;: &#34;MacNet&#34;, 
+    &#34;params&#34;:
+    {
+        &#34;FClass&#34;: 6,
+        &#34;FNum&#34;: 2,
+        &#34;Chan&#34;: -1,
+        &#34;TestName&#34;: &#34;Random&#34;, 
+        &#34;ProcName&#34;: &#34;Procedure Name&#34;, 
+        &#34;Comment&#34;: &#34;Test comment&#34;, 
+        &#34;Crate&#34;: 1,
+        &#34;ChamberNum&#34;: 0, 
+        &#34;StartCycle&#34;: 0, 
+        &#34;TotCycles&#34;: 0, 
+        &#34;Mass&#34;: 1, 
+        &#34;VGain&#34;: 0, 
+        &#34;AbsTRepAlign&#34;: 0, 
+        &#34;ParallelR&#34;: 0, 
+        &#34;VDivHiR&#34;: 0, 
+        &#34;VDivLoR&#34;: 0, 
+        &#34;CANpos&#34;: -1, 
+        &#34;CANprof&#34;: &#34;&#34;, 
+        &#34;RegimeName&#34;: &#34;&#34;
+    },
+    &#34;id&#34;: 1987
+}
+&#34;&#34;&#34;
+Start test with direct control
+
+Selects the test channel to be started. The test name and procedure name can be up to 250 characters long.
+Also, do not select the channel in advance of starting the test. The JSON Start test command will both select and 
+start the channel. If, however, multiple channels should be started with the same test, do first select the channels,
+then start the test using 65535, meaning &#34;all selected&#34;.
+
+Paramters as follows:
+
+`TestName` Up to 25 ascii characters for the data file name. “Random” will generate a pseudo-random name. 
+The field is fixed in length, so remaining characters should be space characters.
+
+`ProcName` Up to 25 ascii characters for the test procedure name. The test procedure must exist in the 
+C:\\Maccor\\Procedur folder and the “.000” should not be part of the name. The field is fixed in length, 
+so remaining characters should be space characters.
+
+`Comment` Up to 80 characters for the test comment. The field is fixed in length, 
+so remaining characters should be space characters.
+
+`Crate` C-rate. If C-rate is not used, enter 1.
+
+`ChamberNum` Environmental chamber number. If the environmental chamber is not used, enter 0.
+
+`StartCycle` Default: 0; See Start Test Setup for further details
+
+`TotCycles` Default: 0; See Start Test Setup for further details
+
+`Mass` Default: 1; See Start Test Setup for further details
+
+`VGain` Default: 0; Used to change the gain of the constant voltage feedback loop. Only use it after consulting Customer Service.
+0: Gain x1 1: Gain x2 2: Gain x4 3: Gain x8 4: Gain /1 5: Gain /2 6: Gain /4 7: Gain /8
+
+`AbsTRepAlign` Default: 0; 1: Use absolute time report alignment. See Start Test Setup for further details
+
+`ParallelR` See Start Test Setup for further details
+
+`VDivHiR` See Start Test Setup for further details
+
+`VDivLoR` See Start Test Setup for further details
+&#34;&#34;&#34;
+
+rx_start_test_with_procedure_msg = {
+    &#39;jsonrpc&#39;: &#39;2.0&#39;, 
+    &#39;result&#39;: 
+    {
+        &#39;FClass&#39;: 6, 
+        &#39;FNum&#39;: 2, 
+        &#39;Chan&#39;: -1, 
+        &#39;Result&#39;: &#39;OK&#39;
+    }, 
+    &#39;id&#39;: 1987
+}
+&#39;&#39;&#39;
+Response for starting test with procedure.
+&#39;&#39;&#39;
+
+tx_start_test_with_direct_control_msg = {
+    &#34;jsonrpc&#34;: &#34;2.0&#34;, 
+    &#34;method&#34;: &#34;MacNet&#34;, 
+    &#34;params&#34;:
+    {
+        &#34;FClass&#34;: 6,
+        &#34;FNum&#34;: 7,
+        &#34;Chan&#34;: -1,
+        &#34;TestName&#34;: &#34;Random&#34;, 
+        &#34;Current&#34;: 0.0,
+        &#34;Voltage&#34;: 5.0, 
+        &#34;Power&#34;: 50, 
+        &#34;Resistance&#34;: 0, 
+        &#34;CurrentRange&#34;: 1, 
+        &#34;ChMode&#34;: &#39;D&#39;, 
+        &#34;DataTime&#34;: 1.0, 
+        &#34;DataV&#34;: 0, 
+        &#34;DataI&#34;: 0
+    },
+    &#34;id&#34;: 1987 
+}
+&#39;&#39;&#39;
+Start direct mode test.
+
+Start direct mode. Initializes direct remote control of the test channel with the 
+following data in the “Data” area. The channel will output this current, voltage 
+and power - mutually limiting as standard - until the values are changed with the 
+“(6, 8) Set direct output” command described below or stopped.
+
+A watchdog timer can be activated in the Misc_Options section of the System.ini file. Setting the 
+MacNetDirectModeWD to a value higher than 0 will cause a channel under direct mode to suspend if it 
+has not been updated within the specified number of seconds.
+
+Parameters are as follows:
+
+`testName` Up to 25 ascii characters for the data file name. “Random” (Case sensitive) will 
+generate a pseudo-random name. The field is fixed in length, so remaining characters should be space characters.
+
+`Current` Amps. Mutually limiting. Set outside range to ignore. 0 is within range. 
+Must be active to function in (6, 8) Set direct mode output.
+
+`Voltage` Voltage. Mutually limiting. Set outside range to ignore. 0 is within range. 
+Must be active to function in (6, 8) Set direct mode output.
+
+`Power` Watts. Mutually limiting. Set outside range to ignore. 0 is within range. 
+Must be active to function in (6, 8) Set direct mode output.
+
+`Resistance`  Ohms. Mutually limiting. Set to 0 to ignore. 
+Must be active to function in (6, 8) Set direct mode output.
+
+`CurrentRange` The desired current range: 1, 2, 3, 4
+
+`ChMode` Charge mode. 67 i.e. &#39;C&#39; for charge, 68 i.e. &#39;D&#39; for discharge and 82 i.e. &#39;R&#39; for rest
+
+`DataTime` Data record time. Time increment between data records in the data file. Enter 0 for no data.
+Data record voltage
+
+`DataV` `Voltage increment to generate a data record in the data file. Enter 0 to disable.
+Data record current
+
+`DataI` Current increment to generate a data record in the data file. Enter 0 to disable.
+&#39;&#39;&#39;
+
+rx_start_test_with_direct_control_msg = {
+    &#39;jsonrpc&#39;: &#39;2.0&#39;, 
+    &#39;result&#39;: 
+    {
+        &#39;FClass&#39;: 6, 
+        &#39;FNum&#39;: 7, 
+        &#39;Chan&#39;: -1, 
+        &#39;Result&#39;: &#39;OK&#39;
+    },
+    &#39;id&#39;: 1987
+    }
+&#34;&#34;&#34;
+Starts test with direct control response message
+&#34;&#34;&#34;
+
+tx_set_direct_output_msg = {
+    &#34;jsonrpc&#34;: &#34;2.0&#34;, 
+    &#34;method&#34;: &#34;MacNet&#34;, 
+    &#34;params&#34;:
+    {
+        &#34;FClass&#34;: 6, 
+        &#34;FNum&#34;: 8, 
+        &#34;Chan&#34;: -1, 
+        &#34;Current&#34;: 0.0, 
+        &#34;Voltage&#34;: 65536, 
+        &#34;Power&#34;: 65536, 
+        &#34;Resistance&#34;: 0, 
+        &#34;CurrentRange&#34;: 4, 
+        &#34;ChMode&#34;: &#34;C&#34;
+    },
+    &#34;id&#34;: 1987 
+}
+&#39;&#39;&#39;
+Set direct mode output
+
+Set direct output. When a channel has been started in direct mode, the output can be set with this 
+command and these arguments:
+
+Parameters as follows:
+
+`Current` Amps. Mutually limiting. Set outside range to ignore. 0 is within range. 
+        Must be active to function in (6, 8) Set direct mode output.
+
+`Voltage` Voltage. Mutually limiting. Set outside range to ignore. 0 is within range. 
+Must be active to function in (6, 8) Set direct mode output.
+
+`Power` Watts. Mutually limiting. Set outside range to ignore. 0 is within range. 
+Must be active to function in (6, 8) Set direct mode output.
+
+`Resistance` Ohms. Mutually limiting. Set to 0 to ignore. 
+Must be active to function in (6, 8) Set direct mode output.
+
+`Current range` The desired current range: 1, 2, 3, 4
+
+`Charge mode` 67 i.e. &#39;C&#39; for charge, 68 i.e. &#39;D&#39; for discharge and 82 i.e. &#39;R&#39; for rest
+Note: As of 12/14/22 setting &#39;R&#39; for rest does not work and rest must be set via other means.
+
+Response back results decode as follows:
+    0: OK
+    1: Illegal system type. This feature only works for type 0
+    2: The channel is not active
+    3: Command sent too fast. There must be at least 100 ms (10 ticks) between commands.
+    4: Direct mode is not active.
+    5: Direct mode is not ready yet.
+&#39;&#39;&#39;
+
+rx_set_direct_output_msg = {
+    &#39;jsonrpc&#39;: &#39;2.0&#39;, 
+    &#39;result&#39;: 
+    {
+        &#39;FClass&#39;: 6, 
+        &#39;FNum&#39;: 8, 
+        &#39;Chan&#39;: -1, 
+        &#39;Result&#39;: &#39;OK&#39;
+    }, 
+    &#39;id&#39;: 1987
+}
+&#39;&#39;&#39;
+Response for setting direct mode output.
+&#39;&#39;&#39;
+
+tx_reset_channel_msg = {
+    &#34;jsonrpc&#34;: &#34;2.0&#34;, 
+    &#34;method&#34;: &#34;MacNet&#34;,
+    &#34;params&#34;:
+    {
+        &#34;FClass&#34;: 6, 
+        &#34;FNum&#34;: 5, 
+        &#34;Chan&#34;: -1
+    },
+    &#34;id&#34;: 1987 
+}
+&#39;&#39;&#39;
+Reset “Chan” test channel.
+&#39;&#39;&#39;
+
+rx_reset_channel_msg = { 
+    &#34;jsonrpc&#34;:&#34;2.0&#34;, 
+    &#34;result&#34;:
+    {
+        &#34;FClass&#34;:6, 
+        &#34;FNum&#34;:5, 
+        &#34;Chan&#34;:-1, 
+        &#34;Result&#34;:&#34;OK&#34;
+    },
+    &#34;id&#34;:1987
+}
+&#39;&#39;&#39;
+Reset channel response.
+&#39;&#39;&#39;
+
+tx_read_aux_msg = {
+    &#34;jsonrpc&#34;: &#34;2.0&#34;, 
+    &#34;method&#34;: &#34;MacNet&#34;, 
+    &#34;params&#34;:
+    {
+        &#34;FClass&#34;: 4, 
+        &#34;FNum&#34;: 4, 
+        &#34;Chan&#34;: -1
+    },
+    &#34;id&#34;: 1987 
+}
+&#39;&#39;&#39;
+Get the auxiliary values for the specified channel `Chan`.
+&#39;&#39;&#39;
+
+rx_read_aux_msg = {
+    &#39;jsonrpc&#39;: &#39;2.0&#39;, 
+    &#39;result&#39;:
+    {
+        &#39;FClass&#39;: 4, 
+        &#39;FNum&#39;: 4, 
+        &#39;Chan&#39;: -1, 
+        &#39;Len&#39;: 1, 
+        &#39;AuxValues&#39;: [24.7545490264893]
+    }, 
+    &#39;id&#39;: 1987
+}
+&#39;&#39;&#39;
+The auxiliary response message.
+&#39;&#39;&#39;
+
+tx_set_safety_limits_msg = {
+    &#34;jsonrpc&#34;: &#34;2.0&#34;, 
+    &#34;method&#34;: &#34;MacNet&#34;, 
+    &#34;params&#34;:
+    {
+        &#34;FClass&#34;: 6, 
+        &#34;FNum&#34;: 10, 
+        &#34;Chan&#34;: 3, 
+        &#34;VSafeMax&#34;: 4.5,
+        &#34;VSafeMin&#34;: 2.5,
+        &#34;ISafeChg&#34;: 4.3, 
+        &#34;ISafeDis&#34;: 2.5,
+        &#34;PBatSafeChg&#34;: 50,
+        &#34;PBatSafeDis&#34;: 50
+    },
+    &#34;id&#34;: 1987
+}
+&#39;&#39;&#39;
+Sets safety limits on a channel.
+&#39;&#39;&#39;
+
+rx_set_safety_limits_msg = {
+    &#34;jsonrpc&#34;:&#34;2.0&#34;, 
+    &#34;result&#34;:
+    {
+        &#34;FClass&#34;:6,
+        &#34;FNum&#34;:10,
+        &#34;Chan&#34;:-1,
+        &#34;VSafeMax&#34;:4.5, 
+        &#34;VSafeMin&#34;:2.5, 
+        &#34;ISafeChg&#34;:4.3, 
+        &#34;ISafeDis&#34;:2.5,
+        &#34;PBatSafeChg&#34;:50,
+        &#34;PBatSafeDis&#34;:50
+    },
+    &#34;id&#34;:1987
+}
+&#39;&#39;&#39;
+Response message for setting safety limits on channel.
+&#39;&#39;&#39;
+
+tx_set_variable_msg = {
+    &#34;jsonrpc&#34;: &#34;2.0&#34;, 
+    &#34;method&#34;: &#34;MacNet&#34;, 
+    &#34;params&#34;:
+    {
+        &#34;FClass&#34;: 6, 
+        &#34;FNum&#34;: 9, 
+        &#34;Chan&#34;: -1, 
+        &#34;VarNum&#34;: 1,
+        &#34;Value&#34;: 0
+    },
+    &#34;id&#34;: 1987 
+}
+&#39;&#39;&#39;
+Sets channel variable for the specified variable &#39;VarNum&#39;.
+&#39;&#39;&#39;
+
+rx_set_variable_msg = {
+    &#39;jsonrpc&#39;: &#39;2.0&#39;, 
+    &#39;result&#39;: 
+    {
+        &#39;FClass&#39;: 6, 
+        &#39;FNum&#39;: 9, 
+        &#39;Chan&#39;: -1, 
+        &#39;Result&#39;: &#39;OK&#39;
+    }, 
+    &#39;id&#39;: 1987
+}
+&#39;&#39;&#39;
+Response message for setting channel variables.
+&#39;&#39;&#39;</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-variables">Global variables</h2>
+<dl>
+<dt id="pymacnet.messages.messages.rx_read_aux_msg"><code class="name">var <span class="ident">rx_read_aux_msg</span></code></dt>
+<dd>
+<div class="desc"><p>The auxiliary response message.</p></div>
+</dd>
+<dt id="pymacnet.messages.messages.rx_read_status_msg"><code class="name">var <span class="ident">rx_read_status_msg</span></code></dt>
+<dd>
+<div class="desc"><p>All status and readings from channel <code>Chan</code>.</p></div>
+</dd>
+<dt id="pymacnet.messages.messages.rx_reset_channel_msg"><code class="name">var <span class="ident">rx_reset_channel_msg</span></code></dt>
+<dd>
+<div class="desc"><p>Reset channel response.</p></div>
+</dd>
+<dt id="pymacnet.messages.messages.rx_set_direct_output_msg"><code class="name">var <span class="ident">rx_set_direct_output_msg</span></code></dt>
+<dd>
+<div class="desc"><p>Response for setting direct mode output.</p></div>
+</dd>
+<dt id="pymacnet.messages.messages.rx_set_safety_limits_msg"><code class="name">var <span class="ident">rx_set_safety_limits_msg</span></code></dt>
+<dd>
+<div class="desc"><p>Response message for setting safety limits on channel.</p></div>
+</dd>
+<dt id="pymacnet.messages.messages.rx_set_variable_msg"><code class="name">var <span class="ident">rx_set_variable_msg</span></code></dt>
+<dd>
+<div class="desc"><p>Response message for setting channel variables.</p></div>
+</dd>
+<dt id="pymacnet.messages.messages.rx_start_test_with_direct_control_msg"><code class="name">var <span class="ident">rx_start_test_with_direct_control_msg</span></code></dt>
+<dd>
+<div class="desc"><p>Starts test with direct control response message</p></div>
+</dd>
+<dt id="pymacnet.messages.messages.rx_start_test_with_procedure_msg"><code class="name">var <span class="ident">rx_start_test_with_procedure_msg</span></code></dt>
+<dd>
+<div class="desc"><p>Response for starting test with procedure.</p></div>
+</dd>
+<dt id="pymacnet.messages.messages.tx_read_aux_msg"><code class="name">var <span class="ident">tx_read_aux_msg</span></code></dt>
+<dd>
+<div class="desc"><p>Get the auxiliary values for the specified channel <code>Chan</code>.</p></div>
+</dd>
+<dt id="pymacnet.messages.messages.tx_read_status_msg"><code class="name">var <span class="ident">tx_read_status_msg</span></code></dt>
+<dd>
+<div class="desc"><p>Gets the status and readings of one channel. The status and readings of <code>Chan</code> channel will be returned.</p></div>
+</dd>
+<dt id="pymacnet.messages.messages.tx_reset_channel_msg"><code class="name">var <span class="ident">tx_reset_channel_msg</span></code></dt>
+<dd>
+<div class="desc"><p>Reset “Chan” test channel.</p></div>
+</dd>
+<dt id="pymacnet.messages.messages.tx_set_direct_output_msg"><code class="name">var <span class="ident">tx_set_direct_output_msg</span></code></dt>
+<dd>
+<div class="desc"><p>Set direct mode output</p>
+<p>Set direct output. When a channel has been started in direct mode, the output can be set with this
+command and these arguments:</p>
+<p>Parameters as follows:</p>
+<p><code>Current</code> Amps. Mutually limiting. Set outside range to ignore. 0 is within range.
+Must be active to function in (6, 8) Set direct mode output.</p>
+<p><code>Voltage</code> Voltage. Mutually limiting. Set outside range to ignore. 0 is within range.
+Must be active to function in (6, 8) Set direct mode output.</p>
+<p><code>Power</code> Watts. Mutually limiting. Set outside range to ignore. 0 is within range.
+Must be active to function in (6, 8) Set direct mode output.</p>
+<p><code>Resistance</code> Ohms. Mutually limiting. Set to 0 to ignore.
+Must be active to function in (6, 8) Set direct mode output.</p>
+<p><code>Current range</code> The desired current range: 1, 2, 3, 4</p>
+<p><code>Charge mode</code> 67 i.e. 'C' for charge, 68 i.e. 'D' for discharge and 82 i.e. 'R' for rest
+Note: As of 12/14/22 setting 'R' for rest does not work and rest must be set via other means.</p>
+<p>Response back results decode as follows:
+0: OK
+1: Illegal system type. This feature only works for type 0
+2: The channel is not active
+3: Command sent too fast. There must be at least 100 ms (10 ticks) between commands.
+4: Direct mode is not active.
+5: Direct mode is not ready yet.</p></div>
+</dd>
+<dt id="pymacnet.messages.messages.tx_set_safety_limits_msg"><code class="name">var <span class="ident">tx_set_safety_limits_msg</span></code></dt>
+<dd>
+<div class="desc"><p>Sets safety limits on a channel.</p></div>
+</dd>
+<dt id="pymacnet.messages.messages.tx_set_variable_msg"><code class="name">var <span class="ident">tx_set_variable_msg</span></code></dt>
+<dd>
+<div class="desc"><p>Sets channel variable for the specified variable 'VarNum'.</p></div>
+</dd>
+<dt id="pymacnet.messages.messages.tx_start_test_with_direct_control_msg"><code class="name">var <span class="ident">tx_start_test_with_direct_control_msg</span></code></dt>
+<dd>
+<div class="desc"><p>Start direct mode test.</p>
+<p>Start direct mode. Initializes direct remote control of the test channel with the
+following data in the “Data” area. The channel will output this current, voltage
+and power - mutually limiting as standard - until the values are changed with the
+“(6, 8) Set direct output” command described below or stopped.</p>
+<p>A watchdog timer can be activated in the Misc_Options section of the System.ini file. Setting the
+MacNetDirectModeWD to a value higher than 0 will cause a channel under direct mode to suspend if it
+has not been updated within the specified number of seconds.</p>
+<p>Parameters are as follows:</p>
+<p><code>testName</code> Up to 25 ascii characters for the data file name. “Random” (Case sensitive) will
+generate a pseudo-random name. The field is fixed in length, so remaining characters should be space characters.</p>
+<p><code>Current</code> Amps. Mutually limiting. Set outside range to ignore. 0 is within range.
+Must be active to function in (6, 8) Set direct mode output.</p>
+<p><code>Voltage</code> Voltage. Mutually limiting. Set outside range to ignore. 0 is within range.
+Must be active to function in (6, 8) Set direct mode output.</p>
+<p><code>Power</code> Watts. Mutually limiting. Set outside range to ignore. 0 is within range.
+Must be active to function in (6, 8) Set direct mode output.</p>
+<p><code>Resistance</code>
+Ohms. Mutually limiting. Set to 0 to ignore.
+Must be active to function in (6, 8) Set direct mode output.</p>
+<p><code>CurrentRange</code> The desired current range: 1, 2, 3, 4</p>
+<p><code>ChMode</code> Charge mode. 67 i.e. 'C' for charge, 68 i.e. 'D' for discharge and 82 i.e. 'R' for rest</p>
+<p><code>DataTime</code> Data record time. Time increment between data records in the data file. Enter 0 for no data.
+Data record voltage</p>
+<p><code>DataV</code> `Voltage increment to generate a data record in the data file. Enter 0 to disable.
+Data record current</p>
+<p><code>DataI</code> Current increment to generate a data record in the data file. Enter 0 to disable.</p></div>
+</dd>
+<dt id="pymacnet.messages.messages.tx_start_test_with_procedure_msg"><code class="name">var <span class="ident">tx_start_test_with_procedure_msg</span></code></dt>
+<dd>
+<div class="desc"><p>Start test with direct control</p>
+<p>Selects the test channel to be started. The test name and procedure name can be up to 250 characters long.
+Also, do not select the channel in advance of starting the test. The JSON Start test command will both select and
+start the channel. If, however, multiple channels should be started with the same test, do first select the channels,
+then start the test using 65535, meaning "all selected".</p>
+<p>Paramters as follows:</p>
+<p><code>TestName</code> Up to 25 ascii characters for the data file name. “Random” will generate a pseudo-random name.
+The field is fixed in length, so remaining characters should be space characters.</p>
+<p><code>ProcName</code> Up to 25 ascii characters for the test procedure name. The test procedure must exist in the
+C:\Maccor\Procedur folder and the “.000” should not be part of the name. The field is fixed in length,
+so remaining characters should be space characters.</p>
+<p><code>Comment</code> Up to 80 characters for the test comment. The field is fixed in length,
+so remaining characters should be space characters.</p>
+<p><code>Crate</code> C-rate. If C-rate is not used, enter 1.</p>
+<p><code>ChamberNum</code> Environmental chamber number. If the environmental chamber is not used, enter 0.</p>
+<p><code>StartCycle</code> Default: 0; See Start Test Setup for further details</p>
+<p><code>TotCycles</code> Default: 0; See Start Test Setup for further details</p>
+<p><code>Mass</code> Default: 1; See Start Test Setup for further details</p>
+<p><code>VGain</code> Default: 0; Used to change the gain of the constant voltage feedback loop. Only use it after consulting Customer Service.
+0: Gain x1 1: Gain x2 2: Gain x4 3: Gain x8 4: Gain /1 5: Gain /2 6: Gain /4 7: Gain /8</p>
+<p><code>AbsTRepAlign</code> Default: 0; 1: Use absolute time report alignment. See Start Test Setup for further details</p>
+<p><code>ParallelR</code> See Start Test Setup for further details</p>
+<p><code>VDivHiR</code> See Start Test Setup for further details</p>
+<p><code>VDivLoR</code> See Start Test Setup for further details</p></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="pymacnet.messages" href="index.html">pymacnet.messages</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-variables">Global variables</a></h3>
+<ul class="">
+<li><code><a title="pymacnet.messages.messages.rx_read_aux_msg" href="#pymacnet.messages.messages.rx_read_aux_msg">rx_read_aux_msg</a></code></li>
+<li><code><a title="pymacnet.messages.messages.rx_read_status_msg" href="#pymacnet.messages.messages.rx_read_status_msg">rx_read_status_msg</a></code></li>
+<li><code><a title="pymacnet.messages.messages.rx_reset_channel_msg" href="#pymacnet.messages.messages.rx_reset_channel_msg">rx_reset_channel_msg</a></code></li>
+<li><code><a title="pymacnet.messages.messages.rx_set_direct_output_msg" href="#pymacnet.messages.messages.rx_set_direct_output_msg">rx_set_direct_output_msg</a></code></li>
+<li><code><a title="pymacnet.messages.messages.rx_set_safety_limits_msg" href="#pymacnet.messages.messages.rx_set_safety_limits_msg">rx_set_safety_limits_msg</a></code></li>
+<li><code><a title="pymacnet.messages.messages.rx_set_variable_msg" href="#pymacnet.messages.messages.rx_set_variable_msg">rx_set_variable_msg</a></code></li>
+<li><code><a title="pymacnet.messages.messages.rx_start_test_with_direct_control_msg" href="#pymacnet.messages.messages.rx_start_test_with_direct_control_msg">rx_start_test_with_direct_control_msg</a></code></li>
+<li><code><a title="pymacnet.messages.messages.rx_start_test_with_procedure_msg" href="#pymacnet.messages.messages.rx_start_test_with_procedure_msg">rx_start_test_with_procedure_msg</a></code></li>
+<li><code><a title="pymacnet.messages.messages.tx_read_aux_msg" href="#pymacnet.messages.messages.tx_read_aux_msg">tx_read_aux_msg</a></code></li>
+<li><code><a title="pymacnet.messages.messages.tx_read_status_msg" href="#pymacnet.messages.messages.tx_read_status_msg">tx_read_status_msg</a></code></li>
+<li><code><a title="pymacnet.messages.messages.tx_reset_channel_msg" href="#pymacnet.messages.messages.tx_reset_channel_msg">tx_reset_channel_msg</a></code></li>
+<li><code><a title="pymacnet.messages.messages.tx_set_direct_output_msg" href="#pymacnet.messages.messages.tx_set_direct_output_msg">tx_set_direct_output_msg</a></code></li>
+<li><code><a title="pymacnet.messages.messages.tx_set_safety_limits_msg" href="#pymacnet.messages.messages.tx_set_safety_limits_msg">tx_set_safety_limits_msg</a></code></li>
+<li><code><a title="pymacnet.messages.messages.tx_set_variable_msg" href="#pymacnet.messages.messages.tx_set_variable_msg">tx_set_variable_msg</a></code></li>
+<li><code><a title="pymacnet.messages.messages.tx_start_test_with_direct_control_msg" href="#pymacnet.messages.messages.tx_start_test_with_direct_control_msg">tx_start_test_with_direct_control_msg</a></code></li>
+<li><code><a title="pymacnet.messages.messages.tx_start_test_with_procedure_msg" href="#pymacnet.messages.messages.tx_start_test_with_procedure_msg">tx_start_test_with_procedure_msg</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

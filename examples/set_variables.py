@@ -1,7 +1,7 @@
 '''
 Example of how set vaiable on a channel.
 
-MAKE SURE A TEST WITH A VARIABLE IS SET ON CHA
+MAKE SURE A TEST WITH A VARIABLE IS SET ON CHANNEL
 '''
 import json
 import pymacnet 
@@ -13,10 +13,10 @@ with open(config_path, 'r') as file:
     config_dict = json.load(file)
     
 maccor_interface = pymacnet.MaccorInterface(config_dict)
-if not maccor_interface.create_connection():
+if not maccor_interface.start():
     sys.exit("failed to create connection!")
 
-set_current = 0.1
+set_current = 0.01
 
 for i in range(0,5):
     print(maccor_interface.set_channel_variable(var_num = 1, var_value = set_current))
