@@ -254,7 +254,7 @@ class MaccorInterface:
                 assert( abs(reply['result']['ISafeChg'] - self.config['i_max_safety_limit_a']) < 0.001 )
                 assert( abs(reply['result']['ISafeDis'] - self.config['i_min_safety_limit_a']) < 0.001 )
             except:
-                log.error("Set safety limits to not match sent safety limits!")
+                log.error("Set safety limits to not match sent safety limits! Message response: " + str(reply))
                 return False
         else:
             log.error("Failed to receive reply message when trying to set safety limits!")
@@ -264,7 +264,8 @@ class MaccorInterface:
 
     def set_channel_variable(self, var_num = 1, var_value = 0) -> bool:
         """
-        Sets test variables on the target channel.
+        Sets test variables on the target channel. See the "Variables" section in the 
+        Maccor manual for more details about how to use these in tests.
 
         Parameters
         --------------------------
