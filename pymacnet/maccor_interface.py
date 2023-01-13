@@ -8,6 +8,7 @@ from datetime import datetime
 
 log = logging.getLogger(__name__)
 
+
 class MaccorInterface:
     """
     Class for controlling Maccor Cycler using MacNet.
@@ -17,18 +18,18 @@ class MaccorInterface:
 
     def __init__(self, config: dict):
         """
-        Creates the a class instance. The `start()` method still needs to be run to create the conenction
+        Creates the a class instance. The `start()` method still needs to be run to create the connection
         and to check the validity of the config.
 
         Parameters
-        --------------------------
+        ----------
         config : dict
             A configuration dictionary containing relevant test parameters. See the README.md
             for a detailed breakdown of all parameters that must be included.
         """
 
-        # Channels are zero indexed within Macnet so we must subract one here.
-        self.channel = config['channel'] - 1 
+        # Channels are zero indexed within Macnet so we must subtract one here.
+        self.channel = config['channel'] - 1
         self.config = config
         self.__json_sock = None
         self.__tcp_sock = None
@@ -39,7 +40,7 @@ class MaccorInterface:
         the Maccor server.
 
         Returns
-        --------------------------
+        -------
         success : bool
             True or False based on whether the config passed at construction is valid.
         """
@@ -52,7 +53,7 @@ class MaccorInterface:
 
     def __verify_config(self) -> bool:
         """
-        Verifies that the config passed on contruction is valid.
+        Verifies that the config passed on construction is valid.
 
         Returns
         --------------------------
@@ -60,12 +61,12 @@ class MaccorInterface:
             True or False based on whether the config passed at construction is valid.
         """
 
-        required_config_keys = [ 'channel', 
+        required_config_keys = ['channel',
                                 'test_name',
                                 'test_procedure',
                                 'v_max_safety_limit_v',
                                 'v_min_safety_limit_v',
-                                'i_max_safety_limit_a', 
+                                'i_max_safety_limit_a',
                                 'i_min_safety_limit_a',
                                 'v_max_v',
                                 'v_min_v',
@@ -75,10 +76,10 @@ class MaccorInterface:
                                 'data_record_current_delta_abys',
                                 'server_ip',
                                 'json_server_port',
-                                'tcp_server_port' ]
+                                'tcp_server_port']
 
         for key in required_config_keys:
-            if key not in self.config: 
+            if key not in self.config:
                 log.error("Missing key from config! Missing : " + key)
                 return False
         return True
@@ -93,31 +94,39 @@ class MaccorInterface:
             True or False based on whether the connection was created successfully
         """
         try:
-            self.__json_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.__json_sock.connect((self.config['server_ip'], self.config['json_server_port']))
+            self.__json_sock = socket.socket(
+                socket.AF_INET, socket.SOCK_STREAM
+            )
+            self.__json_sock.connect(
+                (self.config['server_ip'], self.config['json_server_port'])
+            )
         except:
-            log.error("Failed to create JSON TCP connection with Maccor server!", exc_info=True)
+            log.error(
+                "Failed to create JSON TCP connection with Maccor server!", exc_info=True)
             return False
         try:
             self.__tcp_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.__tcp_sock.connect((self.config['server_ip'], self.config['tcp_server_port']))
+            self.__tcp_sock.connect(
+                (self.config['server_ip'], self.config['tcp_server_port'])
+            )
         except:
-            log.error("Failed to create TCP connection with Maccor server!", exc_info=True)
+            log.error(
+                "Failed to create TCP connection with Maccor server!", exc_info=True)
             return False
 
         return True
 
-    def __send_receive_msg( self, outgoing_msg_dict) -> dict:
+    def __send_receive_msg(self, outgoing_msg_dict) -> dict:
         """
         Takes in a message dictionary, packs it, sends to Maccor server, and unpacks the response.
 
         Parameters
-        --------------------------
+        ----------
         msg_outgoing_dict : dict
             A dictionary containing the message to be sent.
-        --------------------------
+
         Returns
-        --------------------------
+        -------
         msg_incoming_dict : dict
             A dictionary containing the message response. Returns None if there is an issue.
         """
@@ -130,7 +139,7 @@ class MaccorInterface:
             return None
         # Pack message
         try:
-            msg_outgoing_packed = json.dumps( outgoing_msg_dict, indent = 4)
+            msg_outgoing_packed = json.dumps(outgoing_msg_dict, indent=4)
             msg_outgoing_packed = msg_outgoing_packed.encode()
         except:
             log.error("Error packing outgoing message!", exc_info=True)
@@ -143,7 +152,9 @@ class MaccorInterface:
             return None
         # Receive response
         try:
-            msg_incoming_packed = self.__json_sock.recv(self.__msg_buffer_size_bytes)
+            msg_incoming_packed = self.__json_sock.recv(
+                self.__msg_buffer_size_bytes
+            )
         except:
             log.error("Error receiving message!", exc_info=True)
             return None
@@ -167,7 +178,7 @@ class MaccorInterface:
         Method to read the status of the channel defined in the config.
 
         Returns
-        --------------------------
+        -------
         status : dict
             A dictionary detailing the status of the channel. Returns None if there is an issue.
         """
@@ -188,7 +199,7 @@ class MaccorInterface:
         Reads the auxiliary readings for the channel specified in the config.
 
         Returns
-        --------------------------
+        -------
         aux_readings : list
             A list of the auxiliary readings.
         """
@@ -202,17 +213,19 @@ class MaccorInterface:
         else:
             log.error("Failed to read channel aux values!")
             return None
-        
+
     def reset_channel(self) -> bool:
         """
         Resets the channel. Note this will stop any actively running test on the target channel.
 
         Returns
-        --------------------------
+        -------
         success : bool
             True of False based on whether the test was started or not.
         """
-        msg_outging_dict = copy.deepcopy(pymacnet.messages.tx_reset_channel_msg)
+        msg_outging_dict = copy.deepcopy(
+            pymacnet.messages.tx_reset_channel_msg
+        )
         msg_outging_dict['params']['Chan'] = self.channel
 
         reply = self.__send_receive_msg(msg_outging_dict)
@@ -226,18 +239,20 @@ class MaccorInterface:
             log.error("Failed reset channel! Did not receive reply!")
             success = False
 
-        return success 
+        return success
 
     def __set_channel_safety_limits(self) -> bool:
         """
-        Sets channel safety limits on the channel specifed in the config. 
+        Sets channel safety limits on the channel specified in the config. 
 
         Returns
-        --------------------------
+        -------
         success : bool
             Returns True/False based on whether the safety limits were set correctly.
         """
-        msg_outging_dict = copy.deepcopy(pymacnet.messages.tx_set_safety_limits_msg)
+        msg_outging_dict = copy.deepcopy(
+            pymacnet.messages.tx_set_safety_limits_msg
+        )
         msg_outging_dict['params']['Chan'] = self.channel
         msg_outging_dict['params']['VSafeMax'] = self.config['v_max_safety_limit_v']
         msg_outging_dict['params']['VSafeMin'] = self.config['v_min_safety_limit_v']
@@ -248,33 +263,40 @@ class MaccorInterface:
         reply = self.__send_receive_msg(msg_outging_dict)
         if reply:
             try:
-                assert( (reply['result']['Chan']) == self.config['channel'] )
-                assert( abs(reply['result']['VSafeMax'] - self.config['v_max_safety_limit_v']) < 0.001 )
-                assert( abs(reply['result']['VSafeMin'] - self.config['v_min_safety_limit_v']) < 0.001 )
-                assert( abs(reply['result']['ISafeChg'] - self.config['i_max_safety_limit_a']) < 0.001 )
-                assert( abs(reply['result']['ISafeDis'] - self.config['i_min_safety_limit_a']) < 0.001 )
+                assert ((reply['result']['Chan']) == self.config['channel'])
+                assert (abs(reply['result']['VSafeMax'] -
+                        self.config['v_max_safety_limit_v']) < 0.001)
+                assert (abs(reply['result']['VSafeMin'] -
+                        self.config['v_min_safety_limit_v']) < 0.001)
+                assert (abs(reply['result']['ISafeChg'] -
+                        self.config['i_max_safety_limit_a']) < 0.001)
+                assert (abs(reply['result']['ISafeDis'] -
+                        self.config['i_min_safety_limit_a']) < 0.001)
             except:
-                log.error("Set safety limits to not match sent safety limits! Message response: " + str(reply))
+                log.error(
+                    "Set safety limits to not match sent safety limits! Message response: " + str(reply))
                 return False
         else:
-            log.error("Failed to receive reply message when trying to set safety limits!")
+            log.error(
+                "Failed to receive reply message when trying to set safety limits!")
             return False
 
-        return True 
+        return True
 
-    def set_channel_variable(self, var_num = 1, var_value = 0) -> bool:
+    def set_channel_variable(self, var_num=1, var_value=0) -> bool:
         """
         Sets test variables on the target channel. See the "Variables" section in the 
         Maccor manual for more details about how to use these in tests.
 
         Parameters
-        --------------------------
+        ----------
         var_num : int
             Value between 1 and 16, depending on which variable to set.
         var_value : float
             Value to set the variable to.
+
         Returns
-        --------------------------
+        -------
         success : bool
             True of False based on whether or not the variable value was set.
         """
@@ -287,16 +309,17 @@ class MaccorInterface:
         reply = self.__send_receive_msg(msg_outging_dict)
         if reply:
             try:
-                assert( (reply['result']['Chan']) == self.config['channel'] )
-                assert(reply['result']['Result'] == 'OK')
+                assert ((reply['result']['Chan']) == self.config['channel'])
+                assert (reply['result']['Result'] == 'OK')
             except:
                 log.error("Variable not set!")
                 return False
         else:
-            log.error("Failed to receive reply message when trying to set variable!")
+            log.error(
+                "Failed to receive reply message when trying to set variable!")
             return False
 
-        return True 
+        return True
 
     def start_test_with_procedure(self) -> bool:
         """
@@ -304,15 +327,17 @@ class MaccorInterface:
         Note that it will not start a test if the channel is current running a test.
 
         Returns
-        --------------------------
+        -------
         success : bool
             True of False based on whether the test was started or not
         """
-        msg_outging_dict = copy.deepcopy(pymacnet.messages.tx_start_test_with_procedure_msg)
+        msg_outging_dict = copy.deepcopy(
+            pymacnet.messages.tx_start_test_with_procedure_msg)
         msg_outging_dict['params']['Chan'] = self.channel
         msg_outging_dict['params']['ProcName'] = self.config['test_procedure']
         msg_outging_dict['params']['Crate'] = self.config['c_rate_ah']
-        msg_outging_dict['params']['Comment'] = "Started with pymacnet at " + str(datetime.timestamp(datetime.now()))
+        msg_outging_dict['params']['Comment'] = "Started with pymacnet at " + \
+            str(datetime.timestamp(datetime.now()))
 
         # If test name is not specified then start test with a random test
         if not self.config['test_name']:
@@ -335,10 +360,11 @@ class MaccorInterface:
             return False
 
         # Start the test.
-        reponse = self.__send_receive_msg(msg_outging_dict)
-        if reponse:
-            if reponse['result']['Result'] != 'OK':
-                log.error("Error starting test! Comment from Maccor: " + reponse['result']['Result'])
+        response = self.__send_receive_msg(msg_outging_dict)
+        if response:
+            if response['result']['Result'] != 'OK':
+                log.error("Error starting test! Comment from Maccor: " +
+                          response['result']['Result'])
                 return False
             else:
                 return True
@@ -348,22 +374,26 @@ class MaccorInterface:
 
     def start_test_with_direct_control(self) -> bool:
         """
-        Starts a test to be manually controled with direct output on the channel specified in the config.
+        Starts a test to be manually controlled with direct output on the channel specified in the config.
 
         Returns
-        --------------------------
+        -------
         success : bool
             True of False based on whether the test was started or not.
         """
 
-        msg_outging_dict = copy.deepcopy(pymacnet.messages.tx_start_test_with_direct_control_msg)
+        msg_outging_dict = copy.deepcopy(
+            pymacnet.messages.tx_start_test_with_direct_control_msg)
         msg_outging_dict['params']['Chan'] = self.channel
         msg_outging_dict['params']['DataTime'] = self.config['data_record_time_s']
         msg_outging_dict['params']['DataV'] = self.config['data_record_voltage_delta_vbys']
         msg_outging_dict['params']['DataI'] = self.config['data_record_current_delta_abys']
-        msg_outging_dict['params']['Current'] = 0 # Make sure the start current is always zero.
-        msg_outging_dict['params']['Voltage'] = self.config['v_max_v'] # Set to something within range so it's not disabled.
-        msg_outging_dict['params']['ChMode'] = "C" # TODO: FIX having a weird issue where I can't set the mode to rest.
+        # Make sure the start current is always zero.
+        msg_outging_dict['params']['Current'] = 0
+        # Set to something within range so it's not disabled.
+        msg_outging_dict['params']['Voltage'] = self.config['v_max_v']
+        # TODO: FIX having a weird issue where I can't set the mode to rest.
+        msg_outging_dict['params']['ChMode'] = "C"
 
         # If test name is not specified then start test with a random test
         if not self.config['test_name']:
@@ -386,10 +416,11 @@ class MaccorInterface:
             return False
 
         # Start the test
-        reponse = self.__send_receive_msg(msg_outging_dict)
-        if reponse:
-            if reponse['result']['Result'] != 'OK':
-                log.error("Error starting test! Comment from Maccor: " + reponse['result']['Result'])
+        response = self.__send_receive_msg(msg_outging_dict)
+        if response:
+            if response['result']['Result'] != 'OK':
+                log.error("Error starting test! Comment from Maccor: " +
+                          response['result']['Result'])
                 return False
             else:
                 return True
@@ -397,7 +428,7 @@ class MaccorInterface:
             log.error("Failed to get message response when trying to start test!")
             return False
 
-    def set_direct_mode_output( self, current_a, voltage_v = 4900) -> bool:
+    def set_direct_mode_output(self, current_a, voltage_v=4900) -> bool:
         """
         Sets the current/voltage output on the channel specified on in the config. Note that the
         test must have been started with the start_test_direct_control method for this to work.
@@ -408,10 +439,10 @@ class MaccorInterface:
         For charging: If only `current_a` is passed, the cycler will charge at the this current until commanded 
             otherwise or until the upper voltage safety limit is hit. If a `voltage_v` argument is passed in addition to `current_a`, then the cycler will do a CCCV 
             charge with the requested voltage.
-            
+
 
         Returns
-        --------------------------
+        -------
         success : bool
             True of False based on whether the values were set or not.
         """
@@ -435,7 +466,8 @@ class MaccorInterface:
 
         # Determine range based on the magnitude of the current
         if set_current_a == 0:
-            current_range = 4 # Don't bother changing current range if we're just setting to zero.
+            # Don't bother changing current range if we're just setting to zero.
+            current_range = 4
         elif set_current_a < 0.000150:
             current_range = 1
         elif set_current_a < 0.005:
@@ -445,7 +477,8 @@ class MaccorInterface:
         else:
             current_range = 4
 
-        msg_outging_dict = copy.deepcopy(pymacnet.messages.tx_set_direct_output_msg)
+        msg_outging_dict = copy.deepcopy(
+            pymacnet.messages.tx_set_direct_output_msg)
         msg_outging_dict['params']['Chan'] = self.channel
         msg_outging_dict['params']['Current'] = set_current_a
         msg_outging_dict['params']['Voltage'] = set_voltage_v
@@ -456,44 +489,44 @@ class MaccorInterface:
         if mode == "R":
             return self.__send_rest_cmd_msg(msg_outging_dict)
 
-        # Send message and make sure resposne indicates values were accepted.
-        reponse = self.__send_receive_msg(msg_outging_dict)
-        if reponse:
-            if reponse['result']['Result'] == "OK":
+        # Send message and make sure response indicates values were accepted.
+        response = self.__send_receive_msg(msg_outging_dict)
+        if response:
+            if response['result']['Result'] == "OK":
                 return True
             else:
-                log.error("Error Setting ouput! Message : " + str(reponse))
+                log.error("Error Setting output! Message : " + str(response))
                 return False
         else:
             log.error("Failed to get message response when trying to set output!")
             return False
 
-    def __send_rest_cmd_msg( self, msg_outging_dict) -> bool:
+    def __send_rest_cmd_msg(self, msg_outging_dict) -> bool:
         """
         Commands rest step using caveman MacNet UDP/TCP method.
-        --------------------------
+
         Parameters
-        --------------------------
+        ----------
         msg_outgoing_dict : dict
             A dictionary containing the message to be sent.
-        --------------------------
+
         Returns
-        --------------------------
+        -------
         success : bool
             True of False based on whether or not rest was set
         """
 
-        msg_outgoing_bytes = struct.pack('<HHHHffffBB', 
-            msg_outging_dict["params"]['FClass'], 
-            msg_outging_dict["params"]['FNum'], 
-            msg_outging_dict["params"]['Chan'], 
-            18,
-            msg_outging_dict["params"]['Current'],
-            msg_outging_dict["params"]['Voltage'],
-            msg_outging_dict["params"]['Power'],
-            msg_outging_dict["params"]['Resistance'],
-            msg_outging_dict["params"]['CurrentRange'],
-            ord('R'))   
+        msg_outgoing_bytes = struct.pack('<HHHHffffBB',
+                                         msg_outging_dict["params"]['FClass'],
+                                         msg_outging_dict["params"]['FNum'],
+                                         msg_outging_dict["params"]['Chan'],
+                                         18,
+                                         msg_outging_dict["params"]['Current'],
+                                         msg_outging_dict["params"]['Voltage'],
+                                         msg_outging_dict["params"]['Power'],
+                                         msg_outging_dict["params"]['Resistance'],
+                                         msg_outging_dict["params"]['CurrentRange'],
+                                         ord('R'))
 
         try:
             self.__tcp_sock.send(msg_outgoing_bytes)
