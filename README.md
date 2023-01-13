@@ -6,7 +6,7 @@ TODO: What is Macnet?
 
 TODO: Make a usage example in Jply Notebook 
 
-Emebedded video 
+Embedded video 
 
 ```
 start_test()
@@ -16,7 +16,7 @@ read_status()
 
 ## Running
 
-The `MaccorInterface` class requires a configuration dictionary on initiaiton at construction where the fields are as follows:
+The `MaccorInterface` class requires a configuration dictionary on initiation at construction where the fields are as follows:
 
 - `channel` -> The channel to be targeted for all operations.
 - `test_name` -> The test name to be used for any tests started. If left blank, Maccor will generate a unique random name for any started tests. Note that Maccor requires unique test names for each test.
@@ -74,4 +74,4 @@ coverage html
 
 ## License?
 
-## Contirbution guidleine 
+## Contribution guideline    

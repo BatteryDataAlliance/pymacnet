@@ -17,6 +17,6 @@ status_dictionary = {
     15: 'FRA',
     16: 'Rem Maint'
 }
-'''
+"""
 Dictionary to decode the "result" field returned by the channel status messages.
-'''
+"""

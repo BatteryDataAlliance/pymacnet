@@ -1,21 +1,21 @@
 tx_read_status_msg = {
-    'jsonrpc': '2.0', 
-    'method': 'MacNet', 
+    'jsonrpc': '2.0',
+    'method': 'MacNet',
     'params':
     {
-        'FClass': 4, 
+        'FClass': 4,
         'FNum': 7,
         'Chan': -1
     },
-    'id': 1987 
+    'id': 1987
 }
-'''
+"""
 Gets the status and readings of one channel. The status and readings of `Chan` channel will be returned.
-'''
+"""
 
 rx_read_status_msg = {
     'jsonrpc': '2.0',
-    'result': 
+    'result':
     {
         'FClass': 4,
         'FNum': 7,
@@ -32,37 +32,37 @@ rx_read_status_msg = {
         'Energy': 0,
         'Current': 0,
         'Voltage': 3.85,
-        'TesterTime':'2022-10-13T12:32:56'
+        'TesterTime': '2022-10-13T12:32:56'
     },
     'id': 1987
 }
-'''
+"""
 All status and readings from channel `Chan`.
-'''
+"""
 
 tx_start_test_with_procedure_msg = {
     "jsonrpc": "2.0",
-    "method": "MacNet", 
+    "method": "MacNet",
     "params":
     {
         "FClass": 6,
         "FNum": 2,
         "Chan": -1,
-        "TestName": "Random", 
-        "ProcName": "Procedure Name", 
-        "Comment": "Test comment", 
+        "TestName": "Random",
+        "ProcName": "Procedure Name",
+        "Comment": "Test comment",
         "Crate": 1,
-        "ChamberNum": 0, 
-        "StartCycle": 0, 
-        "TotCycles": 0, 
-        "Mass": 1, 
-        "VGain": 0, 
-        "AbsTRepAlign": 0, 
-        "ParallelR": 0, 
-        "VDivHiR": 0, 
-        "VDivLoR": 0, 
-        "CANpos": -1, 
-        "CANprof": "", 
+        "ChamberNum": 0,
+        "StartCycle": 0,
+        "TotCycles": 0,
+        "Mass": 1,
+        "VGain": 0,
+        "AbsTRepAlign": 0,
+        "ParallelR": 0,
+        "VDivHiR": 0,
+        "VDivLoR": 0,
+        "CANpos": -1,
+        "CANprof": "",
         "RegimeName": ""
     },
     "id": 1987
@@ -110,42 +110,42 @@ so remaining characters should be space characters.
 """
 
 rx_start_test_with_procedure_msg = {
-    'jsonrpc': '2.0', 
-    'result': 
+    'jsonrpc': '2.0',
+    'result':
     {
-        'FClass': 6, 
-        'FNum': 2, 
-        'Chan': -1, 
+        'FClass': 6,
+        'FNum': 2,
+        'Chan': -1,
         'Result': 'OK'
-    }, 
+    },
     'id': 1987
 }
-'''
+"""
 Response for starting test with procedure.
-'''
+"""
 
 tx_start_test_with_direct_control_msg = {
-    "jsonrpc": "2.0", 
-    "method": "MacNet", 
+    "jsonrpc": "2.0",
+    "method": "MacNet",
     "params":
     {
         "FClass": 6,
         "FNum": 7,
         "Chan": -1,
-        "TestName": "Random", 
+        "TestName": "Random",
         "Current": 0.0,
-        "Voltage": 5.0, 
-        "Power": 50, 
-        "Resistance": 0, 
-        "CurrentRange": 1, 
-        "ChMode": 'D', 
-        "DataTime": 1.0, 
-        "DataV": 0, 
+        "Voltage": 5.0,
+        "Power": 50,
+        "Resistance": 0,
+        "CurrentRange": 1,
+        "ChMode": 'D',
+        "DataTime": 1.0,
+        "DataV": 0,
         "DataI": 0
     },
-    "id": 1987 
+    "id": 1987
 }
-'''
+"""
 Start direct mode test.
 
 Start direct mode. Initializes direct remote control of the test channel with the 
@@ -185,41 +185,41 @@ Data record voltage
 Data record current
 
 `DataI` Current increment to generate a data record in the data file. Enter 0 to disable.
-'''
+"""
 
 rx_start_test_with_direct_control_msg = {
-    'jsonrpc': '2.0', 
-    'result': 
+    'jsonrpc': '2.0',
+    'result':
     {
-        'FClass': 6, 
-        'FNum': 7, 
-        'Chan': -1, 
+        'FClass': 6,
+        'FNum': 7,
+        'Chan': -1,
         'Result': 'OK'
     },
     'id': 1987
-    }
+}
 """
 Starts test with direct control response message
 """
 
 tx_set_direct_output_msg = {
-    "jsonrpc": "2.0", 
-    "method": "MacNet", 
+    "jsonrpc": "2.0",
+    "method": "MacNet",
     "params":
     {
-        "FClass": 6, 
-        "FNum": 8, 
-        "Chan": -1, 
-        "Current": 0.0, 
-        "Voltage": 65536, 
-        "Power": 65536, 
-        "Resistance": 0, 
-        "CurrentRange": 4, 
+        "FClass": 6,
+        "FNum": 8,
+        "Chan": -1,
+        "Current": 0.0,
+        "Voltage": 65536,
+        "Power": 65536,
+        "Resistance": 0,
+        "CurrentRange": 4,
         "ChMode": "C"
     },
-    "id": 1987 
+    "id": 1987
 }
-'''
+"""
 Set direct mode output
 
 Set direct output. When a channel has been started in direct mode, the output can be set with this 
@@ -251,153 +251,153 @@ Response back results decode as follows:
     3: Command sent too fast. There must be at least 100 ms (10 ticks) between commands.
     4: Direct mode is not active.
     5: Direct mode is not ready yet.
-'''
+"""
 
 rx_set_direct_output_msg = {
-    'jsonrpc': '2.0', 
-    'result': 
+    'jsonrpc': '2.0',
+    'result':
     {
-        'FClass': 6, 
-        'FNum': 8, 
-        'Chan': -1, 
+        'FClass': 6,
+        'FNum': 8,
+        'Chan': -1,
         'Result': 'OK'
-    }, 
+    },
     'id': 1987
 }
-'''
+"""
 Response for setting direct mode output.
-'''
+"""
 
 tx_reset_channel_msg = {
-    "jsonrpc": "2.0", 
+    "jsonrpc": "2.0",
     "method": "MacNet",
     "params":
     {
-        "FClass": 6, 
-        "FNum": 5, 
+        "FClass": 6,
+        "FNum": 5,
         "Chan": -1
     },
-    "id": 1987 
+    "id": 1987
 }
-'''
+"""
 Reset “Chan” test channel.
-'''
+"""
 
-rx_reset_channel_msg = { 
-    "jsonrpc":"2.0", 
+rx_reset_channel_msg = {
+    "jsonrpc": "2.0",
     "result":
     {
-        "FClass":6, 
-        "FNum":5, 
-        "Chan":-1, 
-        "Result":"OK"
+        "FClass": 6,
+        "FNum": 5,
+        "Chan": -1,
+        "Result": "OK"
     },
-    "id":1987
+    "id": 1987
 }
-'''
+"""
 Reset channel response.
-'''
+"""
 
 tx_read_aux_msg = {
-    "jsonrpc": "2.0", 
-    "method": "MacNet", 
+    "jsonrpc": "2.0",
+    "method": "MacNet",
     "params":
     {
-        "FClass": 4, 
-        "FNum": 4, 
+        "FClass": 4,
+        "FNum": 4,
         "Chan": -1
     },
-    "id": 1987 
+    "id": 1987
 }
-'''
+"""
 Get the auxiliary values for the specified channel `Chan`.
-'''
+"""
 
 rx_read_aux_msg = {
-    'jsonrpc': '2.0', 
+    'jsonrpc': '2.0',
     'result':
     {
-        'FClass': 4, 
-        'FNum': 4, 
-        'Chan': -1, 
-        'Len': 1, 
+        'FClass': 4,
+        'FNum': 4,
+        'Chan': -1,
+        'Len': 1,
         'AuxValues': [24.75]
-    }, 
+    },
     'id': 1987
 }
-'''
+"""
 The auxiliary response message.
-'''
+"""
 
 tx_set_safety_limits_msg = {
-    "jsonrpc": "2.0", 
-    "method": "MacNet", 
+    "jsonrpc": "2.0",
+    "method": "MacNet",
     "params":
     {
-        "FClass": 6, 
-        "FNum": 10, 
-        "Chan": 3, 
+        "FClass": 6,
+        "FNum": 10,
+        "Chan": 3,
         "VSafeMax": 4.5,
         "VSafeMin": 2.5,
-        "ISafeChg": 4.3, 
+        "ISafeChg": 4.3,
         "ISafeDis": 2.5,
         "PBatSafeChg": 50,
         "PBatSafeDis": 50
     },
     "id": 1987
 }
-'''
+"""
 Sets safety limits on a channel.
-'''
+"""
 
 rx_set_safety_limits_msg = {
-    "jsonrpc":"2.0", 
+    "jsonrpc": "2.0",
     "result":
     {
-        "FClass":6,
-        "FNum":10,
-        "Chan":-1,
-        "VSafeMax":4.5, 
-        "VSafeMin":2.5, 
-        "ISafeChg":4.3, 
-        "ISafeDis":2.5,
-        "PBatSafeChg":50,
-        "PBatSafeDis":50
+        "FClass": 6,
+        "FNum": 10,
+        "Chan": -1,
+        "VSafeMax": 4.5,
+        "VSafeMin": 2.5,
+        "ISafeChg": 4.3,
+        "ISafeDis": 2.5,
+        "PBatSafeChg": 50,
+        "PBatSafeDis": 50
     },
-    "id":1987
+    "id": 1987
 }
-'''
+"""
 Response message for setting safety limits on channel.
-'''
+"""
 
 tx_set_variable_msg = {
-    "jsonrpc": "2.0", 
-    "method": "MacNet", 
+    "jsonrpc": "2.0",
+    "method": "MacNet",
     "params":
     {
-        "FClass": 6, 
-        "FNum": 9, 
-        "Chan": -1, 
+        "FClass": 6,
+        "FNum": 9,
+        "Chan": -1,
         "VarNum": 1,
         "Value": 0
     },
-    "id": 1987 
+    "id": 1987
 }
-'''
+"""
 Sets channel variable for the specified variable 'VarNum'.
-'''
+"""
 
 rx_set_variable_msg = {
-    'jsonrpc': '2.0', 
-    'result': 
+    'jsonrpc': '2.0',
+    'result':
     {
-        'FClass': 6, 
-        'FNum': 9, 
-        'Chan': -1, 
+        'FClass': 6,
+        'FNum': 9,
+        'Chan': -1,
         'Result': 'OK'
-    }, 
+    },
     'id': 1987
 }
-'''
+"""
 Response message for setting channel variables.
-'''
+"""
