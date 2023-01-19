@@ -3,7 +3,6 @@ import json
 import pymacnet.maccorspoofer
 import pymacnet.messages
 import copy
-import time
 
 """
 Various parameters we will use accross all the tests.
@@ -35,7 +34,6 @@ def __send_recv_msg(s: socket.socket, tx_msg: dict):
     rx_msg_packed = s.recv(MSG_BUFFER_SIZE_BYTES)
     rx_msg = json.loads(rx_msg_packed.decode())
     return rx_msg
-
 
 def test_messages():
     """
@@ -73,7 +71,6 @@ def test_messages():
 
     s.close()
     spoofer_server.stop()
-
 
 def test_update_status():
     """

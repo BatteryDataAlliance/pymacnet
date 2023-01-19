@@ -1,27 +1,26 @@
-# PyMacnet
+# pymacnet
 
-PyMacNet provides a channel level interface for communication and control of Maccor cyclers via MacNet.
+`pymacnet` provides a channel level interface for communication and control of Maccor cyclers via MacNet. MacNet is an interface provided by Maccor that allows for control of their cyclers via UDP/IP and TCP/IP. `pymacnet` provides a way to utalize MacNet with simple python class. Details on Macnet can be found in `docs/macnet_from_maccor_help.pdf`.
 
-TODO: What is Macnet?
+For an overview of `pymacnet` functionality see the `demo.ipynb` notebook. For detailed function descriptions see the `docs/` directory.
 
-TODO: Make a usage example in Jply Notebook 
+## Installation
 
-Embedded video 
+To install `pymacnet` clone this repo and within it type the following commands:
 
 ```
-start_test()
-
-read_status()
+pip install requirements.txt
+pip install . 
 ```
 
-## Running
+## How to use
 
-The `MaccorInterface` class requires a configuration dictionary on initiation at construction where the fields are as follows:
+`pymacnet` interfacts with the Maccor cycler through instances of individual `MaccorInterface` classes that target specific cycler channels. Each class instance requires a configuration dictionary on initiation  where the fields are as follows:
 
 - `channel` -> The channel to be targeted for all operations.
 - `test_name` -> The test name to be used for any tests started. If left blank, Maccor will generate a unique random name for any started tests. Note that Maccor requires unique test names for each test.
 - `test_procedure` -> The test procedure to be used, if starting a test with a procedure. Not needed with direct control.
-- `c_rate_ah` -> The capacity value to be referenced when setting "C" values within the maccor schedule. Units of amp-hours. Ignored if not used anywhere in the test.
+- `c_rate_ah` -> The capacity value to be referenced when setting "C" values within the Maccor schedule. Units of amp-hours. Ignored if not used anywhere in the test.
 - `v_max_safety_limit_v` -> Upper voltage safety limit for the channel. Units of volts.
 - `v_min_safety_limit_v` -> Lower voltage safety limit for the channel. Units of volts.
 - `i_max_safety_limit_a` -> Upper current safety limit for the channel. Units of amps.
@@ -35,43 +34,22 @@ The `MaccorInterface` class requires a configuration dictionary on initiation at
 - `json_server_port` -> The port to communicate through with JSON commands. Default set to 57570.
 - `tcp_server_port` -> The port to communicate through with TCP commands. Default set to 57560.
 
-## Install
+For examples of the `MaccorInterface` class in use see the `demo.ipynb` notebook. For detailed method documentation see the `docs` directory.
 
-Navigate to the repo directory and run the following command:
+## Dev
 
-```
-pip install .
-```
+### Docs 
 
-# To generate documentation 
-
+To re-generate the documentation"
 
 ```
 pdoc --html .
 ```
 
-## Tests
+### Testing
 
 From within the test directory: 
 
 ```
-coverage run -m pytest .
+pytest .
 ```
-
-To view coverage report:
-
-```
-coverage report
-```
-
-To see as HTML:
-
-```
-coverage html
-```
-
-## Platform support.
-
-## License?
-
-## Contribution guideline    

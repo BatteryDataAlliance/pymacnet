@@ -1,1 +1,1 @@
-from .maccor_interface import MaccorInterface
+from .MaccorInterface import MaccorInterface

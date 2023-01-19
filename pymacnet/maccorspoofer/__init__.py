@@ -1,1 +1,1 @@
-from .maccor_spoofer import MaccorSpoofer
+from .MaccorSpoofer import MaccorSpoofer
