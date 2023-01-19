@@ -9,7 +9,7 @@ For an overview of `pymacnet` functionality see the `demo.ipynb` notebook. For d
 To install `pymacnet` clone this repo and within it type the following commands:
 
 ```
-pip install requirements.txt
+pip install -r requirements.txt
 pip install . 
 ```
 
