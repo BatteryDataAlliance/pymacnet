@@ -1,6 +1,6 @@
 # pymacnet
 
-`pymacnet` provides a channel level interface for communication and control of Maccor cyclers via MacNet. MacNet is an interface provided by Maccor that allows for control of their cyclers via UDP/IP and TCP/IP. `pymacnet` provides a way to utalize MacNet with simple python class. Details on Macnet can be found in `docs/macnet_from_maccor_help.pdf`.
+`pymacnet` provides a channel level interface for communication and control of Maccor cyclers via MacNet. MacNet is an interface provided by Maccor that allows for control of their cyclers via UDP/IP and TCP/IP. `pymacnet` provides a way to utilize MacNet with simple python class. Details on Macnet can be found in `docs/macnet_from_maccor_help.pdf`.
 
 For an overview of `pymacnet` functionality see the `demo.ipynb` notebook. For detailed function descriptions see the `docs/` directory.
 
@@ -40,7 +40,7 @@ For examples of the `MaccorInterface` class in use see the `demo.ipynb` notebook
 
 ### Docs 
 
-To re-generate the documentation"
+To re-generate the documentation:
 
 ```
 pdoc --html .
