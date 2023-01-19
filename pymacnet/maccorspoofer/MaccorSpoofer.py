@@ -4,7 +4,6 @@ import threading
 import copy
 import pymacnet.messages
 
-
 class ChannelData:
 
     __chan_status_list = []

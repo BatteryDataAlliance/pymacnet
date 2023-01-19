@@ -89,7 +89,7 @@ class MaccorInterface:
         Creates a connection with Maccor server to send/receive JSON and binary messages.
 
         Returns
-        --------------------------
+       ----------
         success : bool
             True or False based on whether the connection was created successfully
         """
@@ -126,7 +126,7 @@ class MaccorInterface:
             A dictionary containing the message to be sent.
 
         Returns
-        -------
+        ----------
         msg_incoming_dict : dict
             A dictionary containing the message response. Returns None if there is an issue.
         """
