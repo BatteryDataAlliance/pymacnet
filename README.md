@@ -97,36 +97,6 @@ Each class instance requires a configuration dictionary on initiation  where the
 
 For examples of the `MaccorInterface` class in use see the `demo.ipynb` notebook. For detailed method documentation see the `docs` directory.
 
-### <a name="CyclingCapacity"></a>Cycling Capacity Plots
-
-## Installation
-
-To install `pymacnet` clone this repo and within it type the following commands:
-
-```
-pip install -r requirements.txt
-pip install . 
-```
-
-
-## Dev
-
-### Docs 
-
-To re-generate the documentation:
-
-```
-pdoc --html .
-```
-
-### Testing
-
-From within the test directory: 
-
-```
-pytest . License
-```
-
 ## <a name="License"></a>License
 
 MIT License
