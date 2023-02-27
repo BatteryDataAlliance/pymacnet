@@ -46,7 +46,7 @@ It is entirely possible to write one's own MacNet wrapper, but `pymacnet` provid
 
 `pymacnet` requires only Python 3 and packages from the standard library. It has been tested on on Windows, Mac, and Debian operating systems.
 
-## <a name="Source Installation"></a>Source
+## <a name="Source Installation"></a>Source Installation
 
 To install from source clone [the repository](https://github.com/BattGenie/pymacnet), navigate into the directory, and type the following into the command line:
 
