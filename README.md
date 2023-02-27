@@ -1,3 +1,5 @@
+# pycmanet
+
 `pymacnet` is a Python module that provides a channel level interface for communication and control of [Maccor cyclers](http://www.maccor.com/) via MacNet. MacNet is an interface provided by Maccor that allows for controlling their cyclers via UDP/IP and TCP/IP. `pymacnet` provides a hassle-free way to utilize MacNet with a simple python class.
 
 ### Overview
@@ -38,7 +40,7 @@ While conventional constant-current followed by constant-voltage (CCCV) charging
 
 - Well tested, easy to use, community supported interface in the most popular programming language. 
 
-It is entirely possible to write one's own MacNet wrapper, but `pymacnet` provides a well tested ready to use package that takes care of lower level communication, providing a simple yet powerful interface in the most popular programming language. 
+It is entirely possible to write one's own MacNet wrapper, but `pymacnet` provides a well-tested ready to use package that takes care of lower level communication, providing a simple yet powerful interface in the most popular programming language. 
 
 # <a name="Installation"></a>Installation
 
@@ -48,7 +50,7 @@ It is entirely possible to write one's own MacNet wrapper, but `pymacnet` provid
 
 ## <a name="Source Installation"></a>Source Installation
 
-To install from source clone [the repository](https://github.com/BattGenie/pymacnet), navigate into the directory, and type the following into the command line:
+To install from source clone [this repository](https://github.com/BattGenie/pymacnet), navigate into the directory, and type the following into the command line:
 
 ```
 pip install .
@@ -196,7 +198,7 @@ maccor_interface.set_channel_variable(var_num = 1, var_value = 0.01)
 
 ## <a name="Direct"></a>Direct Control
 
-Here is an example of how to bypass using a test procedure all together and control the channel directly using direct control.  Note the channel safety limits will be set before the test is started. **WARNING DIRECT CONTROL IS POTENTIALLY DANGEROUS. BE CAREFUL AND MAKE SURE YOU UNDERSTAND EXACTLY WHAT YOUR CODE IS DOING**
+Here is an example of how to bypass using a test procedure all together and control the channel directly using direct control.  Note the channel safety limits will be set before the test is started. **WARNING DIRECT CONTROL IS POTENTIALLY DANGEROUS. BE CAREFUL AND MAKE SURE YOU UNDERSTAND EXACTLY WHAT YOUR CODE IS DOING.**
 
 ```python
 import pymacnet
@@ -257,7 +259,7 @@ This section contains various information to help developers further extend and 
 
 As it exists now, `pymacnet` only implements a fraction of the messages supported by MacNet. Further work can be done to expand `pymacnet` to include more of the messages detailed in the MacNet documentation `docs/macnet_from_maccor_help.pdf`.
 
-User are encourage to contribute...
+User are encourage to contribute... ADD CONTRIBUTION GUIDELINES
 
 ## <a name="Testing"></a>Testing
 
@@ -273,7 +275,7 @@ Testing software on a real cycler is dangerous so we've created a submodule `mac
 
 ## <a name="Docs"></a>Documentation
 
-All documentation was generated with [pydoc](https://docs.python.org/3/library/pydoc.html). To regenerate the documentation type the following command from the top level directory of the repository:
+All documentation was generated with [pydoc](https://docs.python.org/3/library/pydoc.html). To re-generate the documentation type the following command from the top level directory of the repository:
 
 ```
 pdoc --html .
