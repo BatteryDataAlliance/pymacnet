@@ -5,7 +5,6 @@
 - [Motivation](#Motivation)
 - [Installation](#Installation)
     - [Requirements](#Requirements)
-    - [Base Installation](#BaseInstall)
     - [Source Installation](#SourceInstall)
 - [Examples](#Examples)
   - [Getting Started](#GettingStarted)
