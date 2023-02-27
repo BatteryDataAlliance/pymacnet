@@ -7,7 +7,7 @@
     - [Requirements](#Requirements)
     - [Source Installation](#Source)
 - [Examples](#Examples)
-  - [Getting Started](#Started)
+  - [Getting Started](#Getting Started)
     - [Configuration](#Config)
   - [Getting Channel Readings](#Readings) 
   - [Starting a Test](#Test)
@@ -58,7 +58,7 @@ pip install .
 
 This section goes over various of examples of how to use `pymacnet` to do such tasks as getting channel readings, starting a test, and even controlling a channel directly without a test procedure. For interactive examples see the `demo.ipynb` notebook in the repository. 
 
-## <a name="Started"></a>Getting Started
+## <a name="Getting Started"></a>Getting Started
 
 `pymacnet` provides a class `MaccorInterface` that communicates with the Maccor cycler via MacNet. Each class instance targets a specific channel of the cycler and requires a configuration dictionary with the following fields:
 
