@@ -5,15 +5,15 @@
 - [Motivation](#Motivation)
 - [Installation](#Installation)
     - [Requirements](#Requirements)
-    - [Source Installation](#SourceInstall)
+    - [Source Installation](#Source)
 - [Examples](#Examples)
-  - [Getting Started](#GettingStarted)
+  - [Getting Started](#Started)
     - [Configuration](#Config)
   - [Getting Channel Readings](#Readings) 
-  - [Starting a Test](#StartingTest)
+  - [Starting a Test](#Test)
   - [Setting Variables](#Variables)
-  - [Direct Control](#DirectControl)
-- [Development](#Characterization)
+  - [Direct Control](#Direct)
+- [Development](#Dev)
   - [Contribution Guidelines](#Contribution)
   - [Testing](#Testing)
     - [MaccorSpoofer](#Spoofer)
@@ -46,7 +46,7 @@ It is entirely possible to write one's own MacNet wrapper, but `pymacnet` provid
 
 `pymacnet` requires only Python 3 and packages from the standard library. It has been tested on on Windows, Mac, and Debian operating systems.
 
-## <a name="SourceInstall"></a>Source Installation
+## <a name="Source"></a>Source Installation
 
 To install from source clone [the repository](https://github.com/BattGenie/pymacnet), navigate into the directory, and type the following into the command line:
 
@@ -58,7 +58,7 @@ pip install .
 
 This section goes over various of examples of how to use `pymacnet` to do such tasks as getting channel readings, starting a test, and even controlling a channel directly without a test procedure. For interactive examples see the `demo.ipynb` notebook in the repository. 
 
-## <a name="GettingStarted"></a>Getting Started
+## <a name="Started"></a>Getting Started
 
 `pymacnet` provides a class `MaccorInterface` that communicates with the Maccor cycler via MacNet. Each class instance targets a specific channel of the cycler and requires a configuration dictionary with the following fields:
 
@@ -124,7 +124,7 @@ Example output:
 {'FClass': 4, 'FNum': 7, 'Chan': 1, 'RF1': 0, 'RF2': 192, 'Stat': 0, 'LastRecNum': 4225, 'Cycle': 0, 'Step': 5, 'TestTime': 2.0, 'StepTime': 1.0, 'Capacity': 0, 'Energy': 0, 'Current': 0, 'Voltage': 3.85, 'TesterTime': '2022-10-13T12:32:56'}
 ```
 
-## <a name="StartingTests"></a>Starting a Test
+## <a name="Test"></a>Starting a Test
 
 Here is in example of how to start a test named "simple_test_1" on channel 75 with an existing test procedure named "test_procedure_1". Note the safety limits defined in the config will be set on the channel before starting the test. Also, test names must be unique. If a non-unique test name is provided then the test will not start. If no test name is provided then a unique random test name is generated. 
 
@@ -194,7 +194,7 @@ if not maccor_interface.start():
 maccor_interface.set_channel_variable(var_num = 1, var_value = 0.01)
 ```
 
-## <a name="DirectControl"></a>Direct Control
+## <a name="Direct"></a>Direct Control
 
 Here is an example of how to bypass using a test procedure all together and control the channel directly using direct control.  Note the channel safety limits will be set before the test is started. **WARNING DIRECT CONTROL IS POTENTIALLY DANGEROUS. BE CAREFUL AND MAKE SURE YOU UNDERSTAND EXACTLY WHAT YOUR CODE IS DOING**
 
@@ -249,7 +249,7 @@ maccor_interface.set_direct_mode_output(current_a = 0.0)
 time.sleep(1)
 ```
 
-# <a name="Development"></a>Development
+# <a name="Dev"></a>Development
 
 This section contains various information to help developers further extend and test `pymacnet`
 
