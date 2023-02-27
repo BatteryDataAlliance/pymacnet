@@ -7,7 +7,7 @@
     - [Requirements](#Requirements)
     - [Source Installation](#Source)
 - [Examples](#Examples)
-  - [Getting Started](#Getting Started)
+  - [Getting Started](#GettingStarted)
     - [Configuration](#Config)
   - [Getting Channel Readings](#Readings) 
   - [Starting a Test](#Test)
