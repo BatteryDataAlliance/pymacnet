@@ -8,7 +8,7 @@
     - [Source Installation](#Source)
 - [Examples](#Examples)
   - [Getting Started](#GettingStarted)
-    - [Configuration](#Config)
+    - [Configuration](#Configuration)
   - [Getting Channel Readings](#Readings) 
   - [Starting a Test](#Test)
   - [Setting Variables](#Variables)
