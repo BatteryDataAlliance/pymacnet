@@ -16,10 +16,10 @@
   - [Setting Variables](#setting-variables)
   - [Direct Control](#direct-control)
 - [Development](#Dev)
-  - [Contribution Guidelines](#contribution-guideliens)
+  - [Contributing](#Contributing)
   - [Testing](#Testing)
     - [MaccorSpoofer](#Spoofer)
-  - [Updating Docs](#updating-docs)
+  - [Documentation](#Documentation)
 - [License](#License)
 
 # <a name="Motivation"></a>Motivation
@@ -255,7 +255,7 @@ time.sleep(1)
 
 This section contains various information to help developers further extend and test `pymacnet`
 
-## <a name="Contribution"></a>Contribution guidelines
+## <a name="Contributing"></a>Contributing
 
 As it exists now, `pymacnet` only implements a fraction of the messages supported by MacNet. Further work can be done to expand `pymacnet` to include more of the messages detailed in the MacNet documentation `docs/macnet_from_maccor_help.pdf`.
 s
@@ -273,7 +273,7 @@ pytest .
 
 Testing software on a real cycler is dangerous so we've created a submodule `maccorspoofer` to emulate some of the behavior of the Maccor software with a class `MaccorSpoofer`. This class creates TCP and UDP servers and accepts connections from n number of clients. The `MaccorSpoofer` does not perfectly emulate a Maccor cycler (for example, it does not track if a test is already running on a channel) and merely checks that the message format is correct and responds with standard message. This could be expanded in the future as needed.
 
-## <a name="Docs"></a>Documentation
+## <a name="Documentation"></a>Documentation
 
 All documentation was generated with [pydoc](https://docs.python.org/3/library/pydoc.html). To re-generate the documentation type the following command from the top level directory of the repository:
 
