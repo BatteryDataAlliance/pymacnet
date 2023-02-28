@@ -259,7 +259,7 @@ This section contains various information to help developers further extend and 
 
 As it exists now, `pymacnet` only implements a fraction of the messages supported by MacNet. Further work can be done to expand `pymacnet` to include more of the messages detailed in the MacNet documentation `docs/macnet_from_maccor_help.pdf`.
 
-User are encourage to contribute... ADD CONTRIBUTION GUIDELINES
+User are encourage to contribute...
 
 ## <a name="Testing"></a>Testing
 
