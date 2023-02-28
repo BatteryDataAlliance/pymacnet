@@ -18,7 +18,7 @@
 - [Development](#Dev)
   - [Contributing](#Contributing)
   - [Testing](#Testing)
-    - [MaccorSpoofer](#Spoofer)
+    - [MaccorSpoofer](#MaccorSpoofer)
   - [Documentation](#Documentation)
 - [License](#License)
 
@@ -269,7 +269,7 @@ To run the tests navigate to the "tests" directory and type type the following:
 pytest .
 ```
 
-### <a name="Spoofer"></a>MaccorSpoofer
+### <a name="MaccorSpoofer"></a>MaccorSpoofer
 
 Testing software on a real cycler is dangerous so we've created a submodule `maccorspoofer` to emulate some of the behavior of the Maccor software with a class `MaccorSpoofer`. This class creates TCP and UDP servers and accepts connections from n number of clients. The `MaccorSpoofer` does not perfectly emulate a Maccor cycler (for example, it does not track if a test is already running on a channel) and merely checks that the message format is correct and responds with standard message. This could be expanded in the future as needed.
 
