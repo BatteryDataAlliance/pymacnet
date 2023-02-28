@@ -258,8 +258,8 @@ This section contains various information to help developers further extend and 
 ## <a name="Contribution"></a>Contribution guidelines
 
 As it exists now, `pymacnet` only implements a fraction of the messages supported by MacNet. Further work can be done to expand `pymacnet` to include more of the messages detailed in the MacNet documentation `docs/macnet_from_maccor_help.pdf`.
-
-User are encourage to contribute...
+s
+We welcome your help in expanding `pymacnet`! Please see the CONTRIBUTING.md file in this repository for contribution guideliens. 
 
 ## <a name="Testing"></a>Testing
 
