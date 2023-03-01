@@ -263,7 +263,7 @@ We welcome your help in expanding `pymacnet`! Please see the [CONTRIBUTING.md](h
 
 ## <a name="Testing"></a>Testing
 
-To run the tests navigate to the "tests" directory and type type the following:
+To run the tests navigate to the "tests" directory and type the following:
 
 ```
 pytest .
