@@ -24,7 +24,7 @@
 
 # <a name="Motivation"></a>Motivation
 
-Why bother using `pymacnet`? This package enables a wide variety of applications such as:
+Why did we create `pymacnet`? This package enables a wide variety of applications such as:
 
 - Real-time data logging and reporting
 
