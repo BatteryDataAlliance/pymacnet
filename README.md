@@ -26,13 +26,13 @@
 
 Why did we create `pymacnet`? This package enables a wide variety of applications such as:
 
-- Real-time data logging and reporting
+- Real-time data logging, monitoring and alerting
 
-`pymacnet` can be used to passively monitor running tests and log readings directly to a database, bypassing the need to manually export data. Moreover, it's possible to create automated alerts based on incoming real-time data. For example, if a test were to fault or temperature were to exceed a set threshold. While Maccor already has a built-in notification system with MacNotify `pymacnet` provides a more flexible and customizable solution without having to directly modify test procedures. 
+`pymacnet` can be used to passively monitor running tests and log readings directly to a database, bypassing the need to manually export data. Moreover, it's possible to create automated alerts based on incoming real-time data. For example, if a test were to fault or temperature were to exceed a set threshold. While Maccor already has a built-in notification system with MacNotify, `pymacnet` provides a more flexible and customizable solution without having to directly modify test procedures. 
 
 - Automated test management
 
-The GUI provided by Maccor for test management is straight forward and easy to use, but requires significant manual work. With `pymacnet` it's possible to write programs to automatically start tests simultaneously across many channels (or even many cyclers) at once.
+The GUI provided by Maccor for test management is straight-forward and easy to use, but requires significant manual work. With `pymacnet` it is possible to write programs to automatically start tests simultaneously across many channels (or even many cyclers) at once.
 
 - Testing of next generation closed-loop charging methods
 
@@ -85,7 +85,7 @@ This section goes over various of examples of how to use `pymacnet` to do such t
 
 ## <a name="Readings"></a>Getting Channel Readings
 
-Below is example code for reading channel status (which includes voltage, current, etc.) from channel 75 on a Maccor cycler with IP address 3.3.31.83.
+Below is example code for reading channel status (which includes voltage, current, etc.) from channel 75 on a Maccor cycler with IP address `3.3.31.83`.
 
 ```python
 import time
@@ -258,8 +258,8 @@ This section contains various information to help developers further extend and 
 ## <a name="Contributing"></a>Contributing
 
 As it exists now, `pymacnet` only implements a fraction of the messages supported by MacNet. Further work can be done to expand `pymacnet` to include more of the messages detailed in the MacNet documentation `docs/macnet_from_maccor_help.pdf`.
-s
-We welcome your help in expanding `pymacnet`! Please see the CONTRIBUTING.md file in this repository for contribution guideliens. 
+
+We welcome your help in expanding `pymacnet`! Please see the [CONTRIBUTING.md](https://github.com/BattGenie/pymacnet/blob/main/CONTRIBUTING.md) file in this repository for contribution guideliens. 
 
 ## <a name="Testing"></a>Testing
 
@@ -271,7 +271,7 @@ pytest .
 
 ### <a name="MaccorSpoofer"></a>MaccorSpoofer
 
-Testing software on a real cycler is dangerous so we've created a submodule `maccorspoofer` to emulate some of the behavior of the Maccor software with a class `MaccorSpoofer`. This class creates TCP and UDP servers and accepts connections from n number of clients. The `MaccorSpoofer` does not perfectly emulate a Maccor cycler (for example, it does not track if a test is already running on a channel) and merely checks that the message format is correct and responds with standard message. This could be expanded in the future as needed.
+Testing software on a real cycler is dangerous so we've created a submodule `maccorspoofer` to emulate some of the behavior of the Maccor software with a class `MaccorSpoofer`. This class creates TCP and UDP servers and accepts connections from n number of clients. The `MaccorSpoofer` does not perfectly emulate a Maccor cycler (for example, it does not track if a test is already running on a channel) and merely checks that the message format is correct and responds with standard message. 
 
 ## <a name="Documentation"></a>Documentation
 
