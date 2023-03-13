@@ -1,4 +1,4 @@
-# pycmanet
+# pymacnet
 
 `pymacnet` is a Python module that provides a channel level interface for communication and control of [Maccor cyclers](http://www.maccor.com/) via MacNet. MacNet is an interface provided by Maccor that allows for controlling their cyclers via UDP/IP and TCP/IP. `pymacnet` provides a hassle-free way to utilize MacNet with a simple python class.
 
