@@ -18,14 +18,13 @@ class MaccorInterface:
 
     def __init__(self, config: dict):
         """
-        Creates the a class instance. The `start()` method still needs to be run to create the connection
-        and to check the validity of the config.
+        Creates a class instance. The `start()` method still needs to be run to create the connection.
 
         Parameters
         ----------
         config : dict
-            A configuration dictionary containing relevant test parameters. See the README.md
-            for a detailed breakdown of all parameters that must be included.
+            A configuration dictionary. See the README.md for a detailed breakdown of all parameters 
+            that must be included.
         """
 
         # Channels are zero indexed within Macnet so we must subtract one here.
@@ -118,7 +117,7 @@ class MaccorInterface:
 
     def __send_receive_msg(self, outgoing_msg_dict) -> dict:
         """
-        Takes in a message dictionary, packs it, sends to Maccor server, and unpacks the response.
+        Takes in a message dictionary, packs it, sends it to the Maccor server, and unpacks the response.
 
         Parameters
         ----------
