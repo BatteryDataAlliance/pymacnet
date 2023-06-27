@@ -328,9 +328,6 @@ class _JsonWorker(_SocketWorker):
         """
 
         rx_msg = json.loads(rx_msg)
-        if rx_msg['params']['Chan'] > self.__channel_data.num_channels:
-            # TODO: Should respond with some sort of error message if request is out of range
-            pass
 
         if (pymacnet.messages.tx_read_status_msg['params']['FClass'] == rx_msg['params']['FClass'] and
                 pymacnet.messages.tx_read_status_msg['params']['FNum'] == rx_msg['params']['FNum']):
@@ -372,10 +369,21 @@ class _JsonWorker(_SocketWorker):
             tx_msg['result']['ISafeDis'] = rx_msg['params']['ISafeDis']
             tx_msg['result']['PBatSafeChg'] = rx_msg['params']['PBatSafeChg']
             tx_msg['result']['PBatSafeDis'] = rx_msg['params']['PBatSafeDis']
+        elif (pymacnet.messages.tx_system_info_msg['params']['FClass'] == rx_msg['params']['FClass'] and
+                pymacnet.messages.tx_system_info_msg['params']['FNum'] == rx_msg['params']['FNum']):
+            tx_msg = pymacnet.messages.rx_system_info_msg
+        elif (pymacnet.messages.tx_general_info_msg['params']['FClass'] == rx_msg['params']['FClass'] and
+                pymacnet.messages.tx_general_info_msg['params']['FNum'] == rx_msg['params']['FNum']):
+            tx_msg = pymacnet.messages.rx_general_info_msg
+        elif (pymacnet.messages.tx_channel_status_multiple_channels['params']['FClass'] == rx_msg['params']['FClass'] and
+                pymacnet.messages.tx_channel_status_multiple_channels['params']['FNum'] == rx_msg['params']['FNum']):
+            tx_msg = pymacnet.messages.rx_channel_status_multiple_channels
         else:
             tx_msg = {'err': 1}
 
         tx_msg = json.dumps(tx_msg, indent=4)
+        # Needs to be included as it's included in messages from Maccor server as indicator of message termination
+        tx_msg += '\r\n'
         tx_msg = tx_msg.encode('utf-8')
 
         return tx_msg

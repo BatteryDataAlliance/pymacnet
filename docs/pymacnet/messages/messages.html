@@ -103,13 +103,13 @@ Also, do not select the channel in advance of starting the test. The JSON Start 
 start the channel. If, however, multiple channels should be started with the same test, do first select the channels,
 then start the test using 65535, meaning &#34;all selected&#34;.
 
-Paramters as follows:
+Parameters as follows:
 
 `TestName` Up to 25 ascii characters for the data file name. “Random” will generate a pseudo-random name. 
 The field is fixed in length, so remaining characters should be space characters.
 
 `ProcName` Up to 25 ascii characters for the test procedure name. The test procedure must exist in the 
-C:\\Maccor\\Procedur folder and the “.000” should not be part of the name. The field is fixed in length, 
+C:\\Maccor\\Procedure folder and the “.000” should not be part of the name. The field is fixed in length, 
 so remaining characters should be space characters.
 
 `Comment` Up to 80 characters for the test comment. The field is fixed in length, 
@@ -227,7 +227,7 @@ rx_start_test_with_direct_control_msg = {
     &#39;id&#39;: 1987
 }
 &#34;&#34;&#34;
-Starts test with direct control response message
+Response message for starting test with direct control.
 &#34;&#34;&#34;
 
 tx_set_direct_output_msg = {
@@ -428,6 +428,124 @@ rx_set_variable_msg = {
 }
 &#34;&#34;&#34;
 Response message for setting channel variables.
+&#34;&#34;&#34;
+
+tx_system_info_msg = {
+    &#34;jsonrpc&#34;: &#34;2.0&#34;, 
+    &#34;method&#34;: &#34;MacNet&#34;, 
+    &#34;params&#34;:
+    {
+    &#34;FClass&#34;: 1,
+    &#34;FNum&#34;: 1 
+    },
+    &#34;id&#34;: 1987 
+}
+&#34;&#34;&#34;
+Requests the software system information from the Maccor cycler, message (1,1)
+&#34;&#34;&#34;
+
+rx_system_info_msg = {
+    &#34;jsonrpc&#34;:&#34;2.0&#34;, 
+    &#34;result&#34;:
+    {
+        &#34;FClass&#34;:1,
+        &#34;FNum&#34;:1,
+        &#34;APIVersion&#34;:1, 
+        &#34;MacTest32EXEversionMajor&#34;:3, 
+        &#34;MacTest32EXEversionMinor&#34;:2, 
+        &#34;MacTest32EXEversionBuild&#34;:18, 
+        &#34;MacTest32DLLversionMajor&#34;:3, 
+        &#34;MacTest32DLLversionMsinor&#34;:2, 
+        &#34;MacTest32DLLversionBuild&#34;:18, 
+        &#34;MacTest32ExeDT&#34;:&#34;2016-11-08T15:02:58&#34;, 
+        &#34;MacTest32DLLDT&#34;:&#34;2016-11-13T11:29:48&#34;
+    },
+    &#34;id&#34;:1987
+}
+&#34;&#34;&#34;
+Example response for system software version, message (1,1)
+&#34;&#34;&#34;
+
+tx_general_info_msg = {
+    &#34;jsonrpc&#34;: &#34;2.0&#34;, 
+    &#34;method&#34;: &#34;MacNet&#34;, 
+    &#34;params&#34;:
+    {
+        &#34;FClass&#34;: 1,
+        &#34;FNum&#34;: 2 
+    },
+    &#34;id&#34;: 1987 
+}
+&#34;&#34;&#34;
+Requests the general system information from the Maccor cycler, message (1,2)
+&#34;&#34;&#34;
+
+rx_general_info_msg = {
+    &#34;jsonrpc&#34;:&#34;2.0&#34;, 
+    &#34;result&#34;:
+    {
+        &#34;FClass&#34;:1, 
+        &#34;FNum&#34;:2, 
+        &#34;SystemID&#34;:&#34;Win10&#34;, 
+        &#34;SystemType&#34;:0, 
+        &#34;ControllerBoards&#34;:3, 
+        &#34;TestChannels&#34;:12, 
+        &#34;AuxBoards&#34;:1, 
+        &#34;AuxChannels&#34;:128, 
+        &#34;SMB1Pos&#34;:0,
+        &#34;SMB3Pos&#34;:1 
+    },
+    &#34;id&#34;:1987
+}
+&#34;&#34;&#34;
+Example response for general system information from the Maccor cycler, message (1,2)
+&#34;&#34;&#34;
+
+tx_channel_status_multiple_channels = {
+    &#34;jsonrpc&#34;: &#34;2.0&#34;, 
+    &#34;method&#34;: &#34;MacNet&#34;, 
+    &#34;params&#34;:
+    {
+        &#34;FClass&#34;: 4, 
+        &#34;FNum&#34;: 1, 
+        &#34;Chan&#34;: 0, 
+        &#34;Len&#34;: 2
+    },
+    &#34;id&#34;: 1987
+}
+&#34;&#34;&#34;
+Requests the status of “Len” channels starting from “Chan” will be returned. 
+Four bytes per requested channel. Up to 128 channels can be requested in one message.
+
+MacNet message: (4, 1) Channel status of multiple channels
+&#34;&#34;&#34;
+
+rx_channel_status_multiple_channels = {
+    &#34;jsonrpc&#34;:&#34;2.0&#34;,
+    &#34;result&#34;:
+    {
+        &#34;FClass&#34;:4, 
+        &#34;FNum&#34;:1, 
+        &#34;Chan&#34;:0, 
+        &#34;Len&#34;:2, 
+        &#34;Status&#34;:
+        [
+            {
+                &#34;RF1&#34;:0, 
+                &#34;RF2&#34;:0, 
+                &#34;Stat&#34;:0
+            }, 
+            {
+                &#34;RF1&#34;:0,
+                &#34;RF2&#34;:0, 
+                &#34;Stat&#34;:0
+            } 
+        ]
+    }, 
+    &#34;id&#34;:1987
+}
+&#34;&#34;&#34;
+Example response for MacNet message: (4, 1) Channel status of multiple channels)
 &#34;&#34;&#34;</code></pre>
 </details>
 </section>
@@ -436,6 +554,14 @@ Response message for setting channel variables.
 <section>
 <h2 class="section-title" id="header-variables">Global variables</h2>
 <dl>
+<dt id="pymacnet.messages.messages.rx_channel_status_multiple_channels"><code class="name">var <span class="ident">rx_channel_status_multiple_channels</span></code></dt>
+<dd>
+<div class="desc"><p>Example response for MacNet message: (4, 1) Channel status of multiple channels)</p></div>
+</dd>
+<dt id="pymacnet.messages.messages.rx_general_info_msg"><code class="name">var <span class="ident">rx_general_info_msg</span></code></dt>
+<dd>
+<div class="desc"><p>Example response for general system information from the Maccor cycler, message (1,2)</p></div>
+</dd>
 <dt id="pymacnet.messages.messages.rx_read_aux_msg"><code class="name">var <span class="ident">rx_read_aux_msg</span></code></dt>
 <dd>
 <div class="desc"><p>The auxiliary response message.</p></div>
@@ -462,11 +588,25 @@ Response message for setting channel variables.
 </dd>
 <dt id="pymacnet.messages.messages.rx_start_test_with_direct_control_msg"><code class="name">var <span class="ident">rx_start_test_with_direct_control_msg</span></code></dt>
 <dd>
-<div class="desc"><p>Starts test with direct control response message</p></div>
+<div class="desc"><p>Response message for starting test with direct control.</p></div>
 </dd>
 <dt id="pymacnet.messages.messages.rx_start_test_with_procedure_msg"><code class="name">var <span class="ident">rx_start_test_with_procedure_msg</span></code></dt>
 <dd>
 <div class="desc"><p>Response for starting test with procedure.</p></div>
+</dd>
+<dt id="pymacnet.messages.messages.rx_system_info_msg"><code class="name">var <span class="ident">rx_system_info_msg</span></code></dt>
+<dd>
+<div class="desc"><p>Example response for system software version, message (1,1)</p></div>
+</dd>
+<dt id="pymacnet.messages.messages.tx_channel_status_multiple_channels"><code class="name">var <span class="ident">tx_channel_status_multiple_channels</span></code></dt>
+<dd>
+<div class="desc"><p>Requests the status of “Len” channels starting from “Chan” will be returned.
+Four bytes per requested channel. Up to 128 channels can be requested in one message.</p>
+<p>MacNet message: (4, 1) Channel status of multiple channels</p></div>
+</dd>
+<dt id="pymacnet.messages.messages.tx_general_info_msg"><code class="name">var <span class="ident">tx_general_info_msg</span></code></dt>
+<dd>
+<div class="desc"><p>Requests the general system information from the Maccor cycler, message (1,2)</p></div>
 </dd>
 <dt id="pymacnet.messages.messages.tx_read_aux_msg"><code class="name">var <span class="ident">tx_read_aux_msg</span></code></dt>
 <dd>
@@ -550,11 +690,11 @@ Data record current</p>
 Also, do not select the channel in advance of starting the test. The JSON Start test command will both select and
 start the channel. If, however, multiple channels should be started with the same test, do first select the channels,
 then start the test using 65535, meaning "all selected".</p>
-<p>Paramters as follows:</p>
+<p>Parameters as follows:</p>
 <p><code>TestName</code> Up to 25 ascii characters for the data file name. “Random” will generate a pseudo-random name.
 The field is fixed in length, so remaining characters should be space characters.</p>
 <p><code>ProcName</code> Up to 25 ascii characters for the test procedure name. The test procedure must exist in the
-C:\Maccor\Procedur folder and the “.000” should not be part of the name. The field is fixed in length,
+C:\Maccor\Procedure folder and the “.000” should not be part of the name. The field is fixed in length,
 so remaining characters should be space characters.</p>
 <p><code>Comment</code> Up to 80 characters for the test comment. The field is fixed in length,
 so remaining characters should be space characters.</p>
@@ -569,6 +709,10 @@ so remaining characters should be space characters.</p>
 <p><code>ParallelR</code> See Start Test Setup for further details</p>
 <p><code>VDivHiR</code> See Start Test Setup for further details</p>
 <p><code>VDivLoR</code> See Start Test Setup for further details</p></div>
+</dd>
+<dt id="pymacnet.messages.messages.tx_system_info_msg"><code class="name">var <span class="ident">tx_system_info_msg</span></code></dt>
+<dd>
+<div class="desc"><p>Requests the software system information from the Maccor cycler, message (1,1)</p></div>
 </dd>
 </dl>
 </section>
@@ -590,6 +734,8 @@ so remaining characters should be space characters.</p>
 </li>
 <li><h3><a href="#header-variables">Global variables</a></h3>
 <ul class="">
+<li><code><a title="pymacnet.messages.messages.rx_channel_status_multiple_channels" href="#pymacnet.messages.messages.rx_channel_status_multiple_channels">rx_channel_status_multiple_channels</a></code></li>
+<li><code><a title="pymacnet.messages.messages.rx_general_info_msg" href="#pymacnet.messages.messages.rx_general_info_msg">rx_general_info_msg</a></code></li>
 <li><code><a title="pymacnet.messages.messages.rx_read_aux_msg" href="#pymacnet.messages.messages.rx_read_aux_msg">rx_read_aux_msg</a></code></li>
 <li><code><a title="pymacnet.messages.messages.rx_read_status_msg" href="#pymacnet.messages.messages.rx_read_status_msg">rx_read_status_msg</a></code></li>
 <li><code><a title="pymacnet.messages.messages.rx_reset_channel_msg" href="#pymacnet.messages.messages.rx_reset_channel_msg">rx_reset_channel_msg</a></code></li>
@@ -598,6 +744,9 @@ so remaining characters should be space characters.</p>
 <li><code><a title="pymacnet.messages.messages.rx_set_variable_msg" href="#pymacnet.messages.messages.rx_set_variable_msg">rx_set_variable_msg</a></code></li>
 <li><code><a title="pymacnet.messages.messages.rx_start_test_with_direct_control_msg" href="#pymacnet.messages.messages.rx_start_test_with_direct_control_msg">rx_start_test_with_direct_control_msg</a></code></li>
 <li><code><a title="pymacnet.messages.messages.rx_start_test_with_procedure_msg" href="#pymacnet.messages.messages.rx_start_test_with_procedure_msg">rx_start_test_with_procedure_msg</a></code></li>
+<li><code><a title="pymacnet.messages.messages.rx_system_info_msg" href="#pymacnet.messages.messages.rx_system_info_msg">rx_system_info_msg</a></code></li>
+<li><code><a title="pymacnet.messages.messages.tx_channel_status_multiple_channels" href="#pymacnet.messages.messages.tx_channel_status_multiple_channels">tx_channel_status_multiple_channels</a></code></li>
+<li><code><a title="pymacnet.messages.messages.tx_general_info_msg" href="#pymacnet.messages.messages.tx_general_info_msg">tx_general_info_msg</a></code></li>
 <li><code><a title="pymacnet.messages.messages.tx_read_aux_msg" href="#pymacnet.messages.messages.tx_read_aux_msg">tx_read_aux_msg</a></code></li>
 <li><code><a title="pymacnet.messages.messages.tx_read_status_msg" href="#pymacnet.messages.messages.tx_read_status_msg">tx_read_status_msg</a></code></li>
 <li><code><a title="pymacnet.messages.messages.tx_reset_channel_msg" href="#pymacnet.messages.messages.tx_reset_channel_msg">tx_reset_channel_msg</a></code></li>
@@ -606,6 +755,7 @@ so remaining characters should be space characters.</p>
 <li><code><a title="pymacnet.messages.messages.tx_set_variable_msg" href="#pymacnet.messages.messages.tx_set_variable_msg">tx_set_variable_msg</a></code></li>
 <li><code><a title="pymacnet.messages.messages.tx_start_test_with_direct_control_msg" href="#pymacnet.messages.messages.tx_start_test_with_direct_control_msg">tx_start_test_with_direct_control_msg</a></code></li>
 <li><code><a title="pymacnet.messages.messages.tx_start_test_with_procedure_msg" href="#pymacnet.messages.messages.tx_start_test_with_procedure_msg">tx_start_test_with_procedure_msg</a></code></li>
+<li><code><a title="pymacnet.messages.messages.tx_system_info_msg" href="#pymacnet.messages.messages.tx_system_info_msg">tx_system_info_msg</a></code></li>
 </ul>
 </li>
 </ul>

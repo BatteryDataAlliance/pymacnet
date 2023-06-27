@@ -356,9 +356,6 @@ class _JsonWorker(_SocketWorker):
         &#34;&#34;&#34;
 
         rx_msg = json.loads(rx_msg)
-        if rx_msg[&#39;params&#39;][&#39;Chan&#39;] &gt; self.__channel_data.num_channels:
-            # TODO: Should respond with some sort of error message if request is out of range
-            pass
 
         if (pymacnet.messages.tx_read_status_msg[&#39;params&#39;][&#39;FClass&#39;] == rx_msg[&#39;params&#39;][&#39;FClass&#39;] and
                 pymacnet.messages.tx_read_status_msg[&#39;params&#39;][&#39;FNum&#39;] == rx_msg[&#39;params&#39;][&#39;FNum&#39;]):
@@ -400,10 +397,21 @@ class _JsonWorker(_SocketWorker):
             tx_msg[&#39;result&#39;][&#39;ISafeDis&#39;] = rx_msg[&#39;params&#39;][&#39;ISafeDis&#39;]
             tx_msg[&#39;result&#39;][&#39;PBatSafeChg&#39;] = rx_msg[&#39;params&#39;][&#39;PBatSafeChg&#39;]
             tx_msg[&#39;result&#39;][&#39;PBatSafeDis&#39;] = rx_msg[&#39;params&#39;][&#39;PBatSafeDis&#39;]
+        elif (pymacnet.messages.tx_system_info_msg[&#39;params&#39;][&#39;FClass&#39;] == rx_msg[&#39;params&#39;][&#39;FClass&#39;] and
+                pymacnet.messages.tx_system_info_msg[&#39;params&#39;][&#39;FNum&#39;] == rx_msg[&#39;params&#39;][&#39;FNum&#39;]):
+            tx_msg = pymacnet.messages.rx_system_info_msg
+        elif (pymacnet.messages.tx_general_info_msg[&#39;params&#39;][&#39;FClass&#39;] == rx_msg[&#39;params&#39;][&#39;FClass&#39;] and
+                pymacnet.messages.tx_general_info_msg[&#39;params&#39;][&#39;FNum&#39;] == rx_msg[&#39;params&#39;][&#39;FNum&#39;]):
+            tx_msg = pymacnet.messages.rx_general_info_msg
+        elif (pymacnet.messages.tx_channel_status_multiple_channels[&#39;params&#39;][&#39;FClass&#39;] == rx_msg[&#39;params&#39;][&#39;FClass&#39;] and
+                pymacnet.messages.tx_channel_status_multiple_channels[&#39;params&#39;][&#39;FNum&#39;] == rx_msg[&#39;params&#39;][&#39;FNum&#39;]):
+            tx_msg = pymacnet.messages.rx_channel_status_multiple_channels
         else:
             tx_msg = {&#39;err&#39;: 1}
 
         tx_msg = json.dumps(tx_msg, indent=4)
+        # Needs to be included as it&#39;s included in messages from Maccor server as indicator of message termination
+        tx_msg += &#39;\r\n&#39;
         tx_msg = tx_msg.encode(&#39;utf-8&#39;)
 
         return tx_msg
