@@ -1,6 +1,6 @@
 # pymacnet
 
-`pymacnet` is a Python module that provides a channel level interface for communication and control of [Maccor cyclers](http://www.maccor.com/) via MacNet. MacNet is an interface provided by Maccor that allows for controlling their cyclers via UDP/IP and TCP/IP. `pymacnet` provides a hassle-free way to utilize MacNet with a simple python class.
+`pymacnet` is a Python module that provides cycler and channel level interfaces for communication and control of [Maccor cyclers](http://www.maccor.com/) via MacNet. MacNet is an interface provided by Maccor that allows for controlling their cyclers via UDP/IP and TCP/IP. `pymacnet` provides a hassle-free way to utilize MacNet with a simple python class.
 
 ## Overview
 
@@ -10,7 +10,9 @@
   - [Installation Instructions](#installation-instructions)
 - [Examples](#examples)
   - [Getting Started](#getting-started)
-    - [Configuration](#configuration)
+    - [CyclerInterface Configuration](#cyclerinterface-configuration)
+    - [ChannelInterface Configuration](#channelinterface-configuration)
+  - [Getting Cycler Level Information](#getting-cycler-level-information)
   - [Getting Channel Readings](#getting-channel-readings)
   - [Starting a Test](#starting-a-test)
   - [Setting Variables](#setting-variables)
@@ -67,14 +69,33 @@ pip install .
 
 ## Examples
 
-This section goes over various of examples of how to use `pymacnet` to do such tasks as getting channel readings, starting a test, and even controlling a channel directly without a test procedure. For interactive examples see the `demo.ipynb` notebook in the repository.
+This section goes over various examples of how to use `pymacnet` to do such tasks as getting channel readings, starting a test, and even controlling a channel directly without a test procedure. For interactive examples see the `demo.ipynb` notebook in the repository.
 
 ### Getting Started
 
-`pymacnet` provides a class `MaccorInterface` that communicates with the Maccor cycler via MacNet. Each class instance targets a specific channel of the cycler and requires a configuration dictionary with the following fields:
+`pymacnet` provides two classes for interacting with a Maccor cycler:
 
-#### Configuration
+- `CyclerInterface` Provides a cycler level interface. The class instance allows for reading cycler level information, such as system software and configuration information, and statuses of all channels.
 
+- `ChannelInterface` Provides a channel level interface for a specific channel on the cycler. `ChannelInterface` is a child class of `CyclerInterface` so all the same cycler level methods are available, but with `ChannelInterface` it's possible to read more detailed information about a channel and even even control it. Each class instance targets a specific channel of the cycler.
+
+#### CyclerInterface Configuration
+
+The fields required in a `CyclerInterface` configuration dictionary are as follows:
+
+- `server_ip` - The IP address of the Maccor server. Use 127.0.0.1 if running on the same machine as the server.
+- `json_msg_port` - The port to communicate through with JSON messages. Default set to 57570.
+- `bin_msg_port` - The port to communicate through with binary messages. Default set to 57560.
+- `msg_buffer_size_bytes` - How big of a message buffer to use for sending/receiving messages. A minimum of 1024 bytes is recommended. 
+
+#### ChannelInterface Configuration
+
+The fields required in a `ChannelInterface` configuration dictionary are as follows:
+
+- `server_ip` - The IP address of the Maccor server. Use 127.0.0.1 if running on the same machine as the server.
+- `json_msg_port` - The port to communicate through with JSON messages. Default set to 57570.
+- `bin_msg_port` - The port to communicate through with binary messages. Default set to 57560.
+- `msg_buffer_size_bytes` - How big of a message buffer to use for sending/receiving messages. A minimum of 1024 bytes is recommended. 
 - `channel` - The channel to be targeted for all operations.
 - `test_name` - The test name to be used for any tests started. If left blank, Maccor will generate a unique random name for any started tests. Note that Maccor requires unique test names for each test.
 - `test_procedure` - The test procedure to be used, if starting a test with a procedure. Not needed with direct control.
@@ -83,18 +104,17 @@ This section goes over various of examples of how to use `pymacnet` to do such t
 - `v_min_safety_limit_v` - Lower voltage safety limit for the channel. Units of volts.
 - `i_max_safety_limit_a` - Upper current safety limit for the channel. Units of amps.
 - `i_min_safety_limit_a` - Lower current safety limit for the channel. Units of amps.
+- `power_safety_limit_chg_w` - The power safety limit for charge. Units of watts.
+- `power_safety_limit_dsg_w` - The power safety limit for discharge. Units of watts.
 - `v_max_v` - Upper voltage limit used for charge/CV limits. Units of volts. Only used with direct control.
 - `v_min_v` - Lower voltage limit used for discharge limit. Units of volts. Only used with direct control.
 - `data_record_time_s` - How often data points are taken during direct control tests. Zero turns off. Used only for direct control.
 - `data_record_voltage_delta_vbys` - The dV/dt at which data points are taken during direct control tests. Zero disables. Used only for direct control.
 - `data_record_current_delta_abys` - The dI/dt at which data points are taken during direct control tests. Zero disables. Used only for direct control.
-- `server_ip` - The IP address of the Maccor server. Use 127.0.0.1 if running on the same machine as the server.
-- `json_server_port` - The port to communicate through with JSON commands. Default set to 57570.
-- `tcp_server_port` - The port to communicate through with TCP commands. Default set to 57560.
 
-### Getting Channel Readings
+### Getting Cycler Level Information
 
-Below is example code for reading channel status (which includes voltage, current, etc.) from channel 75 on a Maccor cycler with IP address `3.3.31.83`.
+Here is some example code for getting cycler level readings with the `CyclerInterface` class. 
 
 ```python
 import time
@@ -102,6 +122,54 @@ import sys
 import pymacnet 
 
 config = {
+    "server_ip": "127.0.0.1",
+    "json_msg_port": 57570,
+    "bin_msg_port": 57560,
+    "msg_buffer_size_bytes": 1024
+}
+    
+cycler_interface = pymacnet.CyclerInterface(config)
+if not channel_interface.start():
+    sys.exit("failed to create connection!")
+
+system_info = cycler_interface.read_system_info()
+print(system_info)
+
+general_info = cycler_interface.read_general_info()
+print(general_info)
+
+channel_statuses = cycler_interface.read_all_channel_statuses()
+print(channel_statuses)
+```
+
+Example output:
+
+```text
+{'FClass': 1, 'FNum': 1, 'APIVersion': 1, 'MacTest32EXEversionMajor': 3, 'MacTest32EXEversionMinor': 2, 'MacTest32EXEversionBuild': 18 'MacTest32DLLversionMajor': 3, 'MacTest32DLLversionMsinor': 2, 'MacTest32DLLversionBuild': 18, 'MacTest32ExeDT': '2016-11-08T15:02:58', 'MacTest32DLLDT': '2016-11-13T11:29:48'}
+```
+
+```text
+{'FClass': 1, 'FNum': 2, 'SystemID': 'Win10', 'SystemType': 0, 'ControllerBoards': 3, 'TestChannels': 12, 'AuxBoards': 1, 'AuxChannels': 128, 'SMB1Pos': 0, 'SMB3Pos': 1}
+```
+
+```text
+[{'RF1': 0, 'RF2': 0, 'Stat': 0}, {'RF1': 0, 'RF2': 0, 'Stat': 0}]
+```
+
+### Getting Channel Readings
+
+Below is example code for reading channel status (which includes voltage, current, etc.) from channel 75.
+
+```python
+import time
+import sys
+import pymacnet 
+
+config = {
+    "server_ip": "127.0.0.1",
+    "json_msg_port": 57570,
+    "bin_msg_port": 57560,
+    "msg_buffer_size_bytes": 1024
     "channel": 75,
     "test_name": "",
     "c_rate_ah": 1,
@@ -111,21 +179,19 @@ config = {
     "v_min_safety_limit_v": 2.9,
     "i_max_safety_limit_a": 3.0,
     "i_min_safety_limit_a": 3.0,
+    "power_safety_limit_chg_w": 25,
+    "power_safety_limit_dsg_w": 25,
     "data_record_time_s": 0.05,
     "data_record_voltage_delta_vbys": 0.0,
     "data_record_current_delta_abys": 0.0,
     "test_procedure": "test_procedure_1",
-    "server_ip": "3.3.31.83",
-    "json_server_port": 57570,
-    "tcp_server_port": 57560,
-    "msg_buffer_size_bytes": 1024
 }
     
-maccor_interface = pymacnet.MaccorInterface(config)
-if not maccor_interface.start():
+channel_interface = pymacnet.ChannelInterface(config)
+if not channel_interface.start():
     sys.exit("failed to create connection!")
 
-status_reading = maccor_interface.read_status()
+status_reading = channel_interface.read_status()
 print(status_reading)
 ```
 
@@ -144,6 +210,10 @@ import pymacnet
 import sys
 
 config = {
+    "server_ip": "127.0.0.1",
+    "json_msg_port": 57570,
+    "bin_msg_port": 57560,
+    "msg_buffer_size_bytes": 1024
     "channel": 75,
     "test_name": "simple_test_1",
     "c_rate_ah": 1,
@@ -153,20 +223,18 @@ config = {
     "v_min_safety_limit_v": 2.9,
     "i_max_safety_limit_a": 3.0,
     "i_min_safety_limit_a": 3.0,
+    "power_safety_limit_chg_w": 25,
+    "power_safety_limit_dsg_w": 25,
     "data_record_time_s": 0.05,
     "data_record_voltage_delta_vbys": 0.0,
     "data_record_current_delta_abys": 0.0,
     "test_procedure": "test_procedure_1",
-    "server_ip": "3.3.31.83",
-    "json_server_port": 57570,
-    "tcp_server_port": 57560,
-    "msg_buffer_size_bytes": 1024
 }
-maccor_interface = pymacnet.MaccorInterface(config_dict)
-if not maccor_interface.start():
+channel_interface = pymacnet.ChannelInterface(config_dict)
+if not channel_interface.start():
     sys.exit("failed to create connection!")
 
-if maccor_interface.start_test_with_procedure():
+if channel_interface.start_test_with_procedure():
     print("Test started!")
 ```
 
@@ -179,6 +247,10 @@ import pymacnet
 import sys
 
 config = {
+    "server_ip": "127.0.0.1",
+    "json_msg_port": 57570,
+    "bin_msg_port": 57560,
+    "msg_buffer_size_bytes": 1024
     "channel": 75,
     "test_name": "",
     "c_rate_ah": 1,
@@ -188,21 +260,19 @@ config = {
     "v_min_safety_limit_v": 2.9,
     "i_max_safety_limit_a": 3.0,
     "i_min_safety_limit_a": 3.0,
+    "power_safety_limit_chg_w": 25,
+    "power_safety_limit_dsg_w": 25,
     "data_record_time_s": 0.05,
     "data_record_voltage_delta_vbys": 0.0,
     "data_record_current_delta_abys": 0.0,
     "test_procedure": "test_procedure_1",
-    "server_ip": "3.3.31.83",
-    "json_server_port": 57570,
-    "tcp_server_port": 57560,
-    "msg_buffer_size_bytes": 1024
 }
 
-maccor_interface = pymacnet.MaccorInterface(config_dict)
-if not maccor_interface.start():
+channel_interface = pymacnet.ChannelInterface(config_dict)
+if not channel_interface.start():
     sys.exit("failed to create connection!")
 
-maccor_interface.set_channel_variable(var_num = 1, var_value = 0.01)
+channel_interface.set_channel_variable(var_num = 1, var_value = 0.01)
 ```
 
 ### Direct Control
@@ -214,6 +284,10 @@ import pymacnet
 import sys
 
 config = {
+    "server_ip": "127.0.0.1",
+    "json_msg_port": 57570,
+    "bin_msg_port": 57560,
+    "msg_buffer_size_bytes": 1024
     "channel": 75,
     "test_name": "",
     "c_rate_ah": 1,
@@ -223,21 +297,19 @@ config = {
     "v_min_safety_limit_v": 2.9,
     "i_max_safety_limit_a": 3.0,
     "i_min_safety_limit_a": 3.0,
+    "power_safety_limit_chg_w": 25,
+    "power_safety_limit_dsg_w": 25,
     "data_record_time_s": 0.05,
     "data_record_voltage_delta_vbys": 0.0,
     "data_record_current_delta_abys": 0.0,
     "test_procedure": "test_procedure_1",
-    "server_ip": "3.3.31.83",
-    "json_server_port": 57570,
-    "tcp_server_port": 57560,
-    "msg_buffer_size_bytes": 1024
 }
 
-maccor_interface = pymacnet.MaccorInterface(config_dict)
-if not maccor_interface.start():
+channel_interface = pymacnet.ChannelInterface(config_dict)
+if not channel_interface.start():
     sys.exit("failed to create connection!")
 
-if maccor_interface.start_test_with_direct_control():
+if channel_interface.start_test_with_direct_control():
     print("Test started!")
 else:
     sys.exit("Failed to start test!")
@@ -245,18 +317,18 @@ else:
 time.sleep(1) # Must wait at least 100 ms between trying to set control
 
 # Discharge at 200 mA for 5 seconds. 
-maccor_interface.set_direct_mode_output(current_a = -0.200)
+channel_interface.set_direct_mode_output(current_a = -0.200)
 time.sleep(5)
 
 # Rest for 5 seconds
-maccor_interface.set_direct_mode_output(current_a = 0)
+channel_interface.set_direct_mode_output(current_a = 0)
 time.sleep(5) 
 
 # Charge at 200 mA for 5 seconds
-maccor_interface.set_direct_mode_output(current_a = 0.200)
+channel_interface.set_direct_mode_output(current_a = 0.200)
 time.sleep(5)
 
-maccor_interface.set_direct_mode_output(current_a = 0.0)
+channel_interface.set_direct_mode_output(current_a = 0.0)
 time.sleep(1)
 ```
 

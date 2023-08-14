@@ -35,6 +35,7 @@ def __send_recv_msg(s: socket.socket, tx_msg: dict):
     rx_msg = json.loads(rx_msg_packed.decode())
     return rx_msg
 
+
 def test_messages():
     """
     Test that the spoofer replies correctly to all messages.
@@ -71,6 +72,7 @@ def test_messages():
 
     s.close()
     spoofer_server.stop()
+
 
 def test_update_status():
     """

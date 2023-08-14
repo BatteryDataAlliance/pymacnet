@@ -4,6 +4,7 @@ import threading
 import copy
 import pymacnet.messages
 
+
 class ChannelData:
 
     __chan_status_list = []
@@ -109,6 +110,7 @@ class MaccorSpoofer:
 
         self.__channel_data = ChannelData(config['num_channels'])
 
+        # Start a dedicated server thread for processing JSON messages
         json_server_config = {
             'ip': config['server_ip'], 'port': config['json_port']
         }
@@ -118,6 +120,7 @@ class MaccorSpoofer:
             daemon=True
         )
 
+        # Start a dedicated server thread for processing binary messages
         tcp_server_config = {
             'ip': config['server_ip'], 'port': config['tcp_port']
         }
@@ -158,7 +161,7 @@ class MaccorSpoofer:
 
         Parameters
         ----------
-        sock_cofig : dict
+        sock_config : dict
             A configuration for the socket containing the IP and port number.
         Worker : _SocketWorker
             A reference to the worker class that will service individual client connections.
@@ -179,7 +182,7 @@ class MaccorSpoofer:
                     Worker(client_connection, self.__channel_data))
             except socket.timeout:
                 with self.__stop_servers_lock:
-                    # If stop commmand is issued then kill all workers.
+                    # If stop command is issued then kill all workers.
                     if self.__stop_servers:
                         for worker in client_workers:
                             if worker.is_alive():
@@ -209,8 +212,8 @@ class _SocketWorker:
     Default setup as an echo server. Child classes should overwrite the 
     the `_process_client_msg()` method with their own responses.
     """
-    __receive_msg_timeout_s = 1
-    __msg_buffer_size_bytes = 1024
+    __receive_msg_timeout_s = 0.5
+    __msg_buffer_size_bytes = 4096
     __stop_lock = threading.Lock()
     __stop = False
 
@@ -235,7 +238,7 @@ class _SocketWorker:
         """
         Forever loop to service client requests. Wait to receive a message. If no messages is 
         received before the timeout then check to see if stop command has been issued. Loop is 
-        also broken if client breaks conenction by sending b''. 
+        also broken if client breaks connection by sending b''. 
 
         Parameters
         ----------
@@ -249,7 +252,9 @@ class _SocketWorker:
                 rx_msg = s.recv(self.__msg_buffer_size_bytes)
                 if not rx_msg:
                     break
+
                 tx_msg = self._process_client_msg(rx_msg)
+
                 s.sendall(tx_msg)
             except socket.timeout:
                 with self.__stop_lock:
@@ -328,9 +333,6 @@ class _JsonWorker(_SocketWorker):
         """
 
         rx_msg = json.loads(rx_msg)
-        if rx_msg['params']['Chan'] > self.__channel_data.num_channels:
-            # TODO: Should respond with some sort of error message if request is out of range
-            pass
 
         if (pymacnet.messages.tx_read_status_msg['params']['FClass'] == rx_msg['params']['FClass'] and
                 pymacnet.messages.tx_read_status_msg['params']['FNum'] == rx_msg['params']['FNum']):
@@ -372,10 +374,22 @@ class _JsonWorker(_SocketWorker):
             tx_msg['result']['ISafeDis'] = rx_msg['params']['ISafeDis']
             tx_msg['result']['PBatSafeChg'] = rx_msg['params']['PBatSafeChg']
             tx_msg['result']['PBatSafeDis'] = rx_msg['params']['PBatSafeDis']
+        elif (pymacnet.messages.tx_system_info_msg['params']['FClass'] == rx_msg['params']['FClass'] and
+                pymacnet.messages.tx_system_info_msg['params']['FNum'] == rx_msg['params']['FNum']):
+            tx_msg = pymacnet.messages.rx_system_info_msg
+        elif (pymacnet.messages.tx_general_info_msg['params']['FClass'] == rx_msg['params']['FClass'] and
+                pymacnet.messages.tx_general_info_msg['params']['FNum'] == rx_msg['params']['FNum']):
+            tx_msg = pymacnet.messages.rx_general_info_msg
+            tx_msg['result']['TestChannels'] = self.__channel_data.num_channels
+        elif (pymacnet.messages.tx_channel_status_multiple_channels['params']['FClass'] == rx_msg['params']['FClass'] and
+                pymacnet.messages.tx_channel_status_multiple_channels['params']['FNum'] == rx_msg['params']['FNum']):
+            tx_msg = pymacnet.messages.rx_channel_status_multiple_channels
         else:
             tx_msg = {'err': 1}
 
         tx_msg = json.dumps(tx_msg, indent=4)
+        # Needs to be included as it's included in messages from Maccor server as indicator of message termination
+        tx_msg += '\r\n'
         tx_msg = tx_msg.encode('utf-8')
 
         return tx_msg
