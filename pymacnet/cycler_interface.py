@@ -86,15 +86,22 @@ class CyclerInterface():
         status : dict
             A dictionary detailing the status of the channel. Returns None if there is an issue.
         """
+        status = {}
+
         if not (channel > 0) and not (channel < self.__num_channels):
             logger.warning("Invalid channel number!")
             return None
 
-        msg_outgoing_dict = copy.deepcopy(pymacnet.messages.tx_read_status_msg)
-        msg_outgoing_dict['params']['Chan'] = channel
-        status = self._send_receive_json_msg(msg_outgoing_dict)
+        try:
+            msg_outgoing_dict = copy.deepcopy(pymacnet.messages.tx_read_status_msg)
+            msg_outgoing_dict['params']['Chan'] = channel
+            status = self._send_receive_json_msg(msg_outgoing_dict)
+        except Exception as e:
+            logger.error(
+                f'Error reading channel status for channel {channel}', exc_info=True)
+            logger.error(e)
 
-        if status:
+        if status and 'result' in status:
             return status['result']
         else:
             logger.error("Failed to read channel status")
