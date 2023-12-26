@@ -191,7 +191,7 @@ channel_interface = pymacnet.ChannelInterface(config)
 if not channel_interface.start():
     sys.exit("failed to create connection!")
 
-status_reading = channel_interface.read_status()
+status_reading = channel_interface.read_channel_status()
 print(status_reading)
 ```
 
