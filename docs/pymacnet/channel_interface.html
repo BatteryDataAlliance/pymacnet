@@ -212,7 +212,7 @@ class ChannelInterface(CyclerInterface):
             msg_outgoing_dict[&#39;params&#39;][&#39;TestName&#39;] = self.__config[&#39;test_name&#39;]
 
         # Check the status of the channel before we try to start the test.]
-        status = self.read_status()
+        status = self.read_channel_status()
         if status:
             if pymacnet.messages.status_dictionary[status[&#39;Stat&#39;]] == &#39;Completed&#39;:
                 self.reset_channel()
@@ -269,7 +269,7 @@ class ChannelInterface(CyclerInterface):
             msg_outgoing_dict[&#39;params&#39;][&#39;TestName&#39;] = self.__config[&#39;test_name&#39;]
 
         # Check the status of the channel before we try to start the test.
-        status = self.read_status()
+        status = self.read_channel_status()
         if status:
             if pymacnet.messages.status_dictionary[status[&#39;Stat&#39;]] == &#39;Completed&#39;:
                 self.reset_channel()
@@ -672,7 +672,7 @@ class ChannelInterface(CyclerInterface):
             msg_outgoing_dict[&#39;params&#39;][&#39;TestName&#39;] = self.__config[&#39;test_name&#39;]
 
         # Check the status of the channel before we try to start the test.]
-        status = self.read_status()
+        status = self.read_channel_status()
         if status:
             if pymacnet.messages.status_dictionary[status[&#39;Stat&#39;]] == &#39;Completed&#39;:
                 self.reset_channel()
@@ -729,7 +729,7 @@ class ChannelInterface(CyclerInterface):
             msg_outgoing_dict[&#39;params&#39;][&#39;TestName&#39;] = self.__config[&#39;test_name&#39;]
 
         # Check the status of the channel before we try to start the test.
-        status = self.read_status()
+        status = self.read_channel_status()
         if status:
             if pymacnet.messages.status_dictionary[status[&#39;Stat&#39;]] == &#39;Completed&#39;:
                 self.reset_channel()
@@ -1249,7 +1249,7 @@ charge with the requested voltage.</p>
         msg_outgoing_dict[&#39;params&#39;][&#39;TestName&#39;] = self.__config[&#39;test_name&#39;]
 
     # Check the status of the channel before we try to start the test.
-    status = self.read_status()
+    status = self.read_channel_status()
     if status:
         if pymacnet.messages.status_dictionary[status[&#39;Stat&#39;]] == &#39;Completed&#39;:
             self.reset_channel()
@@ -1317,7 +1317,7 @@ Note that it will not start a test if the channel is current running a test.</p>
         msg_outgoing_dict[&#39;params&#39;][&#39;TestName&#39;] = self.__config[&#39;test_name&#39;]
 
     # Check the status of the channel before we try to start the test.]
-    status = self.read_status()
+    status = self.read_channel_status()
     if status:
         if pymacnet.messages.status_dictionary[status[&#39;Stat&#39;]] == &#39;Completed&#39;:
             self.reset_channel()
