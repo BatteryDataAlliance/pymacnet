@@ -352,21 +352,21 @@ pytest .
 
 #### MaccorSpoofer
 
-Testing software on a real cycler is dangerous so we've created a submodule `maccorspoofer` to emulate some of the behavior of the Maccor software with a class `MaccorSpoofer`. This class creates TCP and UDP servers and accepts connections from n number of clients. The `MaccorSpoofer` does not perfectly emulate a Maccor cycler (for example, it does not track if a test is already running on a channel) and merely checks that the message format is correct and responds with standard message.
+Testing software on a real cycler is dangerous so we've created a submodule `maccorspoofer` to emulate some of the behavior of the Maccor software with a class `MaccorSpoofer`. This class creates TCP and UDP servers and accepts connections from n number of clients. The `MaccorSpoofer` does not perfectly emulate a Maccor cycler (for example, it does not track if a test is already running on a channel) and merely checks that the message format is correct and responds with standard message. Example usage of MaccorSpoofer is documented in the file [demo_maccorspoofer.ipynb](./demo_maccorspoofer.ipynb) and a video demonstration for the same can be found [here](https://www.loom.com/share/5895a2ea83e2439b81a92b1d00cf639e?sid=e2f509c8-55e3-4b9f-9307-8f7d7b8fcb68).
 
 ### Documentation
 
 All documentation was generated with [pydoc](https://docs.python.org/3/library/pydoc.html). To re-generate the documentation type the following command from the top level directory of the repository:
 
 ```sh
-pdoc --html .
+pydoc --html .
 ```
 
 ## License
 
 MIT License
 
-Copyright (c) 2023 BattGenie Inc.
+Copyright (c) 2024 BattGenie Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
