@@ -71,20 +71,20 @@ tx_start_test_with_procedure_msg = {
 Start test with direct control
 
 Selects the test channel to be started. The test name and procedure name can be up to 250 characters long.
-Also, do not select the channel in advance of starting the test. The JSON Start test command will both select and 
+Also, do not select the channel in advance of starting the test. The JSON Start test command will both select and
 start the channel. If, however, multiple channels should be started with the same test, do first select the channels,
 then start the test using 65535, meaning "all selected".
 
 Parameters as follows:
 
-`TestName` Up to 25 ascii characters for the data file name. “Random” will generate a pseudo-random name. 
+`TestName` Up to 25 ascii characters for the data file name. “Random” will generate a pseudo-random name.
 The field is fixed in length, so remaining characters should be space characters.
 
-`ProcName` Up to 25 ascii characters for the test procedure name. The test procedure must exist in the 
-C:\\Maccor\\Procedure folder and the “.000” should not be part of the name. The field is fixed in length, 
+`ProcName` Up to 25 ascii characters for the test procedure name. The test procedure must exist in the
+C:\\Maccor\\Procedure folder and the “.000” should not be part of the name. The field is fixed in length,
 so remaining characters should be space characters.
 
-`Comment` Up to 80 characters for the test comment. The field is fixed in length, 
+`Comment` Up to 80 characters for the test comment. The field is fixed in length,
 so remaining characters should be space characters.
 
 `Crate` C-rate. If C-rate is not used, enter 1.
@@ -148,30 +148,30 @@ tx_start_test_with_direct_control_msg = {
 """
 Start direct mode test.
 
-Start direct mode. Initializes direct remote control of the test channel with the 
-following data in the “Data” area. The channel will output this current, voltage 
-and power - mutually limiting as standard - until the values are changed with the 
+Start direct mode. Initializes direct remote control of the test channel with the
+following data in the “Data” area. The channel will output this current, voltage
+and power - mutually limiting as standard - until the values are changed with the
 “(6, 8) Set direct output” command described below or stopped.
 
-A watchdog timer can be activated in the Misc_Options section of the System.ini file. Setting the 
-MacNetDirectModeWD to a value higher than 0 will cause a channel under direct mode to suspend if it 
+A watchdog timer can be activated in the Misc_Options section of the System.ini file. Setting the
+MacNetDirectModeWD to a value higher than 0 will cause a channel under direct mode to suspend if it
 has not been updated within the specified number of seconds.
 
 Parameters are as follows:
 
-`testName` Up to 25 ascii characters for the data file name. “Random” (Case sensitive) will 
+`testName` Up to 25 ascii characters for the data file name. “Random” (Case sensitive) will
 generate a pseudo-random name. The field is fixed in length, so remaining characters should be space characters.
 
-`Current` Amps. Mutually limiting. Set outside range to ignore. 0 is within range. 
+`Current` Amps. Mutually limiting. Set outside range to ignore. 0 is within range.
 Must be active to function in (6, 8) Set direct mode output.
 
-`Voltage` Voltage. Mutually limiting. Set outside range to ignore. 0 is within range. 
+`Voltage` Voltage. Mutually limiting. Set outside range to ignore. 0 is within range.
 Must be active to function in (6, 8) Set direct mode output.
 
-`Power` Watts. Mutually limiting. Set outside range to ignore. 0 is within range. 
+`Power` Watts. Mutually limiting. Set outside range to ignore. 0 is within range.
 Must be active to function in (6, 8) Set direct mode output.
 
-`Resistance`  Ohms. Mutually limiting. Set to 0 to ignore. 
+`Resistance`  Ohms. Mutually limiting. Set to 0 to ignore.
 Must be active to function in (6, 8) Set direct mode output.
 
 `CurrentRange` The desired current range: 1, 2, 3, 4
@@ -222,21 +222,21 @@ tx_set_direct_output_msg = {
 """
 Set direct mode output
 
-Set direct output. When a channel has been started in direct mode, the output can be set with this 
+Set direct output. When a channel has been started in direct mode, the output can be set with this
 command and these arguments:
 
 Parameters as follows:
 
-`Current` Amps. Mutually limiting. Set outside range to ignore. 0 is within range. 
+`Current` Amps. Mutually limiting. Set outside range to ignore. 0 is within range.
         Must be active to function in (6, 8) Set direct mode output.
 
-`Voltage` Voltage. Mutually limiting. Set outside range to ignore. 0 is within range. 
+`Voltage` Voltage. Mutually limiting. Set outside range to ignore. 0 is within range.
 Must be active to function in (6, 8) Set direct mode output.
 
-`Power` Watts. Mutually limiting. Set outside range to ignore. 0 is within range. 
+`Power` Watts. Mutually limiting. Set outside range to ignore. 0 is within range.
 Must be active to function in (6, 8) Set direct mode output.
 
-`Resistance` Ohms. Mutually limiting. Set to 0 to ignore. 
+`Resistance` Ohms. Mutually limiting. Set to 0 to ignore.
 Must be active to function in (6, 8) Set direct mode output.
 
 `Current range` The desired current range: 1, 2, 3, 4
@@ -403,118 +403,118 @@ Response message for setting channel variables.
 """
 
 tx_system_info_msg = {
-    "jsonrpc": "2.0", 
-    "method": "MacNet", 
+    "jsonrpc": "2.0",
+    "method": "MacNet",
     "params":
     {
-    "FClass": 1,
-    "FNum": 1 
+        "FClass": 1,
+        "FNum": 1
     },
-    "id": 1987 
+    "id": 1987
 }
 """
 Requests the software system information from the Maccor cycler, message (1,1)
 """
 
 rx_system_info_msg = {
-    "jsonrpc":"2.0", 
+    "jsonrpc": "2.0",
     "result":
     {
-        "FClass":1,
-        "FNum":1,
-        "APIVersion":1, 
-        "MacTest32EXEversionMajor":3, 
-        "MacTest32EXEversionMinor":2, 
-        "MacTest32EXEversionBuild":18, 
-        "MacTest32DLLversionMajor":3, 
-        "MacTest32DLLversionMsinor":2, 
-        "MacTest32DLLversionBuild":18, 
-        "MacTest32ExeDT":"2016-11-08T15:02:58", 
-        "MacTest32DLLDT":"2016-11-13T11:29:48"
+        "FClass": 1,
+        "FNum": 1,
+        "APIVersion": 1,
+        "MacTest32EXEversionMajor": 3,
+        "MacTest32EXEversionMinor": 2,
+        "MacTest32EXEversionBuild": 18,
+        "MacTest32DLLversionMajor": 3,
+        "MacTest32DLLversionMsinor": 2,
+        "MacTest32DLLversionBuild": 18,
+        "MacTest32ExeDT": "2016-11-08T15:02:58",
+        "MacTest32DLLDT": "2016-11-13T11:29:48"
     },
-    "id":1987
+    "id": 1987
 }
 """
 Example response for system software version, message (1,1)
 """
 
 tx_general_info_msg = {
-    "jsonrpc": "2.0", 
-    "method": "MacNet", 
+    "jsonrpc": "2.0",
+    "method": "MacNet",
     "params":
     {
         "FClass": 1,
-        "FNum": 2 
+        "FNum": 2
     },
-    "id": 1987 
+    "id": 1987
 }
 """
 Requests the general system information from the Maccor cycler, message (1,2)
 """
 
 rx_general_info_msg = {
-    "jsonrpc":"2.0", 
+    "jsonrpc": "2.0",
     "result":
     {
-        "FClass":1, 
-        "FNum":2, 
-        "SystemID":"Win10", 
-        "SystemType":0, 
-        "ControllerBoards":3, 
-        "TestChannels":12, 
-        "AuxBoards":1, 
-        "AuxChannels":128, 
-        "SMB1Pos":0,
-        "SMB3Pos":1 
+        "FClass": 1,
+        "FNum": 2,
+        "SystemID": "Win10",
+        "SystemType": 0,
+        "ControllerBoards": 3,
+        "TestChannels": 12,
+        "AuxBoards": 1,
+        "AuxChannels": 128,
+        "SMB1Pos": 0,
+        "SMB3Pos": 1
     },
-    "id":1987
+    "id": 1987
 }
 """
 Example response for general system information from the Maccor cycler, message (1,2)
 """
 
 tx_channel_status_multiple_channels = {
-    "jsonrpc": "2.0", 
-    "method": "MacNet", 
+    "jsonrpc": "2.0",
+    "method": "MacNet",
     "params":
     {
-        "FClass": 4, 
-        "FNum": 1, 
-        "Chan": 0, 
+        "FClass": 4,
+        "FNum": 1,
+        "Chan": 0,
         "Len": 2
     },
     "id": 1987
 }
 """
-Requests the status of “Len” channels starting from “Chan” will be returned. 
+Requests the status of “Len” channels starting from “Chan” will be returned.
 Four bytes per requested channel. Up to 128 channels can be requested in one message.
 
 MacNet message: (4, 1) Channel status of multiple channels
 """
 
 rx_channel_status_multiple_channels = {
-    "jsonrpc":"2.0",
+    "jsonrpc": "2.0",
     "result":
     {
-        "FClass":4, 
-        "FNum":1, 
-        "Chan":0, 
-        "Len":2, 
+        "FClass": 4,
+        "FNum": 1,
+        "Chan": 0,
+        "Len": 2,
         "Status":
         [
             {
-                "RF1":0, 
-                "RF2":0, 
-                "Stat":0
-            }, 
+                "RF1": 0,
+                "RF2": 0,
+                "Stat": 0
+            },
             {
-                "RF1":0,
-                "RF2":0, 
-                "Stat":0
-            } 
+                "RF1": 0,
+                "RF2": 0,
+                "Stat": 0
+            }
         ]
-    }, 
-    "id":1987
+    },
+    "id": 1987
 }
 """
 Example response for MacNet message: (4, 1) Channel status of multiple channels)

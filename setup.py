@@ -8,9 +8,9 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pymacnet",
-    version="1.1.1",
-    author="Zander Nevitt",
-    author_email="zandern@battgenie.life",
+    version="1.1.3",
+    author="Bing Syuan Wang, Chintan Pathak and Zander Nevitt",
+    author_email="info@battgenie.life",
     description="A class based python interface for communication and control of Maccor cyclers over Macnet.",
     long_description=long_description,
     long_description_content_type="text/markdown",

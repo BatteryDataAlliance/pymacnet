@@ -1,7 +1,8 @@
-import logging
 import copy
-import pymacnet.messages
+import logging
 from datetime import datetime
+
+import pymacnet.messages
 from .cycler_interface import CyclerInterface
 
 logger = logging.getLogger(__name__)
@@ -23,20 +24,28 @@ class ChannelInterface(CyclerInterface):
             - `server_ip` - The IP address of the Maccor server. Use 127.0.0.1 if running on the same machine as the server.
             - `json_msg_port` - The port to communicate through with JSON messages. Default set to 57570.
             - `bin_msg_port` - The port to communicate through with binary messages. Default set to 57560.
-            - `msg_buffer_size_bytes` - How big of a message buffer to use for sending/receiving messages. A minimum of 1024 bytes is recommended. 
+            - `msg_buffer_size_bytes` - How big of a message buffer to use for sending/receiving messages.
+                A minimum of 1024 bytes is recommended.
             - `channel` - The channel to be targeted for all operations.
-            - `test_name` - The test name to be used for any tests started. If left blank, Maccor will generate a unique random name for any started tests. Note that Maccor requires unique test names for each test.
-            - `test_procedure` - The test procedure to be used, if starting a test with a procedure. Not needed with direct control.
-            - `c_rate_ah` - The capacity value to be referenced when setting "C" values within the Maccor schedule. Units of amp-hours. Ignored if not used anywhere in the test.
+            - `test_name` - The test name to be used for any tests started. If left blank,
+                Maccor will generate a unique random name for any started tests.
+                Note that Maccor requires unique test names for each test.
+            - `test_procedure` - The test procedure to be used, if starting a test with a procedure.
+                Not needed with direct control.
+            - `c_rate_ah` - The capacity value to be referenced when setting "C" values within the Maccor schedule.
+                Units of amp-hours. Ignored if not used anywhere in the test.
             - `v_max_safety_limit_v` - Upper voltage safety limit for the channel. Units of volts.
             - `v_min_safety_limit_v` - Lower voltage safety limit for the channel. Units of volts.
             - `i_max_safety_limit_a` - Upper current safety limit for the channel. Units of amps.
             - `i_min_safety_limit_a` - Lower current safety limit for the channel. Units of amps.
             - `v_max_v` - Upper voltage limit used for charge/CV limits. Units of volts. Only used with direct control.
             - `v_min_v` - Lower voltage limit used for discharge limit. Units of volts. Only used with direct control.
-            - `data_record_time_s` - How often data points are taken during direct control tests. Zero turns off. Used only for direct control.
-            - `data_record_voltage_delta_vbys` - The dV/dt at which data points are taken during direct control tests. Zero disables. Used only for direct control.
-            - `data_record_current_delta_abys` - The dI/dt at which data points are taken during direct control tests. Zero disables. Used only for direct control.
+            - `data_record_time_s` - How often data points are taken during direct control tests. Zero turns off.
+                Used only for direct control.
+            - `data_record_voltage_delta_vbys` - The dV/dt at which data points are taken during direct control tests.
+                Zero disables. Used only for direct control.
+            - `data_record_current_delta_abys` - The dI/dt at which data points are taken during direct control tests.
+                Zero disables. Used only for direct control.
         """
         self.__channel = config['channel']
         self.__config = config
@@ -110,7 +119,7 @@ class ChannelInterface(CyclerInterface):
 
     def set_channel_variable(self, var_num=1, var_value=0) -> bool:
         """
-        Sets test variables on the target channel. See the "Variables" section in the 
+        Sets test variables on the target channel. See the "Variables" section in the
         Maccor manual for more details about how to use these in tests.
 
         Parameters
@@ -137,8 +146,9 @@ class ChannelInterface(CyclerInterface):
             try:
                 assert ((reply['result']['Chan']) == self.__config['channel'])
                 assert (reply['result']['Result'] == 'OK')
-            except:
+            except Exception as e:
                 logger.error("Variable not set!")
+                logger.error(e)
                 return False
         else:
             logger.error(
@@ -149,7 +159,7 @@ class ChannelInterface(CyclerInterface):
 
     def start_test_with_procedure(self) -> bool:
         """
-        Starts the test on the channel and with the procedure specified in the passed config. 
+        Starts the test on the channel and with the procedure specified in the passed config.
         Note that it will not start a test if the channel is current running a test.
 
         Returns
@@ -264,8 +274,9 @@ class ChannelInterface(CyclerInterface):
         For discharging: Indicated with a negative sign on current. A lower voltage limit is set based on the
             `v_min_v` value set in the config.
 
-        For charging: If only `current_a` is passed, the cycler will charge at the this current until commanded 
-            otherwise or until the upper voltage safety limit is hit. If a `voltage_v` argument is passed in addition to `current_a`, then the cycler will do a CCCV 
+        For charging: If only `current_a` is passed, the cycler will charge at the this current until commanded
+            otherwise or until the upper voltage safety limit is hit.
+            If a `voltage_v` argument is passed in addition to `current_a`, then the cycler will do a CCCV
             charge with the requested voltage.
 
 
@@ -333,7 +344,7 @@ class ChannelInterface(CyclerInterface):
 
     def __set_channel_safety_limits(self) -> bool:
         """
-        Sets channel safety limits on the channel specified in the config. 
+        Sets channel safety limits on the channel specified in the config.
 
         Returns
         -------
@@ -368,9 +379,10 @@ class ChannelInterface(CyclerInterface):
                         self.__config['power_safety_limit_chg_w']) < 0.001)
                 assert (abs(reply['result']['PBatSafeDis'] -
                         self.__config['power_safety_limit_dsg_w']) < 0.001)
-            except:
+            except Exception as e:
                 logger.error(
                     "Set safety limits do not match sent safety limits! Message response: " + str(reply))
+                logger.error(e)
                 return False
         else:
             logger.error(
