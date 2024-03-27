@@ -1,9 +1,9 @@
-import logging
 import copy
-import socket
-import logging
 import json
 import struct
+import socket
+import logging
+
 import pymacnet.messages
 
 logger = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ class CyclerInterface():
 
     def __init__(self, config: dict):
         """
-        Creates a CyclerInterface class instance. 
+        Creates a CyclerInterface class instance.
 
         Parameters
         ----------
@@ -25,8 +25,10 @@ class CyclerInterface():
             - `server_ip` - The IP address of the Maccor server. Use 127.0.0.1 if running on the same machine as the server.
             - `json_msg_port` - The port to communicate through with JSON messages. Default set to 57570.
             - `bin_msg_port` - The port to communicate through with binary messages. Default set to 57560.
-            - `msg_buffer_size_bytes` - How big of a message buffer to use for sending/receiving messages. A minimum of 1024 bytes is recommended.
+            - `msg_buffer_size_bytes` - How big of a message buffer to use for sending/receiving messages.
+                A minimum of 1024 bytes is recommended.
         """
+        self.__config = config
         self.__msg_buffer_size_bytes = config['msg_buffer_size_bytes']
 
         assert (self.__create_connection(
@@ -93,7 +95,8 @@ class CyclerInterface():
             return None
 
         try:
-            msg_outgoing_dict = copy.deepcopy(pymacnet.messages.tx_read_status_msg)
+            msg_outgoing_dict = copy.deepcopy(
+                pymacnet.messages.tx_read_status_msg)
             msg_outgoing_dict['params']['Chan'] = channel
             status = self._send_receive_json_msg(msg_outgoing_dict)
         except Exception as e:
@@ -157,14 +160,17 @@ class CyclerInterface():
         try:
             msg_outgoing_packed = json.dumps(outgoing_msg_dict, indent=4)
             msg_outgoing_packed = msg_outgoing_packed.encode()
-        except:
+        except Exception as e:
             logger.error("Error packing outgoing message!", exc_info=True)
+            logger.error(e)
             return None
 
         try:
             self.__json_msg_socket.send(msg_outgoing_packed)
-        except:
+        except Exception as e:
             logger.error("Error sending message!", exc_info=True)
+            logger.error(e)
+            self.__reconnect()
             return None
 
         try:
@@ -175,16 +181,20 @@ class CyclerInterface():
         except socket.timeout:
             logger.error(
                 "Timeout on receiving message from Maccor server!", exc_info=True)
+            self.__reconnect()
             return False
-        except:
+        except Exception as e:
             logger.error("Error receiving message!", exc_info=True)
+            self.__reconnect()
+            logger.error(e)
             return None
 
         try:
             msg_incoming_dict = json.loads(msg_incoming_packed.decode('utf-8'))
-        except:
+        except Exception as e:
             logger.error("Error unpacking incoming message!", exc_info=True)
             logger.error("Message: " + str(msg_incoming_packed))
+            logger.error(e)
             return None
 
         # Take care of channel zero indexing on incoming messages
@@ -196,7 +206,7 @@ class CyclerInterface():
     def _send_direct_output_rest_bin_msg(self, direct_out_msg_dict: dict) -> bool:
         """
         Sends a direct output binary message to set the channel to rest.
-        Note this is necessary because there is a bug where direct output 
+        Note this is necessary because there is a bug where direct output
         JSON messages cannot set rest.
 
         Parameters
@@ -226,8 +236,9 @@ class CyclerInterface():
                                          ord('R'))
         try:
             self.__bin_msg_socket.send(msg_outgoing_bytes)
-        except:
+        except Exception as e:
             logger.error("Error sending binary rest message!", exc_info=True)
+            logger.error(e)
             return False
         try:
             response = self.__bin_msg_socket.recv(self.__msg_buffer_size_bytes)
@@ -235,9 +246,10 @@ class CyclerInterface():
             logger.error(
                 "Timeout on receiving message from Maccor server!", exc_info=True)
             return False
-        except:
+        except Exception as e:
             logger.error(
                 "Error receiving rest message response!", exc_info=True)
+            logger.error(e)
             return False
         if response:
             # TODO: Should check something related to the response.
@@ -256,7 +268,7 @@ class CyclerInterface():
             The IP address of the Maccor server.
         json_msg_port : int
             The TCP port use for JSON message communication.
-        bin_msg_port : 
+        bin_msg_port :
             The TCP port used for binary message communication
 
         Returns
@@ -265,26 +277,44 @@ class CyclerInterface():
             True or False based on whether the connection was created successfully
         """
         try:
+            logger.info(f'Creating connection to {ip}:{json_msg_port}')
             self.__json_msg_socket = socket.socket(
                 socket.AF_INET, socket.SOCK_STREAM)
+            self.__json_msg_socket.setsockopt(
+                socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.__json_msg_socket.settimeout(2)
             self.__json_msg_socket.connect(
                 (ip, json_msg_port)
             )
-        except:
+        except Exception as e:
             logger.error(
                 "Failed to create JSON message socket!", exc_info=True)
+            logger.error(e)
             return False
         try:
+            logger.info(f'Creating connection to {ip}:{bin_msg_port}')
             self.__bin_msg_socket = socket.socket(
                 socket.AF_INET, socket.SOCK_STREAM)
+            self.__bin_msg_socket.setsockopt(
+                socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.__bin_msg_socket.settimeout(2)
             self.__bin_msg_socket.connect(
                 (ip, bin_msg_port)
             )
-        except:
+        except Exception as e:
             logger.error(
                 "Failed to create binary message socket!", exc_info=True)
+            logger.error(e)
             return False
 
         return True
+
+    def __reconnect(self):
+        """
+        Reconnects to the Maccor server.
+        """
+        logger.warning("Reconnecting to Maccor server...")
+        self.__json_msg_socket.close()
+        self.__bin_msg_socket.close()
+        self.__create_connection(
+            ip=self.__config['server_ip'], json_msg_port=self.__config['json_msg_port'], bin_msg_port=self.__config['bin_msg_port'])

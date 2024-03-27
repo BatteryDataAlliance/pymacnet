@@ -1,15 +1,20 @@
-import socket
-import json
-import pymacnet.maccorspoofer
-import pymacnet.messages
 import copy
+import json
+import time
+import socket
+
+import pymacnet.messages
+import pymacnet.maccorspoofer
+
 
 """
 Various parameters we will use accross all the tests.
 """
 MSG_BUFFER_SIZE_BYTES = 1024
-CONFIG_DICT = {"server_ip": "127.0.0.1", "json_port": 1234,
-               "tcp_port": 5678, "num_channels": 128}
+CONFIG_DICT = {"server_ip": "127.0.0.1",
+               "json_port": 5630,
+               "tcp_port": 5730,
+               "num_channels": 128}
 CHANNEL = 1  # The channel we will use to associated tests messages.
 
 
@@ -40,8 +45,14 @@ def test_messages():
     """
     Test that the spoofer replies correctly to all messages.
     """
-    spoofer_server = pymacnet.maccorspoofer.MaccorSpoofer(CONFIG_DICT)
+    config = CONFIG_DICT.copy()
+    config['json_port'] += 1
+    config['tcp_port'] += 1
+
+    spoofer_server = pymacnet.maccorspoofer.MaccorSpoofer(config)
     spoofer_server.start()
+    # Give time for the spoofer to start.
+    time.sleep(5)
 
     # Send all messages and make sure we get the correct responses.
     messages = [(pymacnet.messages.tx_read_status_msg, pymacnet.messages.rx_read_status_msg),
@@ -62,7 +73,8 @@ def test_messages():
                 ]
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((CONFIG_DICT["server_ip"], CONFIG_DICT["json_port"]))
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    s.connect((config["server_ip"], config["json_port"]))
 
     for tx_msg, ans_key in messages:
         tx_msg['params']['Chan'] = CHANNEL
@@ -78,12 +90,18 @@ def test_update_status():
     """
     Check that updating channel status works and does not effect other channel.
     """
+    config = CONFIG_DICT.copy()
+    config['json_port'] += 2
+    config['tcp_port'] += 2
 
-    spoofer_server = pymacnet.maccorspoofer.MaccorSpoofer(CONFIG_DICT)
+    spoofer_server = pymacnet.maccorspoofer.MaccorSpoofer(config)
     spoofer_server.start()
+    # Give time for the spoofer to start.
+    time.sleep(5)
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((CONFIG_DICT["server_ip"], CONFIG_DICT["json_port"]))
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    s.connect((config["server_ip"], config["json_port"]))
 
     tx_msg = copy.deepcopy(pymacnet.messages.tx_read_status_msg)
     ans_key = copy.deepcopy(pymacnet.messages.rx_read_status_msg)

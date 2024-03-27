@@ -1,13 +1,16 @@
 import copy
+import time
 import pytest
+
 import pymacnet
-import pymacnet.maccorspoofer
 import pymacnet.messages
+import pymacnet.maccorspoofer
+
 
 # Create Maccor Spoofer server
 MACCOR_SPOOFER_CONFIG = {"server_ip": "127.0.0.1",
-                         "json_port": 5690,
-                         "tcp_port": 5691,
+                         "json_port": 5610,
+                         "tcp_port": 5710,
                          "num_channels": 128}
 
 # Create the interface we will use for testing.
@@ -38,22 +41,32 @@ def test_messages_basic():
     """
     Send basic messages to the MaccorSpoofer and make sure we get the correct results.
     """
-    maccor_spoofer = pymacnet.maccorspoofer.MaccorSpoofer(
-        MACCOR_SPOOFER_CONFIG)
-    maccor_spoofer.start()
+    spoofer_config = MACCOR_SPOOFER_CONFIG.copy()
+    spoofer_config['json_port'] += 1
+    spoofer_config['tcp_port'] += 1
 
-    channel_interface = pymacnet.ChannelInterface(CHANNEL_INTERFACE_CONFIG)
+    maccor_spoofer = pymacnet.maccorspoofer.MaccorSpoofer(
+        spoofer_config)
+    maccor_spoofer.start()
+    # Give time for the spoofer to start.
+    time.sleep(5)
+
+    config = CHANNEL_INTERFACE_CONFIG.copy()
+    config['json_msg_port'] += 1
+    config['bin_msg_port'] += 1
+
+    channel_interface = pymacnet.ChannelInterface(config)
 
     # Read Status
     response = channel_interface.read_channel_status()
     ans_key = copy.deepcopy(pymacnet.messages.rx_read_status_msg)
-    ans_key['result']['Chan'] = CHANNEL_INTERFACE_CONFIG['channel']
+    ans_key['result']['Chan'] = config['channel']
     assert (response == ans_key['result'])
 
     # Read Aux
     response = channel_interface.read_aux()
     ans_key = copy.deepcopy(pymacnet.messages.rx_read_aux_msg)
-    ans_key['result']['Chan'] = CHANNEL_INTERFACE_CONFIG['channel']
+    ans_key['result']['Chan'] = config['channel']
     assert (response == ans_key['result']['AuxValues'])
 
     # Read reset channel message
@@ -97,8 +110,12 @@ def test_no_server():
     """
     Test that failing to connect raises an assertion error
     """
+    config = CHANNEL_INTERFACE_CONFIG.copy()
+    config['json_msg_port'] += 2
+    config['bin_msg_port'] += 2
+
     with pytest.raises(AssertionError):
-        pymacnet.ChannelInterface(CHANNEL_INTERFACE_CONFIG)
+        pymacnet.ChannelInterface(config)
 
 
 def test_bad_config():

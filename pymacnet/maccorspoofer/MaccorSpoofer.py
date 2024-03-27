@@ -1,8 +1,12 @@
-import socket
-import json
-import threading
 import copy
+import json
+import socket
+import logging
+import threading
+
 import pymacnet.messages
+
+logger = logging.getLogger(__name__)
 
 
 class ChannelData:
@@ -66,6 +70,8 @@ class ChannelData:
         success : bool
             Returns True if all values in the updated_status were used to update the channel_status_array.
         """
+        logger.debug(
+            f"Updating channel {channel} status with {updated_status}")
 
         if channel > self.num_channels:
             return False
@@ -89,9 +95,9 @@ class MaccorSpoofer:
 
     def __init__(self, config: dict):
         """
-        Class to mimic behavior of Maccor cycler MacNet control server. The class is currently dumb 
-        and just sends back basic response messages without any notion of channel status or readings. 
-        It could be expanded in future. 
+        Class to mimic behavior of Maccor cycler MacNet control server. The class is currently dumb
+        and just sends back basic response messages without any notion of channel status or readings.
+        It could be expanded in future.
 
         Parameters
         ----------
@@ -174,7 +180,8 @@ class MaccorSpoofer:
         sock.bind((sock_config["ip"], sock_config["port"]))
         sock.settimeout(self.__client_connect_timeout_s)
         sock.listen()
-
+        logger.info(
+            f"Listening on {sock_config['ip']}:{sock_config['port']}...")
         while True:
             try:
                 client_connection = sock.accept()[0]
@@ -192,6 +199,9 @@ class MaccorSpoofer:
                 client_workers[:] = [
                     worker for worker in client_workers if worker.is_alive()
                 ]
+        sock.close()
+        logger.info(
+            f"Stopped listening on {sock_config['ip']}:{sock_config['port']}")
 
     def stop(self):
         """
@@ -208,8 +218,8 @@ class MaccorSpoofer:
 
 class _SocketWorker:
     """
-    Generic worker class that will respond to client socket requests. 
-    Default setup as an echo server. Child classes should overwrite the 
+    Generic worker class that will respond to client socket requests.
+    Default setup as an echo server. Child classes should overwrite the
     the `_process_client_msg()` method with their own responses.
     """
     __receive_msg_timeout_s = 0.5
@@ -236,9 +246,9 @@ class _SocketWorker:
 
     def ___service_loop(self, s: socket.socket):
         """
-        Forever loop to service client requests. Wait to receive a message. If no messages is 
-        received before the timeout then check to see if stop command has been issued. Loop is 
-        also broken if client breaks connection by sending b''. 
+        Forever loop to service client requests. Wait to receive a message. If no messages is
+        received before the timeout then check to see if stop command has been issued. Loop is
+        also broken if client breaks connection by sending b''.
 
         Parameters
         ----------
@@ -264,7 +274,7 @@ class _SocketWorker:
 
     def _process_client_msg(self, rx_msg):
         """
-        Takes the incoming client message and generates a response. 
+        Takes the incoming client message and generates a response.
 
         Parameters
         ----------
